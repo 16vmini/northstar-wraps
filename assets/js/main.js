@@ -245,6 +245,7 @@ function initLightbox() {
     const nextBtn = document.querySelector('.lightbox-next');
     const titleEl = document.getElementById('lightbox-title');
     const descEl = document.getElementById('lightbox-description');
+    const lightboxImg = document.getElementById('lightbox-img');
 
     if (!lightbox || !zoomBtns.length) return;
 
@@ -269,9 +270,14 @@ function initLightbox() {
 
         const title = card.querySelector('h3')?.textContent || '';
         const desc = card.querySelector('.gallery-card-content p')?.textContent || '';
+        const imgSrc = card.querySelector('.gallery-card-image img')?.src || '';
 
         if (titleEl) titleEl.textContent = title;
         if (descEl) descEl.textContent = desc;
+        if (lightboxImg && imgSrc) {
+            lightboxImg.src = imgSrc;
+            lightboxImg.alt = title;
+        }
     }
 
     function nextSlide() {
