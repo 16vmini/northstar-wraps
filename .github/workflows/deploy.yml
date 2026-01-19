@@ -14,20 +14,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Sync files to cPanel via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy via SFTP
+        uses: Dylan700/sftp-upload-action@v1.1.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            **/logs/**
-            **/*.log
-            **/*.md
-            **/.env*
+          port: 22
+          uploads: |
+            ./ => ${{ secrets.FTP_SERVER_DIR }}
+          ignore: |
+            .git
+            .git/**
+            .github
+            .github/**
+            logs
+            logs/**
+            *.log
+            *.md
+            .env*
