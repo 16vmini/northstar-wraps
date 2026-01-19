@@ -71,7 +71,7 @@ require_once 'includes/header.php';
                         <h3><?php echo $service['name']; ?></h3>
                         <p><?php echo $service['short_desc']; ?></p>
                         <?php if ($service['price_from']): ?>
-                        <span class="service-price">From $<?php echo number_format($service['price_from']); ?></span>
+                        <span class="service-price">From £<?php echo number_format($service['price_from']); ?></span>
                         <?php endif; ?>
                         <a href="/pages/services.php#<?php echo $service['id']; ?>" class="service-link">
                             Learn More <i class="fas fa-arrow-right"></i>

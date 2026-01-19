@@ -111,7 +111,7 @@ require_once '../includes/header.php';
                             <?php if ($service['price_from']): ?>
                             <div class="price-tag">
                                 <span class="price-label">Starting at</span>
-                                <span class="price-value">$<?php echo number_format($service['price_from']); ?></span>
+                                <span class="price-value">£<?php echo number_format($service['price_from']); ?></span>
                             </div>
                             <?php else: ?>
                             <div class="price-tag">

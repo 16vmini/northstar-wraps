@@ -95,11 +95,11 @@ $service_display = $service_names[$service] ?? $service;
 
 // Format budget
 $budget_ranges = [
-    'under-1000' => 'Under $1,000',
-    '1000-2500' => '$1,000 - $2,500',
-    '2500-5000' => '$2,500 - $5,000',
-    '5000-10000' => '$5,000 - $10,000',
-    'over-10000' => '$10,000+',
+    'under-1000' => 'Under £1,000',
+    '1000-2500' => '£1,000 - £2,500',
+    '2500-5000' => '£2,500 - £5,000',
+    '5000-10000' => '£5,000 - £10,000',
+    'over-10000' => '£10,000+',
     'not-sure' => 'Not Sure Yet'
 ];
 $budget_display = $budget_ranges[$budget] ?? 'Not specified';
