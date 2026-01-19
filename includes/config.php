@@ -53,14 +53,6 @@ $services = [
         'price_from' => 1500
     ],
     [
-        'id' => 'ppf',
-        'name' => 'Paint Protection Film',
-        'short_desc' => 'Invisible protection against chips, scratches, and debris.',
-        'description' => 'Shield your vehicle\'s paint with premium clear protection film. Self-healing technology keeps your car looking showroom fresh while guarding against rock chips, bug splatter, and minor scratches.',
-        'icon' => 'fa-shield-alt',
-        'price_from' => 800
-    ],
-    [
         'id' => 'chrome-delete',
         'name' => 'Chrome Delete',
         'short_desc' => 'Sleek blackout packages for trim and accents.',

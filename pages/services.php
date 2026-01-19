@@ -24,7 +24,7 @@ require_once '../includes/header.php';
         <div class="container">
             <div class="intro-content" data-aos="fade-up">
                 <p class="lead-text">
-                    Whether you're looking to completely change your vehicle's color, protect your paint,
+                    Whether you're looking to completely change your vehicle's color
                     or create eye-catching graphics for your business, North Star Wraps has the expertise
                     and premium materials to make it happen.
                 </p>
@@ -81,17 +81,6 @@ require_once '../includes/header.php';
                                 <li><i class="fas fa-check"></i> Brand consistency across vehicles</li>
                                 <li><i class="fas fa-check"></i> Faster turnaround than paint</li>
                                 <li><i class="fas fa-check"></i> Easy updates when branding changes</li>
-                            </ul>
-                        </div>
-                        <?php elseif ($service['id'] === 'ppf'): ?>
-                        <div class="service-features">
-                            <h4>Protection Features:</h4>
-                            <ul>
-                                <li><i class="fas fa-check"></i> Self-healing technology</li>
-                                <li><i class="fas fa-check"></i> UV ray protection</li>
-                                <li><i class="fas fa-check"></i> Rock chip resistance</li>
-                                <li><i class="fas fa-check"></i> Stain and chemical resistant</li>
-                                <li><i class="fas fa-check"></i> 10-year warranty available</li>
                             </ul>
                         </div>
                         <?php elseif ($service['id'] === 'chrome-delete'): ?>

@@ -8,7 +8,7 @@
                         <img src="/assets/images/logo.png" alt="<?php echo SITE_NAME; ?>" class="footer-logo">
                         <p class="footer-tagline"><?php echo SITE_TAGLINE; ?></p>
                         <p class="footer-description">
-                            Transforming vehicles with precision and passion. Quality vinyl wraps, paint protection, and custom designs that turn heads.
+                            Transforming vehicles with precision and passion. Quality vinyl wraps and custom designs that turn heads.
                         </p>
                         <div class="footer-social">
                             <a href="<?php echo SOCIAL_FACEBOOK; ?>" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -36,8 +36,8 @@
                             <li><a href="/pages/services.php#full-wrap">Full Vehicle Wraps</a></li>
                             <li><a href="/pages/services.php#partial-wrap">Partial Wraps</a></li>
                             <li><a href="/pages/services.php#commercial">Commercial Wraps</a></li>
-                            <li><a href="/pages/services.php#ppf">Paint Protection Film</a></li>
                             <li><a href="/pages/services.php#chrome-delete">Chrome Delete</a></li>
+                            <li><a href="/pages/services.php#custom-design">Custom Designs</a></li>
                         </ul>
                     </div>
 
