@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(where:*)",
+      "Bash(winget install:*)",
+      "Bash(\"C:\\\\php\\\\php.exe\" -v)",
+      "Bash(\"C:\\\\Program Files\\\\PHP\\\\php.exe\" -v)",
+      "Bash(dir \"C:\\\\php*\" /b)",
+      "Bash(dir \"C:\\\\Program Files\\\\PHP*\" /b)",
+      "Bash(cmd /c \"where php 2>nul || echo not in path yet\")",
+      "Bash(cmd /c \"C:\\\\Users\\\\%USERNAME%\\\\AppData\\\\Local\\\\Programs\\\\PHP\\\\php.exe -v\")",
+      "Bash(cmd /c \"dir C:\\\\Users\\\\mg1\\\\AppData\\\\Local\\\\Programs /b 2>nul\")",
+      "Bash(cmd /c \"for /r C:\\\\ %i in \\(php.exe\\) do @if exist %i echo %i\")",
+      "Bash(powershell -Command \"Get-Command php -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "Bash(powershell -Command:*)",
+      "Bash(winget list:*)",
+      "Bash(cmd.exe /c \"refreshenv && where php\")",
+      "Bash(cmd.exe /c \"echo %PATH%\")",
+      "Bash(tr:*)",
+      "Bash(cmd.exe /c \"dir C:\\\\php*.exe /s /b 2>nul\")",
+      "Bash(git add:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(gh run:*)",
+      "Bash(gh workflow run:*)",
+      "Bash(nslookup:*)",
+      "Bash(host:*)"
+    ]
+  }
+}
