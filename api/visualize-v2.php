@@ -59,6 +59,21 @@ if (!is_dir($log_dir)) {
     mkdir($log_dir, 0755, true);
 }
 
+// Set longer execution time for this script
+set_time_limit(120);
+
+// Error handler to catch fatal errors
+function handleError($errno, $errstr, $errfile, $errline) {
+    global $log_dir;
+    file_put_contents($log_dir . '/visualizer_v2_debug.log',
+        date('Y-m-d H:i:s') . " | PHP Error: {$errstr} in {$errfile}:{$errline}\n",
+        FILE_APPEND);
+    http_response_code(500);
+    echo json_encode(['error' => 'Server error: ' . $errstr]);
+    exit;
+}
+set_error_handler('handleError');
+
 /**
  * Approach: Use FLUX Kontext Pro with a composite image
  * Combine car image and wrap pattern side by side, then prompt the AI
@@ -172,11 +187,12 @@ curl_setopt_array($ch, [
     CURLOPT_URL => 'https://api.replicate.com/v1/models/black-forest-labs/flux-kontext-pro/predictions',
     CURLOPT_POST => true,
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 30,
+    CURLOPT_TIMEOUT => 90,
+    CURLOPT_CONNECTTIMEOUT => 30,
     CURLOPT_HTTPHEADER => [
         'Authorization: Bearer ' . $replicate_key,
         'Content-Type: application/json',
-        'Prefer: wait'
+        'Prefer: wait=60'
     ],
     CURLOPT_POSTFIELDS => json_encode($payload)
 ]);
@@ -187,12 +203,26 @@ $curl_error = curl_error($ch);
 curl_close($ch);
 
 file_put_contents($log_dir . '/visualizer_v2_debug.log',
-    date('Y-m-d H:i:s') . " | HTTP {$http_code} | Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
+    date('Y-m-d H:i:s') . " | HTTP {$http_code} | Error: {$curl_error} | Response: " . substr($response ?: 'empty', 0, 500) . "\n",
     FILE_APPEND);
+
+// Check for curl errors
+if ($curl_error) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Connection error: ' . $curl_error]);
+    exit;
+}
+
+// Check for empty response
+if (empty($response)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Empty response from API - request may have timed out']);
+    exit;
+}
 
 if ($http_code !== 200 && $http_code !== 201) {
     $error_data = json_decode($response, true);
-    $error_msg = $error_data['detail'] ?? ($error_data['error'] ?? 'Unknown error');
+    $error_msg = $error_data['detail'] ?? ($error_data['error'] ?? 'Unknown error (HTTP ' . $http_code . ')');
     http_response_code(500);
     echo json_encode(['error' => 'Failed to start generation: ' . $error_msg]);
     exit;
