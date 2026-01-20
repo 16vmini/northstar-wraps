@@ -204,6 +204,8 @@ require_once '../includes/header.php';
     .calculator-result {
         position: sticky;
         top: 100px;
+        z-index: 100;
+        align-self: start;
     }
 
     .calculator-result-inner {
@@ -318,11 +320,9 @@ require_once '../includes/header.php';
         .calculator-wrapper {
             grid-template-columns: 1fr;
         }
-        /* Make estimate sticky on tablet/mobile */
+        /* Adjust sticky for tablet/mobile */
         .calculator-result {
-            position: sticky;
-            top: 70px;
-            z-index: 100;
+            top: 90px;
             order: -1;
         }
         /* Hide desktop footer, show mobile footer */
