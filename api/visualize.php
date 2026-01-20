@@ -247,9 +247,18 @@ if (!$source_image) {
 }
 
 // Resize to 1024x1024 (required by DALL-E)
+// DALL-E edit API requires RGBA format with alpha channel
 $resized = imagecreatetruecolor(1024, 1024);
 $orig_width = imagesx($source_image);
 $orig_height = imagesy($source_image);
+
+// Enable alpha blending and save alpha channel
+imagesavealpha($resized, true);
+imagealphablending($resized, false);
+
+// Fill with transparent background
+$transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+imagefill($resized, 0, 0, $transparent);
 
 // Calculate aspect-ratio-preserving resize
 $scale = min(1024 / $orig_width, 1024 / $orig_height);
@@ -258,17 +267,17 @@ $new_height = (int)($orig_height * $scale);
 $x_offset = (int)((1024 - $new_width) / 2);
 $y_offset = (int)((1024 - $new_height) / 2);
 
-// Fill with white background
-$white = imagecolorallocate($resized, 255, 255, 255);
-imagefill($resized, 0, 0, $white);
+// Enable alpha blending for the copy operation
+imagealphablending($resized, true);
 
 // Copy resized image centered
 imagecopyresampled($resized, $source_image, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
 imagedestroy($source_image);
 
-// Save to temp file as PNG
+// Save to temp file as PNG with alpha
 $temp_dir = sys_get_temp_dir();
 $temp_image_path = $temp_dir . '/car_' . uniqid() . '.png';
+imagesavealpha($resized, true);
 imagepng($resized, $temp_image_path);
 imagedestroy($resized);
 
