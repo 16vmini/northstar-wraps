@@ -70,6 +70,72 @@ function addWatermark($base64_image) {
 }
 
 /**
+ * Fix image orientation based on EXIF data
+ * Phone cameras often store images rotated with EXIF metadata
+ */
+function fixImageOrientation($base64_data_uri) {
+    // Extract the base64 data and mime type
+    if (!preg_match('/^data:image\/(\w+);base64,(.+)$/', $base64_data_uri, $matches)) {
+        return $base64_data_uri;
+    }
+
+    $mime_type = $matches[1];
+    $base64_data = $matches[2];
+    $image_data = base64_decode($base64_data);
+
+    // Only JPEGs have EXIF data
+    if (!in_array($mime_type, ['jpeg', 'jpg'])) {
+        return $base64_data_uri;
+    }
+
+    // Create image from string
+    $image = imagecreatefromstring($image_data);
+    if (!$image) {
+        return $base64_data_uri;
+    }
+
+    // Try to read EXIF data
+    // We need to write to a temp file because exif_read_data needs a file path
+    $temp_file = tempnam(sys_get_temp_dir(), 'exif_');
+    file_put_contents($temp_file, $image_data);
+
+    $exif = @exif_read_data($temp_file);
+    @unlink($temp_file);
+
+    if (!$exif || !isset($exif['Orientation'])) {
+        imagedestroy($image);
+        return $base64_data_uri;
+    }
+
+    $orientation = $exif['Orientation'];
+
+    // Apply rotation based on EXIF orientation
+    switch ($orientation) {
+        case 3: // 180 degrees
+            $image = imagerotate($image, 180, 0);
+            break;
+        case 6: // 90 degrees CW (this is likely the issue)
+            $image = imagerotate($image, -90, 0);
+            break;
+        case 8: // 90 degrees CCW
+            $image = imagerotate($image, 90, 0);
+            break;
+        default:
+            // No rotation needed (orientation 1) or unsupported
+            imagedestroy($image);
+            return $base64_data_uri;
+    }
+
+    // Convert back to base64
+    ob_start();
+    imagejpeg($image, null, 90);
+    $output = ob_get_clean();
+    imagedestroy($image);
+
+    return 'data:image/jpeg;base64,' . base64_encode($output);
+}
+
+/**
  * Upload image to a temporary hosting service and get URL
  * Replicate needs a URL, not base64
  */
@@ -190,6 +256,10 @@ if (!preg_match('/^data:image\/(jpeg|jpg|png|webp);base64,/', $car_image)) {
     echo json_encode(['error' => 'Invalid image format. Please upload a JPEG, PNG, or WebP image.']);
     exit;
 }
+
+// Fix EXIF orientation before sending to API
+// This prevents rotated images from phone cameras
+$car_image = fixImageOrientation($car_image);
 
 // Check Replicate API key
 $replicate_key = defined('REPLICATE_API_KEY') ? REPLICATE_API_KEY : '';
