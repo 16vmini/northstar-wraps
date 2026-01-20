@@ -15,16 +15,16 @@ $gallery_images = [];
 if (is_dir($upload_dir)) {
     // Get all approved images (files without pending_ prefix)
     $files = glob($upload_dir . '/*.png');
-    // Filter out pending files
+    // Filter out pending files (PHP 7 compatible)
     $files = array_filter($files, function($f) {
-        return !str_contains(basename($f), 'pending_');
+        return strpos(basename($f), 'pending_') === false;
     });
 
     foreach ($files as $file) {
         $filename = basename($file);
         $id = str_replace('.png', '', $filename);
         // Skip if id starts with 'pending' (double check)
-        if (str_starts_with($id, 'pending')) continue;
+        if (strpos($id, 'pending') === 0) continue;
 
         $meta_file = $upload_dir . '/' . $id . '.json';
         $meta = file_exists($meta_file) ? json_decode(file_get_contents($meta_file), true) : [];
