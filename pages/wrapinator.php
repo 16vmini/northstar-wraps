@@ -1536,6 +1536,14 @@ require_once '../includes/header.php';
                     });
                     data = await response.json();
 
+                    if (data.error === 'email_required') {
+                        resultLoading.style.display = 'none';
+                        resultPlaceholder.style.display = 'block';
+                        emailModal.style.display = 'flex';
+                        generateBtn.disabled = false;
+                        return;
+                    }
+
                     if (!response.ok || data.error) {
                         throw new Error(data.error || data.message || 'Generation failed');
                     }
@@ -1547,6 +1555,7 @@ require_once '../includes/header.php';
                     resultImage.style.display = 'block';
                     resultActions.style.display = 'flex';
                     currentShareId = data.share_id || null;
+                    updateUsageText(data.remaining, data.needs_email);
 
                 } else {
                     // Use classic V1 API (or V2 with colour for pro mode without pattern)

@@ -1,7 +1,7 @@
 <?php
 /**
- * Wrap Visualizer V2 API Endpoint
- * Testing multi-image approach for custom wrap patterns
+ * Wrap Visualizer V2 API Endpoint (T-1000)
+ * Multi-image approach for custom wrap patterns
  * Uses image merge/style transfer models on Replicate
  */
 
@@ -12,6 +12,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/api-config.php';
 require_once __DIR__ . '/../includes/visualizer-share.php';
+require_once __DIR__ . '/../includes/wrapinator-usage.php';
 
 // Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -22,6 +23,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Get input
 $input = json_decode(file_get_contents('php://input'), true);
+
+// Handle status check
+if (isset($input['action']) && $input['action'] === 'status') {
+    echo json_encode(getWrapinatorStatus());
+    exit;
+}
+
+// Check usage limits before processing
+$usage_check = checkWrapinatorUsage();
+if (!$usage_check['allowed']) {
+    http_response_code($usage_check['error'] === 'email_required' ? 403 : 429);
+    echo json_encode($usage_check);
+    exit;
+}
 
 if (!isset($input['car_image']) || !isset($input['wrap_image'])) {
     http_response_code(400);
@@ -409,7 +424,7 @@ file_put_contents($log_dir . '/visualizer_v2_debug.log',
     FILE_APPEND);
 
 // Save image for sharing/gallery
-$save_result = saveVisualizerImage($image_data, 'Custom Pattern', 'Wrapinator 1000');
+$save_result = saveVisualizerImage($image_data, 'Custom Pattern', 'T-1000');
 $share_id = $save_result['share_id'];
 
 if ($share_id) {
@@ -418,12 +433,18 @@ if ($share_id) {
         FILE_APPEND);
 }
 
+// Increment usage counter
+$usage_status = incrementWrapinatorUsage();
+
 // Return result
 echo json_encode([
     'success' => true,
     'image' => 'data:image/png;base64,' . $generated_image,
     'share_id' => $share_id,
     'wrap' => 'Custom Pattern',
+    'used' => $usage_status['used'],
+    'remaining' => $usage_status['remaining'],
+    'needs_email' => $usage_status['needs_email'],
     'debug' => [
         'model' => 'flux-kontext-pro',
         'prompt' => $prompt,
