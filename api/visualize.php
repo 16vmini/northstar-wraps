@@ -231,97 +231,75 @@ if (!is_dir($log_dir)) {
 }
 
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Starting visualization | Wrap: {$wrap_name} | Prompt: " . substr($prompt, 0, 150) . "\n",
+    date('Y-m-d H:i:s') . " | Starting visualization | Wrap: {$wrap_name}\n",
     FILE_APPEND);
 
-// Use GPT-4o chat completions with vision to analyze the car,
-// then use DALL-E 3 to generate the wrapped version
-$ch = curl_init();
+// Decode the base64 image and save as PNG for the edit API
+$car_image_data = preg_replace('/^data:image\/\w+;base64,/', '', $car_image);
+$car_image_binary = base64_decode($car_image_data);
 
-// First, get GPT-4o to analyze the car and create a detailed description
-$analysis_prompt = "Analyze this car image and provide a detailed description for image generation. Include: exact make/model/year if identifiable, body style, viewing angle (front 3/4, side, rear, etc), current color, background setting, lighting conditions, and any distinctive features. Be very specific and concise.";
-
-$analysis_messages = [
-    [
-        'role' => 'user',
-        'content' => [
-            ['type' => 'text', 'text' => $analysis_prompt],
-            ['type' => 'image_url', 'image_url' => ['url' => $car_image, 'detail' => 'high']]
-        ]
-    ]
-];
-
-$analysis_data = [
-    'model' => 'gpt-4o',
-    'messages' => $analysis_messages,
-    'max_tokens' => 500
-];
-
-curl_setopt_array($ch, [
-    CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 60,
-    CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $api_key,
-        'Content-Type: application/json'
-    ],
-    CURLOPT_POSTFIELDS => json_encode($analysis_data)
-]);
-
-$analysis_response = curl_exec($ch);
-$analysis_http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Analysis HTTP {$analysis_http_code} | Response: " . substr($analysis_response, 0, 500) . "\n",
-    FILE_APPEND);
-
-if ($analysis_http_code !== 200) {
-    $error_data = json_decode($analysis_response, true);
-    http_response_code(500);
-    echo json_encode(['error' => 'Failed to analyze image: ' . ($error_data['error']['message'] ?? 'Unknown error')]);
+// Convert to PNG (required by DALL-E edit API)
+$source_image = imagecreatefromstring($car_image_binary);
+if (!$source_image) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Could not process the uploaded image']);
     exit;
 }
 
-$analysis_result = json_decode($analysis_response, true);
-$car_description = $analysis_result['choices'][0]['message']['content'] ?? '';
+// Resize to 1024x1024 (required by DALL-E)
+$resized = imagecreatetruecolor(1024, 1024);
+$orig_width = imagesx($source_image);
+$orig_height = imagesy($source_image);
 
-if (empty($car_description)) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Failed to analyze the car image']);
-    exit;
-}
+// Calculate aspect-ratio-preserving resize
+$scale = min(1024 / $orig_width, 1024 / $orig_height);
+$new_width = (int)($orig_width * $scale);
+$new_height = (int)($orig_height * $scale);
+$x_offset = (int)((1024 - $new_width) / 2);
+$y_offset = (int)((1024 - $new_height) / 2);
 
-// Now generate the wrapped version using DALL-E 3
-// Create a very specific prompt that emphasizes keeping the exact car
-$generation_prompt = "Photorealistic image of this EXACT car: {$car_description}\n\nCRITICAL CHANGES: The car body panels are now wrapped in {$wrap_name} vinyl wrap ({$wrap_finish} finish" . ($wrap_hex ? ", color {$wrap_hex}" : "") . ").\n\nKEEP IDENTICAL: exact car model, body shape, viewing angle, background, lighting, windows, headlights, taillights, wheels, tires, license plate area, all chrome/trim details.\n\nONLY CHANGE: the body panel color/finish to the specified wrap.\n\nStyle: Professional automotive photography, sharp detail, realistic lighting.";
+// Fill with white background
+$white = imagecolorallocate($resized, 255, 255, 255);
+imagefill($resized, 0, 0, $white);
+
+// Copy resized image centered
+imagecopyresampled($resized, $source_image, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
+imagedestroy($source_image);
+
+// Save to temp file as PNG
+$temp_dir = sys_get_temp_dir();
+$temp_image_path = $temp_dir . '/car_' . uniqid() . '.png';
+imagepng($resized, $temp_image_path);
+imagedestroy($resized);
 
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Generation prompt: " . substr($generation_prompt, 0, 300) . "\n",
+    date('Y-m-d H:i:s') . " | Saved temp image: {$temp_image_path}\n",
     FILE_APPEND);
 
+// Build the edit prompt
+$edit_prompt = "Change the car body color to {$wrap_name} ({$wrap_finish} finish" . ($wrap_hex ? ", {$wrap_hex}" : "") . ") vinyl wrap. Keep everything else exactly the same - windows, wheels, background, lighting.";
+
+// Try DALL-E 2 edit API with multipart form data
 $ch = curl_init();
 
-$dalle_data = [
-    'model' => 'dall-e-3',
-    'prompt' => $generation_prompt,
+$post_fields = [
+    'model' => 'dall-e-2',
+    'image' => new CURLFile($temp_image_path, 'image/png', 'image.png'),
+    'prompt' => $edit_prompt,
     'n' => 1,
     'size' => '1024x1024',
-    'quality' => 'hd',
     'response_format' => 'b64_json'
 ];
 
 curl_setopt_array($ch, [
-    CURLOPT_URL => 'https://api.openai.com/v1/images/generations',
+    CURLOPT_URL => 'https://api.openai.com/v1/images/edits',
     CURLOPT_POST => true,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT => 120,
     CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $api_key,
-        'Content-Type: application/json'
+        'Authorization: Bearer ' . $api_key
     ],
-    CURLOPT_POSTFIELDS => json_encode($dalle_data)
+    CURLOPT_POSTFIELDS => $post_fields
 ]);
 
 $response = curl_exec($ch);
@@ -329,14 +307,17 @@ $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curl_error = curl_error($ch);
 curl_close($ch);
 
+// Clean up temp file
+@unlink($temp_image_path);
+
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | DALL-E HTTP {$http_code} | cURL Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
+    date('Y-m-d H:i:s') . " | DALL-E Edit HTTP {$http_code} | Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
     FILE_APPEND);
 
 if ($http_code !== 200) {
     $error_data = json_decode($response, true);
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to generate image: ' . ($error_data['error']['message'] ?? 'Unknown error')]);
+    echo json_encode(['error' => 'Failed to edit image: ' . ($error_data['error']['message'] ?? 'Unknown error')]);
     exit;
 }
 
