@@ -3,13 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo SITE_NAME; ?> - <?php echo SITE_TAGLINE; ?>. Professional car wrapping, color changes, commercial graphics, and paint protection in your area.">
-    <meta name="keywords" content="car wrap, vehicle wrap, vinyl wrap, color change, paint protection film, PPF, chrome delete, commercial fleet wrap">
 
-    <title><?php echo isset($page_title) ? $page_title . ' | ' . SITE_NAME : SITE_NAME . ' - ' . SITE_TAGLINE; ?></title>
+    <?php
+    // SEO Meta - Page specific or defaults
+    $meta_description = isset($page_description) ? $page_description : SITE_NAME . ' - ' . SITE_TAGLINE . '. Professional vehicle wrapping, full colour changes, partial wraps, chrome delete and commercial fleet graphics.';
+    $meta_title = isset($page_title) ? $page_title . ' | ' . SITE_NAME : SITE_NAME . ' - ' . SITE_TAGLINE;
+    $meta_image = isset($page_image) ? $page_image : '/assets/images/og-image.jpg';
+    $canonical_url = isset($canonical) ? $canonical : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    ?>
+
+    <!-- Primary Meta Tags -->
+    <title><?php echo $meta_title; ?></title>
+    <meta name="description" content="<?php echo $meta_description; ?>">
+    <meta name="keywords" content="car wrap, vehicle wrap, vinyl wrap, colour change, chrome delete, commercial fleet wrap, vehicle graphics, matte wrap, gloss wrap, satin wrap">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<?php echo $canonical_url; ?>">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?php echo $canonical_url; ?>">
+    <meta property="og:title" content="<?php echo $meta_title; ?>">
+    <meta property="og:description" content="<?php echo $meta_description; ?>">
+    <meta property="og:image" content="<?php echo $meta_image; ?>">
+    <meta property="og:site_name" content="<?php echo SITE_NAME; ?>">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo $meta_title; ?>">
+    <meta name="twitter:description" content="<?php echo $meta_description; ?>">
+    <meta name="twitter:image" content="<?php echo $meta_image; ?>">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
