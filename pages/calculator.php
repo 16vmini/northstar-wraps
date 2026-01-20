@@ -211,6 +211,8 @@ require_once '../includes/header.php';
         font-weight: 700;
         color: #7CB518;
         white-space: nowrap;
+        flex-shrink: 0;
+        padding-left: 5px;
     }
 
     .calculator-result {
