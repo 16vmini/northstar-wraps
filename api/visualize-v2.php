@@ -191,10 +191,11 @@ if (!$composite_image) {
 }
 
 // Build prompt for FLUX Kontext
-$default_prompt = "Look at the pattern shown on the right side of this image. Apply that exact pattern/design as a vinyl wrap to the car shown on the left side. The wrap should cover the car's body panels (hood, doors, fenders, roof). Keep the car's shape, wheels, windows, lights, and overall form exactly the same. Only change the body color/pattern to match the reference pattern on the right. Output only the wrapped car, not the reference pattern.";
+// IMPORTANT: Be very explicit about editing THIS EXACT photo, not generating a new car
+$default_prompt = "EDIT THIS EXACT PHOTOGRAPH. Do NOT generate a new car. Take the pattern/texture shown in the small box on the right side and apply it as a vinyl wrap to the car's painted body panels (hood, fenders, doors, roof, bumpers) in this exact photo. The car's exact shape, angle, position, background, wheels, windows, headlights, taillights, license plate, and all other details must remain EXACTLY as they are in the original photo. ONLY change the paint/body color to have the pattern from the reference box. Crop the output to show only the car without the pattern reference box.";
 
 $prompt = !empty($custom_prompt)
-    ? $custom_prompt . " Apply the pattern shown on the right to the car on the left. Keep everything else about the car the same."
+    ? "EDIT THIS EXACT PHOTOGRAPH. Do NOT generate a new car. " . $custom_prompt . " Apply the pattern shown in the box on the right to the car's body panels. Keep the exact same car, angle, background, and all details. Only change the body color/pattern. Crop out the reference box."
     : $default_prompt;
 
 file_put_contents($log_dir . '/visualizer_v2_debug.log',
