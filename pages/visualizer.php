@@ -1,8 +1,8 @@
 <?php
 session_start();
 require_once '../includes/config.php';
-$page_title = 'Wrap Visualizer';
-$page_description = 'See how your car would look with a new vinyl wrap. Upload a photo and preview different colours and finishes instantly with our AI-powered visualizer.';
+$page_title = 'Wrapinator';
+$page_description = 'See how your car would look with a new vinyl wrap. Upload a photo and preview different colours and finishes instantly with our AI-powered Wrapinator.';
 
 // Load wrap options
 $wraps_json = file_get_contents(__DIR__ . '/../assets/wraps/wraps.json');
@@ -15,12 +15,12 @@ require_once '../includes/header.php';
     <section class="page-hero">
         <div class="container">
             <div class="page-hero-content" data-aos="fade-up">
-                <h1>Wrap Visualizer</h1>
+                <h1>Wrapinator</h1>
                 <p>See your car in a new colour before you commit</p>
                 <nav class="breadcrumb">
                     <a href="/">Home</a>
                     <span>/</span>
-                    <span>Visualizer</span>
+                    <span>Wrapinator</span>
                 </nav>
             </div>
         </div>
@@ -31,7 +31,7 @@ require_once '../includes/header.php';
         <div class="container">
             <div class="visualizer-intro" data-aos="fade-up">
                 <h2>Preview Your Dream Wrap</h2>
-                <p>Upload a photo of your car and select a wrap colour or finish to see how it would look. Our AI-powered visualizer creates a realistic preview in seconds.</p>
+                <p>Upload a photo of your car and select a wrap colour or finish to see how it would look. Our AI-powered Wrapinator creates a realistic preview in seconds.</p>
             </div>
 
             <div class="visualizer-wrapper" data-aos="fade-up">
@@ -242,6 +242,7 @@ require_once '../includes/header.php';
     .visualizer-section {
         padding: 60px 0;
         background: #f5f5f5;
+        overflow-x: hidden;
     }
 
     .visualizer-intro {
@@ -260,6 +261,8 @@ require_once '../includes/header.php';
         grid-template-columns: 1fr 1fr;
         gap: 40px;
         align-items: start;
+        max-width: 100%;
+        overflow: hidden;
     }
 
     /* Controls */
@@ -268,6 +271,8 @@ require_once '../includes/header.php';
         border-radius: 16px;
         padding: 30px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        max-width: 100%;
+        overflow: hidden;
     }
 
     .visualizer-controls h3 {
@@ -518,6 +523,7 @@ require_once '../includes/header.php';
         justify-content: center;
         overflow: hidden;
         position: relative;
+        max-width: 100%;
     }
 
     .result-placeholder {
@@ -563,7 +569,10 @@ require_once '../includes/header.php';
 
     .result-image img {
         width: 100%;
+        max-width: 100%;
+        height: auto;
         display: block;
+        object-fit: contain;
     }
 
     .result-overlay {
@@ -819,7 +828,7 @@ require_once '../includes/header.php';
         }
 
         .visualizer-controls {
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
         }
 
@@ -935,9 +944,9 @@ require_once '../includes/header.php';
             overflow-x: auto;
             flex-wrap: nowrap;
             padding-bottom: 10px;
-            margin: 0 -20px 15px;
-            padding-left: 20px;
-            padding-right: 20px;
+            margin: 0 -15px 15px;
+            padding-left: 15px;
+            padding-right: 15px;
         }
 
         .wrap-categories::-webkit-scrollbar {

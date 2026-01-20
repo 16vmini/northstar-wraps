@@ -47,18 +47,27 @@ function addWatermark($base64_image) {
     $text_color = imagecolorallocate($image, 255, 255, 255);
     imagestring($image, $font_size, $x, $y, $watermark_text, $text_color);
 
-    // Also add a small logo/brand in corner
+    // Add brand watermark in top-right corner (more visible)
     $brand_text = 'NORTH STAR WRAP';
-    $brand_width = imagefontwidth(3) * strlen($brand_text);
-    $brand_x = $padding;
-    $brand_y = $height - imagefontheight(3) - $padding;
+    $brand_font_size = 4; // Larger font
+    $brand_width = imagefontwidth($brand_font_size) * strlen($brand_text);
+    $brand_height = imagefontheight($brand_font_size);
+    $brand_padding = 8;
+    $brand_x = $width - $brand_width - $padding - $brand_padding;
+    $brand_y = $padding;
 
-    // Green brand color background
-    $brand_bg = imagecolorallocatealpha($image, 124, 181, 24, 40);
-    imagefilledrectangle($image, $brand_x - 8, $brand_y - 5, $brand_x + $brand_width + 8, $brand_y + imagefontheight(3) + 5, $brand_bg);
+    // Solid dark background for visibility
+    $brand_bg = imagecolorallocate($image, 30, 30, 30);
+    imagefilledrectangle($image, $brand_x - $brand_padding, $brand_y - $brand_padding/2,
+                         $width - $padding + $brand_padding, $brand_y + $brand_height + $brand_padding/2, $brand_bg);
+
+    // Green accent bar on left of brand
+    $accent_color = imagecolorallocate($image, 124, 181, 24);
+    imagefilledrectangle($image, $brand_x - $brand_padding, $brand_y - $brand_padding/2,
+                         $brand_x - $brand_padding + 4, $brand_y + $brand_height + $brand_padding/2, $accent_color);
 
     $brand_color = imagecolorallocate($image, 255, 255, 255);
-    imagestring($image, 3, $brand_x, $brand_y, $brand_text, $brand_color);
+    imagestring($image, $brand_font_size, $brand_x, $brand_y, $brand_text, $brand_color);
 
     // Convert back to base64
     ob_start();
