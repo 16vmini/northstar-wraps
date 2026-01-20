@@ -68,9 +68,21 @@ require_once '../includes/header.php';
                         </div>
                     </div>
 
+                    <!-- Model Selection -->
+                    <div class="model-selection">
+                        <h3><i class="fas fa-robot"></i> Step 2: Choose Mode</h3>
+                        <div class="model-selector">
+                            <select id="model-select">
+                                <option value="classic">Classic</option>
+                                <option value="pro">Wrapinator 1000 (Beta)</option>
+                            </select>
+                            <small class="model-hint" id="model-hint">Standard wrap colours and finishes</small>
+                        </div>
+                    </div>
+
                     <!-- Wrap Selection -->
                     <div class="wrap-selection">
-                        <h3><i class="fas fa-palette"></i> Step 2: Choose Your Wrap</h3>
+                        <h3><i class="fas fa-palette"></i> Step 3: Choose Your Wrap</h3>
 
                         <!-- Category Tabs -->
                         <div class="wrap-categories">
@@ -101,6 +113,32 @@ require_once '../includes/header.php';
                             </div>
                             <?php endforeach; ?>
                         </div>
+                    </div>
+
+                    <!-- Pattern Upload (Pro Mode) -->
+                    <div class="pattern-upload-section" id="pattern-section" style="display: none;">
+                        <h3><i class="fas fa-image"></i> Or Upload Custom Pattern</h3>
+                        <div class="upload-area pattern-upload-area" id="pattern-upload-area">
+                            <input type="file" id="pattern-upload" accept="image/jpeg,image/png,image/webp" hidden>
+                            <div class="upload-placeholder" id="pattern-placeholder">
+                                <i class="fas fa-paint-roller"></i>
+                                <p>Upload a wrap pattern</p>
+                                <span>Carbon fibre, camo, etc.</span>
+                            </div>
+                            <div class="upload-preview" id="pattern-preview" style="display: none;">
+                                <img id="pattern-preview-image" src="" alt="Pattern">
+                                <button type="button" class="btn-remove" id="remove-pattern">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <small class="pattern-note">Upload a pattern image OR select a colour above. Pattern takes priority.</small>
+                    </div>
+
+                    <!-- Custom Prompt (Pro Mode) -->
+                    <div class="custom-prompt-section" id="prompt-section" style="display: none;">
+                        <h3><i class="fas fa-comment-alt"></i> Special Instructions (Optional)</h3>
+                        <textarea id="custom-prompt" placeholder="e.g., 'Apply pattern to hood and roof only' or 'Make it look metallic'" rows="2"></textarea>
                     </div>
 
                     <!-- Generate Button -->
@@ -494,6 +532,95 @@ require_once '../includes/header.php';
     .wrap-finish {
         font-size: 0.65rem;
         color: #999;
+    }
+
+    /* Model Selection */
+    .model-selection {
+        margin-bottom: 25px;
+    }
+
+    .model-selector {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .model-selector select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+
+    .model-selector select:hover,
+    .model-selector select:focus {
+        border-color: #7CB518;
+        outline: none;
+    }
+
+    .model-hint {
+        color: #666;
+        font-size: 0.85rem;
+    }
+
+    /* Pattern Upload Section */
+    .pattern-upload-section {
+        margin-bottom: 25px;
+        padding: 20px;
+        background: #f0fdf4;
+        border: 1px solid #7CB518;
+        border-radius: 12px;
+    }
+
+    .pattern-upload-section h3 {
+        color: #166534;
+    }
+
+    .pattern-upload-area {
+        padding: 20px;
+        margin-bottom: 10px;
+    }
+
+    .pattern-upload-area .upload-placeholder i {
+        font-size: 2rem;
+    }
+
+    .pattern-upload-area .upload-placeholder p {
+        font-size: 0.95rem;
+        margin-bottom: 3px;
+    }
+
+    .pattern-note {
+        display: block;
+        color: #666;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    /* Custom Prompt Section */
+    .custom-prompt-section {
+        margin-bottom: 25px;
+    }
+
+    .custom-prompt-section textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        resize: vertical;
+        transition: border-color 0.2s ease;
+    }
+
+    .custom-prompt-section textarea:focus {
+        border-color: #7CB518;
+        outline: none;
     }
 
     /* Actions */
@@ -1120,6 +1247,18 @@ require_once '../includes/header.php';
         const previewImage = document.getElementById('preview-image');
         const removeImageBtn = document.getElementById('remove-image');
 
+        const modelSelect = document.getElementById('model-select');
+        const modelHint = document.getElementById('model-hint');
+        const patternSection = document.getElementById('pattern-section');
+        const promptSection = document.getElementById('prompt-section');
+        const patternUploadArea = document.getElementById('pattern-upload-area');
+        const patternUpload = document.getElementById('pattern-upload');
+        const patternPlaceholder = document.getElementById('pattern-placeholder');
+        const patternPreview = document.getElementById('pattern-preview');
+        const patternPreviewImage = document.getElementById('pattern-preview-image');
+        const removePatternBtn = document.getElementById('remove-pattern');
+        const customPrompt = document.getElementById('custom-prompt');
+
         const categoryTabs = document.querySelectorAll('.category-tab');
         const wrapOptionsContainers = document.querySelectorAll('.wrap-options');
         const wrapOptions = document.querySelectorAll('.wrap-option');
@@ -1155,12 +1294,58 @@ require_once '../includes/header.php';
 
         // State
         let carImageData = null;
+        let patternImageData = null;
         let selectedWrap = null;
         let selectedWrapName = null;
         let currentShareId = null;
+        let currentMode = 'classic';
 
         // Initialize
         checkStatus();
+
+        // Image resize helper (for pro mode)
+        function resizeImage(dataUrl, maxWidth, maxHeight) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth || height > maxHeight) {
+                        const ratio = Math.min(maxWidth / width, maxHeight / height);
+                        width = Math.round(width * ratio);
+                        height = Math.round(height * ratio);
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.85));
+                };
+                img.src = dataUrl;
+            });
+        }
+
+        // Model selection handler
+        modelSelect.addEventListener('change', () => {
+            currentMode = modelSelect.value;
+            if (currentMode === 'pro') {
+                patternSection.style.display = 'block';
+                promptSection.style.display = 'block';
+                modelHint.textContent = 'Advanced AI with custom pattern support';
+            } else {
+                patternSection.style.display = 'none';
+                promptSection.style.display = 'none';
+                modelHint.textContent = 'Standard wrap colours and finishes';
+                // Clear pattern when switching back to classic
+                patternImageData = null;
+                patternPlaceholder.style.display = 'block';
+                patternPreview.style.display = 'none';
+            }
+            updateGenerateButton();
+        });
 
         // Upload handlers
         uploadArea.addEventListener('click', () => carUpload.click());
@@ -1214,6 +1399,59 @@ require_once '../includes/header.php';
             reader.readAsDataURL(file);
         }
 
+        // Pattern upload handlers (pro mode)
+        patternUploadArea.addEventListener('click', () => patternUpload.click());
+        patternUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            patternUploadArea.classList.add('dragover');
+        });
+        patternUploadArea.addEventListener('dragleave', () => {
+            patternUploadArea.classList.remove('dragover');
+        });
+        patternUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            patternUploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                handlePatternUpload(e.dataTransfer.files[0]);
+            }
+        });
+
+        patternUpload.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handlePatternUpload(e.target.files[0]);
+            }
+        });
+
+        removePatternBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            patternImageData = null;
+            patternPlaceholder.style.display = 'block';
+            patternPreview.style.display = 'none';
+            updateGenerateButton();
+        });
+
+        async function handlePatternUpload(file) {
+            if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
+                alert('Please upload a JPEG, PNG or WebP image');
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Image must be under 10MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                // Resize pattern to max 512x512
+                patternImageData = await resizeImage(e.target.result, 512, 512);
+                patternPreviewImage.src = patternImageData;
+                patternPlaceholder.style.display = 'none';
+                patternPreview.style.display = 'block';
+                updateGenerateButton();
+            };
+            reader.readAsDataURL(file);
+        }
+
         // Category tabs
         categoryTabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -1242,7 +1480,15 @@ require_once '../includes/header.php';
         function updateGenerateButton() {
             const hasImage = !!carImageData;
             const hasWrap = !!selectedWrap;
-            generateBtn.disabled = !(hasImage && hasWrap);
+            const hasPattern = !!patternImageData;
+
+            if (currentMode === 'pro') {
+                // Pro mode: need car image AND (wrap OR pattern)
+                generateBtn.disabled = !(hasImage && (hasWrap || hasPattern));
+            } else {
+                // Classic mode: need car image AND wrap
+                generateBtn.disabled = !(hasImage && hasWrap);
+            }
         }
 
         // Generate
@@ -1250,7 +1496,15 @@ require_once '../includes/header.php';
         retryBtn.addEventListener('click', generate);
 
         async function generate() {
-            if (!carImageData || !selectedWrap) return;
+            const hasPattern = !!patternImageData;
+            const hasWrap = !!selectedWrap;
+
+            // Validate based on mode
+            if (currentMode === 'pro') {
+                if (!carImageData || (!hasWrap && !hasPattern)) return;
+            } else {
+                if (!carImageData || !hasWrap) return;
+            }
 
             // Show loading
             resultPlaceholder.style.display = 'none';
@@ -1266,41 +1520,68 @@ require_once '../includes/header.php';
             }
 
             try {
-                const response = await fetch('/api/visualize.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        car_image: carImageData,
-                        wrap: selectedWrap
-                    })
-                });
+                let response, data;
 
-                const data = await response.json();
+                if (currentMode === 'pro' && hasPattern) {
+                    // Use V2 API with pattern
+                    const carResized = await resizeImage(carImageData, 1024, 768);
+                    response = await fetch('/api/visualize-v2.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            car_image: carResized,
+                            wrap_image: patternImageData,
+                            prompt: customPrompt.value.trim()
+                        })
+                    });
+                    data = await response.json();
 
-                if (data.error === 'email_required') {
+                    if (!response.ok || data.error) {
+                        throw new Error(data.error || data.message || 'Generation failed');
+                    }
+
+                    // Show result
                     resultLoading.style.display = 'none';
-                    resultPlaceholder.style.display = 'block';
-                    emailModal.style.display = 'flex';
-                    generateBtn.disabled = false;
-                    return;
+                    generatedImage.src = data.image;
+                    wrapBadge.textContent = 'Custom Pattern';
+                    resultImage.style.display = 'block';
+                    resultActions.style.display = 'flex';
+                    currentShareId = null; // No sharing for custom patterns yet
+
+                } else {
+                    // Use classic V1 API (or V2 with colour for pro mode without pattern)
+                    response = await fetch('/api/visualize.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            car_image: carImageData,
+                            wrap: selectedWrap
+                        })
+                    });
+
+                    data = await response.json();
+
+                    if (data.error === 'email_required') {
+                        resultLoading.style.display = 'none';
+                        resultPlaceholder.style.display = 'block';
+                        emailModal.style.display = 'flex';
+                        generateBtn.disabled = false;
+                        return;
+                    }
+
+                    if (!response.ok || data.error) {
+                        throw new Error(data.error || data.message || 'Generation failed');
+                    }
+
+                    // Show result
+                    resultLoading.style.display = 'none';
+                    generatedImage.src = data.image;
+                    wrapBadge.textContent = data.wrap;
+                    resultImage.style.display = 'block';
+                    resultActions.style.display = 'flex';
+                    currentShareId = data.share_id;
+                    updateUsageText(data.remaining, data.needs_email);
                 }
-
-                if (!response.ok || data.error) {
-                    throw new Error(data.error || data.message || 'Generation failed');
-                }
-
-                // Show result
-                resultLoading.style.display = 'none';
-                generatedImage.src = data.image;
-                wrapBadge.textContent = data.wrap;
-                resultImage.style.display = 'block';
-                resultActions.style.display = 'flex';
-
-                // Store share ID for sharing
-                currentShareId = data.share_id;
-
-                // Update usage
-                updateUsageText(data.remaining, data.needs_email);
 
             } catch (error) {
                 resultLoading.style.display = 'none';
