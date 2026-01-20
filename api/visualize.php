@@ -88,34 +88,11 @@ if (!isset($_SESSION['visualizer_email'])) {
 $free_limit = defined('VISUALIZER_FREE_LIMIT') ? VISUALIZER_FREE_LIMIT : 2;
 $max_limit = defined('VISUALIZER_MAX_LIMIT') ? VISUALIZER_MAX_LIMIT : 10;
 
-// If over free limit and no email, require email
-if ($_SESSION['visualizer_count'] >= $free_limit && !$_SESSION['visualizer_email']) {
-    http_response_code(403);
-    echo json_encode([
-        'error' => 'email_required',
-        'message' => 'Please enter your email to continue using the visualizer',
-        'used' => $_SESSION['visualizer_count'],
-        'limit' => $free_limit
-    ]);
-    exit;
-}
-
-// If over max limit, block
-if ($_SESSION['visualizer_count'] >= $max_limit) {
-    http_response_code(429);
-    echo json_encode([
-        'error' => 'limit_reached',
-        'message' => 'You have reached the maximum number of visualizations. Please contact us for more.',
-        'used' => $_SESSION['visualizer_count'],
-        'limit' => $max_limit
-    ]);
-    exit;
-}
-
-// Get input
+// Get input FIRST before checking rate limits
+// This allows email submission and status checks to work regardless of limits
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Handle email submission
+// Handle email submission (before rate limit check)
 if (isset($input['action']) && $input['action'] === 'submit_email') {
     $email = filter_var($input['email'] ?? '', FILTER_VALIDATE_EMAIL);
     if (!$email) {
@@ -143,7 +120,7 @@ if (isset($input['action']) && $input['action'] === 'submit_email') {
     exit;
 }
 
-// Handle status check
+// Handle status check (before rate limit check)
 if (isset($input['action']) && $input['action'] === 'status') {
     echo json_encode([
         'used' => $_SESSION['visualizer_count'],
@@ -153,6 +130,31 @@ if (isset($input['action']) && $input['action'] === 'status') {
         'remaining' => $_SESSION['visualizer_email']
             ? $max_limit - $_SESSION['visualizer_count']
             : $free_limit - $_SESSION['visualizer_count']
+    ]);
+    exit;
+}
+
+// Now check rate limits (only for visualization requests)
+// If over free limit and no email, require email
+if ($_SESSION['visualizer_count'] >= $free_limit && !$_SESSION['visualizer_email']) {
+    http_response_code(403);
+    echo json_encode([
+        'error' => 'email_required',
+        'message' => 'Please enter your email to continue using the visualizer',
+        'used' => $_SESSION['visualizer_count'],
+        'limit' => $free_limit
+    ]);
+    exit;
+}
+
+// If over max limit, block
+if ($_SESSION['visualizer_count'] >= $max_limit) {
+    http_response_code(429);
+    echo json_encode([
+        'error' => 'limit_reached',
+        'message' => 'You have reached the maximum number of visualizations. Please contact us for more.',
+        'used' => $_SESSION['visualizer_count'],
+        'limit' => $max_limit
     ]);
     exit;
 }
