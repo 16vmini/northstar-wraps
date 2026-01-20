@@ -451,6 +451,7 @@ $metadata = [
     'wrap' => $selected_wrap ? $selected_wrap['name'] : 'Custom',
     'wrap_id' => $wrap,
     'finish' => $selected_wrap ? $selected_wrap['finish'] : 'Custom',
+    'model' => 'T-800',
     'created' => date('Y-m-d H:i:s'),
     'ip' => $_SERVER['REMOTE_ADDR'],
     'email' => $_SESSION['visualizer_email'] ?? null,

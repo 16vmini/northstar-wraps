@@ -33,6 +33,7 @@ if (is_dir($upload_dir)) {
             'id' => $id,
             'wrap' => $meta['wrap'] ?? 'Custom',
             'finish' => $meta['finish'] ?? '',
+            'model' => $meta['model'] ?? null,
             'created' => $meta['created'] ?? date('Y-m-d', filemtime($file)),
             'approved_at' => $meta['approved_at'] ?? null
         ];
@@ -95,7 +96,9 @@ require_once '../includes/header.php';
                             </div>
                             <div class="wrapinator-info">
                                 <span class="wrap-name"><?php echo htmlspecialchars($image['wrap']); ?></span>
-                                <?php if ($image['finish']): ?>
+                                <?php if ($image['model']): ?>
+                                    <span class="wrap-finish"><?php echo htmlspecialchars($image['model']); ?></span>
+                                <?php elseif ($image['finish']): ?>
                                     <span class="wrap-finish"><?php echo htmlspecialchars($image['finish']); ?></span>
                                 <?php endif; ?>
                             </div>
