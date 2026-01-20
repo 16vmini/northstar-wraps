@@ -127,17 +127,39 @@ function sendEmailViaPhpMail($to_email, $to_name, $subject, $html_content, $repl
 }
 
 /**
- * Send contact form notification to business
+ * Send contact form notification to business (multiple recipients)
  */
 function sendContactNotification($form_data) {
-    $to_email = defined('EMAIL_TO_ADDRESS') ? EMAIL_TO_ADDRESS : SITE_EMAIL;
     $to_name = defined('EMAIL_FROM_NAME') ? EMAIL_FROM_NAME : 'North Star Wrap';
-
     $subject = "New Quote Request - " . ($form_data['service_display'] ?? 'General Inquiry');
-
     $html_content = buildNotificationEmail($form_data);
+    $reply_to = $form_data['email'] ?? null;
 
-    return sendEmailViaBevo($to_email, $to_name, $subject, $html_content, $form_data['email'] ?? null);
+    // Send to multiple email addresses
+    $recipients = [
+        'mg@16vmini.co.uk',
+        'northstarwrap@yahoo.com'
+    ];
+
+    $results = [];
+    foreach ($recipients as $to_email) {
+        $results[] = sendEmailViaBevo($to_email, $to_name, $subject, $html_content, $reply_to);
+    }
+
+    // Return success if at least one email was sent
+    $any_success = false;
+    foreach ($results as $result) {
+        if ($result['success']) {
+            $any_success = true;
+            break;
+        }
+    }
+
+    return [
+        'success' => $any_success,
+        'message' => $any_success ? 'Notifications sent' : 'Failed to send notifications',
+        'message_id' => null
+    ];
 }
 
 /**

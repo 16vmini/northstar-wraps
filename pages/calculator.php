@@ -403,6 +403,7 @@ require_once '../includes/header.php';
         }
         .extra-item {
             padding: 10px 12px;
+            padding-right: 8px;
         }
         .extra-details strong {
             font-size: 0.8rem;
@@ -412,6 +413,8 @@ require_once '../includes/header.php';
         }
         .extra-cost {
             font-size: 0.85rem;
+            min-width: 50px;
+            text-align: right;
         }
     }
 
