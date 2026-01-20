@@ -166,17 +166,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Initialize session tracking
-if (!isset($_SESSION['visualizer_count'])) {
-    $_SESSION['visualizer_count'] = 0;
-}
-if (!isset($_SESSION['visualizer_email'])) {
-    $_SESSION['visualizer_email'] = null;
-}
-
-// Check rate limits
-$free_limit = defined('VISUALIZER_FREE_LIMIT') ? VISUALIZER_FREE_LIMIT : 2;
-$max_limit = defined('VISUALIZER_MAX_LIMIT') ? VISUALIZER_MAX_LIMIT : 10;
+// Initialize session tracking (shared function handles this)
+initWrapinatorUsage();
 
 // Get input FIRST before checking rate limits
 // This allows email submission and status checks to work regardless of limits
@@ -199,40 +190,15 @@ if (isset($input['action']) && $input['action'] === 'submit_email') {
 
 // Handle status check (before rate limit check)
 if (isset($input['action']) && $input['action'] === 'status') {
-    echo json_encode([
-        'used' => $_SESSION['visualizer_count'],
-        'free_limit' => $free_limit,
-        'max_limit' => $max_limit,
-        'has_email' => !empty($_SESSION['visualizer_email']),
-        'remaining' => $_SESSION['visualizer_email']
-            ? $max_limit - $_SESSION['visualizer_count']
-            : $free_limit - $_SESSION['visualizer_count']
-    ]);
+    echo json_encode(getWrapinatorStatus());
     exit;
 }
 
-// Now check rate limits (only for visualization requests)
-// If over free limit and no email, require email
-if ($_SESSION['visualizer_count'] >= $free_limit && !$_SESSION['visualizer_email']) {
-    http_response_code(403);
-    echo json_encode([
-        'error' => 'email_required',
-        'message' => 'Please enter your email to continue using the visualizer',
-        'used' => $_SESSION['visualizer_count'],
-        'limit' => $free_limit
-    ]);
-    exit;
-}
-
-// If over max limit, block
-if ($_SESSION['visualizer_count'] >= $max_limit) {
-    http_response_code(429);
-    echo json_encode([
-        'error' => 'limit_reached',
-        'message' => 'You have reached the maximum number of visualizations. Please contact us for more.',
-        'used' => $_SESSION['visualizer_count'],
-        'limit' => $max_limit
-    ]);
+// Check usage limits using shared function
+$usage_check = checkWrapinatorUsage();
+if (!$usage_check['allowed']) {
+    http_response_code($usage_check['error'] === 'email_required' ? 403 : 429);
+    echo json_encode($usage_check);
     exit;
 }
 
@@ -496,13 +462,8 @@ $gallery_log = $upload_dir . '/gallery.log';
 $log_entry = date('Y-m-d H:i:s') . " | {$share_id} | " . ($selected_wrap ? $selected_wrap['name'] : 'Custom') . "\n";
 file_put_contents($gallery_log, $log_entry, FILE_APPEND | LOCK_EX);
 
-// Increment usage counter
-$_SESSION['visualizer_count']++;
-
-// Calculate remaining
-$remaining = $_SESSION['visualizer_email']
-    ? $max_limit - $_SESSION['visualizer_count']
-    : $free_limit - $_SESSION['visualizer_count'];
+// Increment usage counter using shared function
+$usage_status = incrementWrapinatorUsage();
 
 // Return the result with share ID
 echo json_encode([
@@ -510,7 +471,7 @@ echo json_encode([
     'image' => 'data:image/png;base64,' . $generated_image,
     'wrap' => $selected_wrap ? $selected_wrap['name'] : 'Custom',
     'share_id' => $share_id,
-    'used' => $_SESSION['visualizer_count'],
-    'remaining' => max(0, $remaining),
-    'needs_email' => $remaining <= 0 && !$_SESSION['visualizer_email']
+    'used' => $usage_status['used'],
+    'remaining' => $usage_status['remaining'],
+    'needs_email' => $usage_status['needs_email']
 ]);
