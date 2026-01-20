@@ -254,22 +254,59 @@ if (!$source_image) {
     exit;
 }
 
-// Get dimensions and resize if needed (max 1024x1024 for cost efficiency)
+// Get dimensions and resize to allowed SDXL dimensions
 $orig_width = imagesx($source_image);
 $orig_height = imagesy($source_image);
 
-// Scale down if larger than 1024 on any side
-$max_size = 1024;
-if ($orig_width > $max_size || $orig_height > $max_size) {
-    $scale = min($max_size / $orig_width, $max_size / $orig_height);
-    $new_width = (int)($orig_width * $scale);
-    $new_height = (int)($orig_height * $scale);
+// Stability AI SDXL allowed dimensions
+$allowed_dimensions = [
+    [1024, 1024], // 1:1
+    [1152, 896],  // ~1.29:1 landscape
+    [1216, 832],  // ~1.46:1 landscape
+    [1344, 768],  // 1.75:1 landscape
+    [1536, 640],  // 2.4:1 landscape
+    [640, 1536],  // portrait
+    [768, 1344],  // portrait
+    [832, 1216],  // portrait
+    [896, 1152],  // portrait
+];
 
-    $resized = imagecreatetruecolor($new_width, $new_height);
-    imagecopyresampled($resized, $source_image, 0, 0, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
-    imagedestroy($source_image);
-    $source_image = $resized;
+// Find the best matching dimension based on aspect ratio
+$orig_ratio = $orig_width / $orig_height;
+$best_match = [1024, 1024];
+$best_diff = PHP_FLOAT_MAX;
+
+foreach ($allowed_dimensions as $dim) {
+    $dim_ratio = $dim[0] / $dim[1];
+    $diff = abs($orig_ratio - $dim_ratio);
+    if ($diff < $best_diff) {
+        $best_diff = $diff;
+        $best_match = $dim;
+    }
 }
+
+$target_width = $best_match[0];
+$target_height = $best_match[1];
+
+// Create new image with exact target dimensions
+$resized = imagecreatetruecolor($target_width, $target_height);
+
+// Fill with black background (for letterboxing if needed)
+$black = imagecolorallocate($resized, 0, 0, 0);
+imagefill($resized, 0, 0, $black);
+
+// Calculate scaling to fit within target while maintaining aspect ratio
+$scale = min($target_width / $orig_width, $target_height / $orig_height);
+$new_width = (int)($orig_width * $scale);
+$new_height = (int)($orig_height * $scale);
+
+// Center the image
+$x_offset = (int)(($target_width - $new_width) / 2);
+$y_offset = (int)(($target_height - $new_height) / 2);
+
+imagecopyresampled($resized, $source_image, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
+imagedestroy($source_image);
+$source_image = $resized;
 
 // Save to temp file as PNG
 $temp_dir = sys_get_temp_dir();
