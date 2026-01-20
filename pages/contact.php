@@ -1,6 +1,13 @@
 <?php
+session_start();
 require_once '../includes/config.php';
 $page_title = 'Contact Us';
+
+// Generate CSRF token
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 require_once '../includes/header.php';
 
 // Get pre-selected service from URL if present
@@ -58,6 +65,10 @@ $form_error = isset($_GET['error']) ? htmlspecialchars($_GET['error']) : '';
                     <?php endif; ?>
 
                     <form action="/includes/process-form.php" method="POST" class="contact-form" id="quote-form">
+                        <!-- Security fields -->
+                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                        <input type="hidden" name="form_time" value="<?php echo time(); ?>">
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="name">Full Name <span class="required">*</span></label>

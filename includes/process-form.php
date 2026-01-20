@@ -1,9 +1,10 @@
 <?php
 /**
  * North Star Wraps - Form Processing
- * Handles contact form submissions
+ * Handles contact form submissions with spam protection
  */
 
+session_start();
 require_once 'config.php';
 
 // Only process POST requests
@@ -12,12 +13,78 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Honeypot spam check
+/**
+ * SPAM PROTECTION MEASURES
+ */
+
+// 1. Honeypot spam check - bots fill hidden fields
 if (!empty($_POST['website'])) {
-    // Bot detected, silently redirect
+    // Bot detected, silently redirect (don't let them know)
+    sleep(2); // Slow down bots
     header('Location: /pages/contact.php?submitted=true');
     exit;
 }
+
+// 2. CSRF Token validation
+if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) ||
+    !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+    header('Location: /pages/contact.php?error=' . urlencode('Session expired. Please try again.'));
+    exit;
+}
+
+// 3. Time-based check - form submitted too quickly (bots are fast)
+$form_time = isset($_POST['form_time']) ? (int)$_POST['form_time'] : 0;
+$time_diff = time() - $form_time;
+if ($time_diff < 3) {
+    // Form submitted in less than 3 seconds - likely a bot
+    sleep(3);
+    header('Location: /pages/contact.php?submitted=true');
+    exit;
+}
+
+// 4. Rate limiting - max 3 submissions per hour per IP
+$ip = $_SERVER['REMOTE_ADDR'];
+$rate_limit_file = __DIR__ . '/../logs/rate_limits.json';
+
+// Create logs directory if needed
+$logs_dir = dirname($rate_limit_file);
+if (!is_dir($logs_dir)) {
+    mkdir($logs_dir, 0755, true);
+}
+
+// Load existing rate limits
+$rate_limits = [];
+if (file_exists($rate_limit_file)) {
+    $rate_limits = json_decode(file_get_contents($rate_limit_file), true) ?: [];
+}
+
+// Clean old entries (older than 1 hour)
+$one_hour_ago = time() - 3600;
+foreach ($rate_limits as $stored_ip => $timestamps) {
+    $rate_limits[$stored_ip] = array_filter($timestamps, function($t) use ($one_hour_ago) {
+        return $t > $one_hour_ago;
+    });
+    if (empty($rate_limits[$stored_ip])) {
+        unset($rate_limits[$stored_ip]);
+    }
+}
+
+// Check current IP
+$ip_submissions = isset($rate_limits[$ip]) ? count($rate_limits[$ip]) : 0;
+if ($ip_submissions >= 3) {
+    header('Location: /pages/contact.php?error=' . urlencode('Too many submissions. Please try again later.'));
+    exit;
+}
+
+// Record this submission
+if (!isset($rate_limits[$ip])) {
+    $rate_limits[$ip] = [];
+}
+$rate_limits[$ip][] = time();
+file_put_contents($rate_limit_file, json_encode($rate_limits), LOCK_EX);
+
+// Clear CSRF token after use (one-time use)
+unset($_SESSION['csrf_token']);
 
 // Sanitize and validate input
 function sanitize($data) {
