@@ -306,7 +306,7 @@ require_once 'includes/header.php';
                         </div>
                     </div>
                     <div class="wrapinator-cta">
-                        <a href="/visualizer" class="btn btn-primary btn-lg">
+                        <a href="/wrapinator" class="btn btn-primary btn-lg">
                             <i class="fas fa-magic"></i> Try Wrapinator Free
                         </a>
                         <a href="/pages/wrapinator-gallery" class="btn btn-outline btn-lg">

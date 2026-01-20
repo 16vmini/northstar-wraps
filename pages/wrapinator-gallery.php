@@ -58,7 +58,7 @@ require_once '../includes/header.php';
                 <nav class="breadcrumb">
                     <a href="/">Home</a>
                     <span>/</span>
-                    <a href="/visualizer">Wrapinator</a>
+                    <a href="/wrapinator">Wrapinator</a>
                     <span>/</span>
                     <span>Gallery</span>
                 </nav>
@@ -72,7 +72,7 @@ require_once '../includes/header.php';
             <div class="gallery-intro" data-aos="fade-up">
                 <h2>See What's Possible</h2>
                 <p>Browse wrap previews created by our community. Want to see your car here? Try the Wrapinator and share your creation!</p>
-                <a href="/visualizer" class="btn btn-primary">
+                <a href="/wrapinator" class="btn btn-primary">
                     <i class="fas fa-magic"></i> Try Wrapinator
                 </a>
             </div>
@@ -82,7 +82,7 @@ require_once '../includes/header.php';
                     <i class="fas fa-images"></i>
                     <h3>No images yet</h3>
                     <p>Be the first to create and share a wrap preview!</p>
-                    <a href="/visualizer" class="btn btn-primary">Create a Preview</a>
+                    <a href="/wrapinator" class="btn btn-primary">Create a Preview</a>
                 </div>
             <?php else: ?>
                 <div class="wrapinator-grid" data-aos="fade-up">
@@ -113,7 +113,7 @@ require_once '../includes/header.php';
                 <h2>Ready to Transform Your Car?</h2>
                 <p>Our AI-powered Wrapinator lets you visualize different wrap colours on your own vehicle. Try it free!</p>
                 <div class="cta-buttons">
-                    <a href="/visualizer" class="btn btn-primary">
+                    <a href="/wrapinator" class="btn btn-primary">
                         <i class="fas fa-magic"></i> Try Wrapinator
                     </a>
                     <a href="/contact?service=full-wrap" class="btn btn-outline-light">

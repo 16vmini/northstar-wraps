@@ -9,7 +9,7 @@ require_once '../includes/config.php';
 $share_id = preg_replace('/[^a-f0-9]/', '', $_GET['id'] ?? '');
 
 if (empty($share_id)) {
-    header('Location: /visualizer');
+    header('Location: /wrapinator');
     exit;
 }
 
@@ -25,7 +25,7 @@ if (!file_exists($metadata_file)) {
 }
 
 if (!file_exists($metadata_file) || !file_exists($image_file)) {
-    header('Location: /visualizer');
+    header('Location: /wrapinator');
     exit;
 }
 
@@ -55,7 +55,7 @@ require_once '../includes/header.php';
                 <nav class="breadcrumb">
                     <a href="/">Home</a>
                     <span>/</span>
-                    <a href="/visualizer">Wrapinator</a>
+                    <a href="/wrapinator">Wrapinator</a>
                     <span>/</span>
                     <span>Share</span>
                 </nav>
@@ -111,7 +111,7 @@ require_once '../includes/header.php';
                     <h3>Want to see your car wrapped?</h3>
                     <p>Try our AI-powered Wrapinator to preview different wrap colours on your own vehicle.</p>
                     <div class="cta-buttons">
-                        <a href="/visualizer" class="btn btn-primary">
+                        <a href="/wrapinator" class="btn btn-primary">
                             <i class="fas fa-magic"></i> Try Wrapinator
                         </a>
                         <a href="/contact?service=full-wrap" class="btn btn-outline">

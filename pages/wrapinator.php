@@ -70,13 +70,13 @@ require_once '../includes/header.php';
 
                     <!-- Model Selection -->
                     <div class="model-selection">
-                        <h3><i class="fas fa-robot"></i> Step 2: Choose Mode</h3>
+                        <h3><i class="fas fa-robot"></i> Step 2: Wrapinator Version</h3>
                         <div class="model-selector">
                             <select id="model-select">
-                                <option value="classic">Classic</option>
-                                <option value="pro">Wrapinator 1000 (Beta)</option>
+                                <option value="classic">T-800</option>
+                                <option value="pro">T-1000 (Beta)</option>
                             </select>
-                            <small class="model-hint" id="model-hint">Standard wrap colours and finishes</small>
+                            <small class="model-hint" id="model-hint">Classic model - solid colours and finishes</small>
                         </div>
                     </div>
 
@@ -1334,11 +1334,11 @@ require_once '../includes/header.php';
             if (currentMode === 'pro') {
                 patternSection.style.display = 'block';
                 promptSection.style.display = 'block';
-                modelHint.textContent = 'Advanced AI with custom pattern support';
+                modelHint.textContent = 'Liquid metal AI - custom patterns & instructions';
             } else {
                 patternSection.style.display = 'none';
                 promptSection.style.display = 'none';
-                modelHint.textContent = 'Standard wrap colours and finishes';
+                modelHint.textContent = 'Classic model - solid colours and finishes';
                 // Clear pattern when switching back to classic
                 patternImageData = null;
                 patternPlaceholder.style.display = 'block';
