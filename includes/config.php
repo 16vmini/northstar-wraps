@@ -1,19 +1,19 @@
 <?php
 /**
- * North Star Wraps - Configuration File
+ * North Star Wrap - Configuration File
  */
 
 // Site Configuration
-define('SITE_NAME', 'North Star Wraps');
+define('SITE_NAME', 'North Star Wrap');
 define('SITE_TAGLINE', 'Premium Vehicle Wrapping Services');
-define('SITE_EMAIL', 'info@northstarwraps.com');
+define('SITE_EMAIL', 'info@northstarwrap.com');
 define('SITE_PHONE', '(555) 123-4567');
 define('SITE_ADDRESS', '123 Auto Drive, Your City, ST 12345');
 
 // Social Media Links
-define('SOCIAL_FACEBOOK', 'https://facebook.com/northstarwraps');
-define('SOCIAL_INSTAGRAM', 'https://instagram.com/northstarwraps');
-define('SOCIAL_TIKTOK', 'https://tiktok.com/@northstarwraps');
+define('SOCIAL_FACEBOOK', 'https://facebook.com/northstarwrap');
+define('SOCIAL_INSTAGRAM', 'https://instagram.com/northstarwrap');
+define('SOCIAL_TIKTOK', 'https://tiktok.com/@northstarwrap');
 
 // Business Hours
 $business_hours = [
