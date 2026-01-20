@@ -313,21 +313,70 @@ require_once '../includes/header.php';
         }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+        .calculator-section {
+            padding: 40px 0 60px;
+        }
         .form-row {
             grid-template-columns: 1fr;
+            gap: 15px;
         }
         .extras-grid {
             grid-template-columns: 1fr;
         }
         .calculator-form-inner {
             padding: 20px;
+            border-radius: 12px;
         }
         .calculator-result-inner {
             padding: 20px;
+            border-radius: 12px;
+        }
+        .calculator-form-inner > h3 {
+            font-size: 1.2rem;
+        }
+        .form-col select {
+            padding: 10px 35px 10px 12px;
+            font-size: 0.85rem;
+        }
+        .extra-item {
+            padding: 10px 12px;
+        }
+        .extra-details strong {
+            font-size: 0.8rem;
+        }
+        .extra-details small {
+            font-size: 0.65rem;
+        }
+        .extra-cost {
+            font-size: 0.85rem;
         }
         .total-value {
             font-size: 1.8rem;
+        }
+        .price-total {
+            padding: 15px 0;
+        }
+        .breakdown-line {
+            font-size: 0.8rem;
+            padding: 6px 0;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .calculator-form-inner,
+        .calculator-result-inner {
+            padding: 15px;
+        }
+        .form-col label {
+            font-size: 0.8rem;
+        }
+        .form-col select {
+            padding: 10px 30px 10px 10px;
+            font-size: 0.8rem;
+        }
+        .total-value {
+            font-size: 1.5rem;
         }
     }
     </style>

@@ -502,9 +502,15 @@ function initPriceCalculator() {
         return currency + Math.round(num).toLocaleString();
     }
 
-    // Helper: find item in config array by ID
+    // Helper: find item in config array by ID (Safari compatible)
     function findById(array, id) {
-        return array.find(item => item.id === id);
+        if (!array || !id) return null;
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].id === id) {
+                return array[i];
+            }
+        }
+        return null;
     }
 
     // Main calculation function
@@ -639,40 +645,50 @@ function initPriceCalculator() {
         }
     }
 
-    // Add event listeners to all inputs
+    // Add event listeners to all inputs (Safari/iOS compatible)
     console.log('Calculator: Attaching event listeners...');
 
-    const selects = [vehicleSelect, coverageSelect, finishSelect, brandSelect, conditionSelect];
-    selects.forEach((select, index) => {
-        if (select) {
-            select.addEventListener('change', function() {
-                console.log('Calculator: Select changed:', select.id, '=', select.value);
+    // Helper to attach change listener
+    function attachChangeListener(element, name) {
+        if (!element) return;
+
+        // Use both 'change' and 'input' for better iOS Safari support
+        element.addEventListener('change', function(e) {
+            console.log('Calculator: ' + name + ' changed:', e.target.value || e.target.checked);
+            calculate();
+        });
+
+        // For select elements, also listen to 'input' event for iOS
+        if (element.tagName === 'SELECT') {
+            element.addEventListener('input', function(e) {
+                console.log('Calculator: ' + name + ' input:', e.target.value);
                 calculate();
             });
-            console.log('Calculator: Attached listener to', select.id);
         }
-    });
 
-    if (doorShutsCheckbox) {
-        doorShutsCheckbox.addEventListener('change', function() {
-            console.log('Calculator: Door shuts toggled:', this.checked);
-            calculate();
-        });
+        console.log('Calculator: Attached listener to', name);
     }
 
-    if (wrapRemovalCheckbox) {
-        wrapRemovalCheckbox.addEventListener('change', function() {
-            console.log('Calculator: Wrap removal toggled:', this.checked);
-            calculate();
-        });
-    }
+    // Attach to all select elements
+    attachChangeListener(vehicleSelect, 'vehicleType');
+    attachChangeListener(coverageSelect, 'coverageType');
+    attachChangeListener(finishSelect, 'finishType');
+    attachChangeListener(brandSelect, 'brandTier');
+    attachChangeListener(conditionSelect, 'condition');
 
-    addonCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            console.log('Calculator: Addon toggled:', this.dataset.addonId, '=', this.checked);
-            calculate();
-        });
-    });
+    // Attach to checkboxes
+    attachChangeListener(doorShutsCheckbox, 'doorShuts');
+    attachChangeListener(wrapRemovalCheckbox, 'wrapRemoval');
+
+    // Attach to addon checkboxes
+    for (var i = 0; i < addonCheckboxes.length; i++) {
+        (function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                console.log('Calculator: Addon toggled:', checkbox.dataset.addonId, '=', checkbox.checked);
+                calculate();
+            });
+        })(addonCheckboxes[i]);
+    }
 
     console.log('Calculator: All listeners attached, running initial calculation...');
 
