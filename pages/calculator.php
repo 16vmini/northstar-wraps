@@ -490,7 +490,20 @@ require_once '../includes/header.php';
     <!-- Pass config to JavaScript -->
     <script>
         window.pricingConfig = <?php echo json_encode($pricingConfig); ?>;
-        console.log('Calculator config loaded:', window.pricingConfig);
+        console.log('=== CALCULATOR PAGE: Config set ===');
     </script>
 
 <?php require_once '../includes/footer.php'; ?>
+
+    <!-- Calculator initialization (runs after main.js loads) -->
+    <script>
+        console.log('=== CALCULATOR PAGE: Running inline init ===');
+
+        // Re-run init in case DOMContentLoaded already fired
+        if (typeof initPriceCalculator === 'function') {
+            console.log('=== CALCULATOR PAGE: Calling initPriceCalculator ===');
+            initPriceCalculator();
+        } else {
+            console.error('=== CALCULATOR PAGE: initPriceCalculator not found! ===');
+        }
+    </script>
