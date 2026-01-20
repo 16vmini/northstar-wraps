@@ -230,43 +230,98 @@ if (!is_dir($log_dir)) {
     mkdir($log_dir, 0755, true);
 }
 
-// Use GPT-4o with image generation (gpt-image-1 model)
-// This model can actually edit images rather than generating new ones
-$ch = curl_init();
-
-// Build the request for GPT-4o image generation
-$request_data = [
-    'model' => 'gpt-image-1',
-    'prompt' => $prompt,
-    'n' => 1,
-    'size' => '1024x1024',
-    'quality' => 'medium',
-    'response_format' => 'b64_json'
-];
-
-// For image editing, we need to include the source image
-// GPT-image-1 uses the images array format
-$request_data['image'] = $car_image;
-
-// If custom wrap image provided, add it to the prompt context
-if ($wrap_image) {
-    $request_data['image'] = [$car_image, $wrap_image];
-}
-
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Sending to gpt-image-1 | Prompt: " . substr($prompt, 0, 200) . "\n",
+    date('Y-m-d H:i:s') . " | Starting visualization | Wrap: {$wrap_name} | Prompt: " . substr($prompt, 0, 150) . "\n",
     FILE_APPEND);
 
+// Use GPT-4o chat completions with vision to analyze the car,
+// then use DALL-E 3 to generate the wrapped version
+$ch = curl_init();
+
+// First, get GPT-4o to analyze the car and create a detailed description
+$analysis_prompt = "Analyze this car image and provide a detailed description for image generation. Include: exact make/model/year if identifiable, body style, viewing angle (front 3/4, side, rear, etc), current color, background setting, lighting conditions, and any distinctive features. Be very specific and concise.";
+
+$analysis_messages = [
+    [
+        'role' => 'user',
+        'content' => [
+            ['type' => 'text', 'text' => $analysis_prompt],
+            ['type' => 'image_url', 'image_url' => ['url' => $car_image, 'detail' => 'high']]
+        ]
+    ]
+];
+
+$analysis_data = [
+    'model' => 'gpt-4o',
+    'messages' => $analysis_messages,
+    'max_tokens' => 500
+];
+
 curl_setopt_array($ch, [
-    CURLOPT_URL => 'https://api.openai.com/v1/images/edits',
+    CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
     CURLOPT_POST => true,
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 180,
+    CURLOPT_TIMEOUT => 60,
     CURLOPT_HTTPHEADER => [
         'Authorization: Bearer ' . $api_key,
         'Content-Type: application/json'
     ],
-    CURLOPT_POSTFIELDS => json_encode($request_data)
+    CURLOPT_POSTFIELDS => json_encode($analysis_data)
+]);
+
+$analysis_response = curl_exec($ch);
+$analysis_http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+file_put_contents($log_dir . '/visualizer_debug.log',
+    date('Y-m-d H:i:s') . " | Analysis HTTP {$analysis_http_code} | Response: " . substr($analysis_response, 0, 500) . "\n",
+    FILE_APPEND);
+
+if ($analysis_http_code !== 200) {
+    $error_data = json_decode($analysis_response, true);
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to analyze image: ' . ($error_data['error']['message'] ?? 'Unknown error')]);
+    exit;
+}
+
+$analysis_result = json_decode($analysis_response, true);
+$car_description = $analysis_result['choices'][0]['message']['content'] ?? '';
+
+if (empty($car_description)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to analyze the car image']);
+    exit;
+}
+
+// Now generate the wrapped version using DALL-E 3
+// Create a very specific prompt that emphasizes keeping the exact car
+$generation_prompt = "Photorealistic image of this EXACT car: {$car_description}\n\nCRITICAL CHANGES: The car body panels are now wrapped in {$wrap_name} vinyl wrap ({$wrap_finish} finish" . ($wrap_hex ? ", color {$wrap_hex}" : "") . ").\n\nKEEP IDENTICAL: exact car model, body shape, viewing angle, background, lighting, windows, headlights, taillights, wheels, tires, license plate area, all chrome/trim details.\n\nONLY CHANGE: the body panel color/finish to the specified wrap.\n\nStyle: Professional automotive photography, sharp detail, realistic lighting.";
+
+file_put_contents($log_dir . '/visualizer_debug.log',
+    date('Y-m-d H:i:s') . " | Generation prompt: " . substr($generation_prompt, 0, 300) . "\n",
+    FILE_APPEND);
+
+$ch = curl_init();
+
+$dalle_data = [
+    'model' => 'dall-e-3',
+    'prompt' => $generation_prompt,
+    'n' => 1,
+    'size' => '1024x1024',
+    'quality' => 'hd',
+    'response_format' => 'b64_json'
+];
+
+curl_setopt_array($ch, [
+    CURLOPT_URL => 'https://api.openai.com/v1/images/generations',
+    CURLOPT_POST => true,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT => 120,
+    CURLOPT_HTTPHEADER => [
+        'Authorization: Bearer ' . $api_key,
+        'Content-Type: application/json'
+    ],
+    CURLOPT_POSTFIELDS => json_encode($dalle_data)
 ]);
 
 $response = curl_exec($ch);
@@ -275,60 +330,8 @@ $curl_error = curl_error($ch);
 curl_close($ch);
 
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | HTTP {$http_code} | cURL Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
+    date('Y-m-d H:i:s') . " | DALL-E HTTP {$http_code} | cURL Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
     FILE_APPEND);
-
-// If the images/edits endpoint doesn't work, fall back to chat completions with image output
-if ($http_code !== 200) {
-    // Try using the responses API with image generation
-    $ch = curl_init();
-
-    $messages_content = [
-        [
-            'type' => 'input_image',
-            'image_url' => $car_image
-        ],
-        [
-            'type' => 'input_text',
-            'text' => $prompt
-        ]
-    ];
-
-    if ($wrap_image) {
-        array_unshift($messages_content, [
-            'type' => 'input_image',
-            'image_url' => $wrap_image
-        ]);
-    }
-
-    $request_data = [
-        'model' => 'gpt-4o',
-        'input' => $messages_content,
-        'tools' => [['type' => 'image_generation']],
-        'tool_choice' => 'required'
-    ];
-
-    curl_setopt_array($ch, [
-        CURLOPT_URL => 'https://api.openai.com/v1/responses',
-        CURLOPT_POST => true,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 180,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $api_key,
-            'Content-Type: application/json'
-        ],
-        CURLOPT_POSTFIELDS => json_encode($request_data)
-    ]);
-
-    $response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curl_error = curl_error($ch);
-    curl_close($ch);
-
-    file_put_contents($log_dir . '/visualizer_debug.log',
-        date('Y-m-d H:i:s') . " | Fallback responses API | HTTP {$http_code} | Response: " . substr($response, 0, 500) . "\n",
-        FILE_APPEND);
-}
 
 if ($http_code !== 200) {
     $error_data = json_decode($response, true);
@@ -338,23 +341,7 @@ if ($http_code !== 200) {
 }
 
 $result = json_decode($response, true);
-
-// Extract the generated image from the response
-$generated_image = null;
-
-// Check for standard images API response format
-if (isset($result['data'][0]['b64_json'])) {
-    $generated_image = $result['data'][0]['b64_json'];
-}
-// Check for responses API format
-elseif (isset($result['output'])) {
-    foreach ($result['output'] as $output) {
-        if (isset($output['type']) && $output['type'] === 'image_generation_call' && isset($output['result'])) {
-            $generated_image = $output['result'];
-            break;
-        }
-    }
-}
+$generated_image = $result['data'][0]['b64_json'] ?? null;
 
 if (!$generated_image) {
     http_response_code(500);
