@@ -546,13 +546,35 @@ require_once '../includes/header.php';
 
     <!-- Calculator initialization (runs after main.js loads) -->
     <script>
-        console.log('=== CALCULATOR PAGE: Running inline init ===');
+        (function() {
+            'use strict';
+            console.log('=== CALCULATOR PAGE: Running inline init ===');
 
-        // Re-run init in case DOMContentLoaded already fired
-        if (typeof initPriceCalculator === 'function') {
-            console.log('=== CALCULATOR PAGE: Calling initPriceCalculator ===');
-            initPriceCalculator();
-        } else {
-            console.error('=== CALCULATOR PAGE: initPriceCalculator not found! ===');
-        }
+            function tryInit() {
+                if (typeof initPriceCalculator === 'function') {
+                    console.log('=== CALCULATOR PAGE: Calling initPriceCalculator ===');
+                    initPriceCalculator();
+                    return true;
+                }
+                console.error('=== CALCULATOR PAGE: initPriceCalculator not found! ===');
+                return false;
+            }
+
+            // Try immediately
+            if (!tryInit()) {
+                // Fallback: try again after a short delay (for slow script loading)
+                setTimeout(tryInit, 100);
+            }
+
+            // Safari/iOS fix: re-init after page is fully loaded
+            window.onload = function() {
+                console.log('=== CALCULATOR PAGE: window.onload fired ===');
+                setTimeout(function() {
+                    if (typeof initPriceCalculator === 'function') {
+                        console.log('=== CALCULATOR PAGE: Re-init on window.onload ===');
+                        initPriceCalculator();
+                    }
+                }, 50);
+            };
+        })();
     </script>

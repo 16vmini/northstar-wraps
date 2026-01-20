@@ -454,9 +454,16 @@ function initPriceCalculator() {
     }
 
     console.log('Calculator: Initializing...');
+    console.log('Calculator: Config coverageTypes count:', window.pricingConfig.coverageTypes ? window.pricingConfig.coverageTypes.length : 0);
 
     var config = window.pricingConfig;
     var currency = config.currency || '£';
+
+    // Validate config has required arrays
+    if (!config.coverageTypes || !config.vehicleTypes) {
+        console.error('Calculator: Config missing required arrays!');
+        return;
+    }
 
     // Get dropdown elements
     var vehicleSelect = document.getElementById('vehicleType');
@@ -515,14 +522,22 @@ function initPriceCalculator() {
     function calculate() {
         console.log('Calculator: Running calculation...');
 
-        // Get selected values
-        var vehicleId = vehicleSelect ? vehicleSelect.value : '';
-        var coverageId = coverageSelect ? coverageSelect.value : '';
-        var finishId = finishSelect ? finishSelect.value : '';
-        var brandId = brandSelect ? brandSelect.value : '';
-        var conditionId = conditionSelect ? conditionSelect.value : '';
+        // Re-get elements in case DOM changed (iOS Safari issue)
+        var vSelect = document.getElementById('vehicleType');
+        var cSelect = document.getElementById('coverageType');
+        var fSelect = document.getElementById('finishType');
+        var bSelect = document.getElementById('brandTier');
+        var condSelect = document.getElementById('condition');
+
+        // Get selected values - use fresh element references
+        var vehicleId = vSelect ? vSelect.value : '';
+        var coverageId = cSelect ? cSelect.value : '';
+        var finishId = fSelect ? fSelect.value : '';
+        var brandId = bSelect ? bSelect.value : '';
+        var conditionId = condSelect ? condSelect.value : '';
 
         console.log('Calculator: IDs - coverage:', coverageId, 'vehicle:', vehicleId);
+        console.log('Calculator: Coverage select exists:', !!cSelect, 'selectedIndex:', cSelect ? cSelect.selectedIndex : -1);
 
         // Get data from config
         var vehicle = findById(config.vehicleTypes, vehicleId);
@@ -531,9 +546,11 @@ function initPriceCalculator() {
         var brand = findById(config.brandTiers, brandId);
         var condition = findById(config.conditions, conditionId);
 
+        console.log('Calculator: Found coverage object:', coverage ? coverage.name : 'null');
+
         // If no coverage selected, show zero
         if (!coverage) {
-            console.log('Calculator: No coverage, showing 0');
+            console.log('Calculator: No coverage found for id:', coverageId);
             if (totalPriceEl) totalPriceEl.textContent = currency + '0';
             if (priceBaseEl) priceBaseEl.textContent = '-';
             if (rowVehicle) rowVehicle.style.display = 'none';
@@ -632,36 +649,72 @@ function initPriceCalculator() {
     // Attach event listeners (Safari/iOS compatible)
     console.log('Calculator: Attaching listeners...');
 
-    function attachListener(element) {
+    function attachSelectListener(element) {
         if (!element) return;
 
-        // Use onchange for maximum compatibility
-        element.onchange = function() {
-            console.log('Calculator: Changed -', element.id);
+        // Multiple event types for maximum iOS/Safari compatibility
+        function handler() {
+            console.log('Calculator: Select changed -', element.id, '- value:', element.value);
             calculate();
+        }
+
+        // Use both onchange and oninput for iOS Safari
+        element.onchange = handler;
+        element.oninput = handler;
+
+        // Also try blur event as fallback for iOS
+        element.onblur = function() {
+            console.log('Calculator: Select blur -', element.id);
+            setTimeout(calculate, 10);
         };
     }
 
+    function attachCheckboxListener(element) {
+        if (!element) return;
+
+        function handler() {
+            console.log('Calculator: Checkbox changed -', element.id, '- checked:', element.checked);
+            calculate();
+        }
+
+        element.onchange = handler;
+        element.onclick = handler;
+    }
+
     // Attach to all select elements
-    attachListener(vehicleSelect);
-    attachListener(coverageSelect);
-    attachListener(finishSelect);
-    attachListener(brandSelect);
-    attachListener(conditionSelect);
+    attachSelectListener(vehicleSelect);
+    attachSelectListener(coverageSelect);
+    attachSelectListener(finishSelect);
+    attachSelectListener(brandSelect);
+    attachSelectListener(conditionSelect);
 
     // Attach to checkboxes
-    attachListener(doorShutsCheckbox);
-    attachListener(wrapRemovalCheckbox);
+    attachCheckboxListener(doorShutsCheckbox);
+    attachCheckboxListener(wrapRemovalCheckbox);
 
     // Attach to addon checkboxes
     for (var k = 0; k < addonCheckboxes.length; k++) {
-        attachListener(addonCheckboxes[k]);
+        attachCheckboxListener(addonCheckboxes[k]);
     }
 
     console.log('Calculator: Listeners attached, running calc...');
 
     // Initial calculation
     calculate();
+
+    // Safari/iOS fix: recalculate after a brief delay in case values were restored from cache
+    setTimeout(function() {
+        console.log('Calculator: Delayed recalculation for iOS...');
+        calculate();
+    }, 100);
+
+    // Another recalculation on pageshow (handles back/forward cache)
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            console.log('Calculator: Page restored from cache, recalculating...');
+            setTimeout(calculate, 50);
+        }
+    });
 
     console.log('Calculator: Init complete!');
 }
