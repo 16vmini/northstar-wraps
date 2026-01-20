@@ -10,6 +10,7 @@ header('Content-Type: application/json');
 // Load configs
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/api-config.php';
+require_once __DIR__ . '/../includes/wrapinator-usage.php';
 
 /**
  * Add watermark to generated image
@@ -190,22 +191,9 @@ if (isset($input['action']) && $input['action'] === 'submit_email') {
         exit;
     }
 
-    $_SESSION['visualizer_email'] = $email;
-
-    // Log the lead
-    $log_dir = dirname(__DIR__) . '/logs';
-    if (!is_dir($log_dir)) {
-        mkdir($log_dir, 0755, true);
-    }
-    $lead_log = $log_dir . '/visualizer_leads.log';
-    $log_entry = date('Y-m-d H:i:s') . " | {$email} | IP: {$_SERVER['REMOTE_ADDR']}\n";
-    file_put_contents($lead_log, $log_entry, FILE_APPEND | LOCK_EX);
-
-    echo json_encode([
-        'success' => true,
-        'message' => 'Email saved. You can now continue using the visualizer.',
-        'remaining' => $max_limit - $_SESSION['visualizer_count']
-    ]);
+    // Use shared function to save email, log lead, and send notification
+    $result = saveWrapinatorEmail($email);
+    echo json_encode($result);
     exit;
 }
 
