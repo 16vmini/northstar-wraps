@@ -5,8 +5,8 @@
  */
 
 session_start();
-require_once 'config.php';
-require_once 'email-sender.php';
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/email-sender.php';
 
 // Only process POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -45,7 +45,7 @@ if ($time_diff < 3) {
 
 // 4. Rate limiting - max 3 submissions per hour per IP
 $ip = $_SERVER['REMOTE_ADDR'];
-$rate_limit_file = __DIR__ . '/../logs/rate_limits.json';
+$rate_limit_file = __DIR__ . '/logs/rate_limits.json';
 
 // Create logs directory if needed
 $logs_dir = dirname($rate_limit_file);
@@ -206,7 +206,7 @@ $form_data = [
 
 // Save to log file (backup in case email fails)
 $log_entry = date('Y-m-d H:i:s') . " | {$name} | {$email} | {$phone} | {$service_display} | {$vehicle_info}\n";
-$log_file = __DIR__ . '/../logs/quotes.log';
+$log_file = __DIR__ . '/logs/quotes.log';
 
 // Create logs directory if it doesn't exist
 $logs_dir = dirname($log_file);
@@ -225,7 +225,7 @@ $autoreply_result = sendCustomerAutoReply($form_data);
 // Log email results
 $email_log = date('Y-m-d H:i:s') . " | Notification: " . ($notification_result['success'] ? 'OK' : 'FAIL') .
              " | AutoReply: " . ($autoreply_result['success'] ? 'OK' : 'FAIL') . "\n";
-file_put_contents(__DIR__ . '/../logs/email.log', $email_log, FILE_APPEND | LOCK_EX);
+file_put_contents(__DIR__ . '/logs/email.log', $email_log, FILE_APPEND | LOCK_EX);
 
 // Redirect back to contact page with success message
 header('Location: /pages/contact.php?submitted=true');

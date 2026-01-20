@@ -64,7 +64,7 @@ $form_error = isset($_GET['error']) ? htmlspecialchars($_GET['error']) : '';
                     </div>
                     <?php endif; ?>
 
-                    <form action="/includes/process-form.php" method="POST" class="contact-form" id="quote-form">
+                    <form action="/process-form.php" method="POST" class="contact-form" id="quote-form">
                         <!-- Security fields -->
                         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                         <input type="hidden" name="form_time" value="<?php echo time(); ?>">
