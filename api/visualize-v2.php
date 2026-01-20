@@ -80,37 +80,65 @@ set_error_handler('handleError');
  * to apply the pattern from the right to the car on the left
  */
 
+// Resize image to max dimensions while maintaining aspect ratio
+function resizeImage($img, $max_width, $max_height) {
+    $width = imagesx($img);
+    $height = imagesy($img);
+
+    // Check if resize needed
+    if ($width <= $max_width && $height <= $max_height) {
+        return $img;
+    }
+
+    // Calculate new dimensions
+    $ratio = min($max_width / $width, $max_height / $height);
+    $new_width = (int)($width * $ratio);
+    $new_height = (int)($height * $ratio);
+
+    // Create resized image
+    $resized = imagecreatetruecolor($new_width, $new_height);
+    imagecopyresampled($resized, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+    imagedestroy($img);
+
+    return $resized;
+}
+
 // Create composite image with car on left, pattern on right
-function createCompositeImage($car_base64, $wrap_base64) {
+function createCompositeImage($car_base64, $wrap_base64, $log_dir) {
     // Remove data URI prefix
     $car_data = preg_replace('/^data:image\/\w+;base64,/', '', $car_base64);
     $wrap_data = preg_replace('/^data:image\/\w+;base64,/', '', $wrap_base64);
+
+    file_put_contents($log_dir . '/visualizer_v2_debug.log',
+        date('Y-m-d H:i:s') . " | Creating images from base64...\n", FILE_APPEND);
 
     $car_img = imagecreatefromstring(base64_decode($car_data));
     $wrap_img = imagecreatefromstring(base64_decode($wrap_data));
 
     if (!$car_img || !$wrap_img) {
+        file_put_contents($log_dir . '/visualizer_v2_debug.log',
+            date('Y-m-d H:i:s') . " | ERROR: Failed to create image from base64\n", FILE_APPEND);
         return null;
     }
+
+    file_put_contents($log_dir . '/visualizer_v2_debug.log',
+        date('Y-m-d H:i:s') . " | Resizing images...\n", FILE_APPEND);
+
+    // Resize images to reasonable dimensions (max 800px)
+    $car_img = resizeImage($car_img, 800, 600);
+    $wrap_img = resizeImage($wrap_img, 300, 300);
 
     $car_width = imagesx($car_img);
     $car_height = imagesy($car_img);
     $wrap_width = imagesx($wrap_img);
     $wrap_height = imagesy($wrap_img);
 
-    // Scale pattern to match car height while maintaining aspect ratio
-    $pattern_display_height = $car_height;
-    $pattern_display_width = (int)($wrap_width * ($pattern_display_height / $wrap_height));
-
-    // Limit pattern width to not be larger than 40% of car width
-    if ($pattern_display_width > $car_width * 0.4) {
-        $pattern_display_width = (int)($car_width * 0.4);
-        $pattern_display_height = (int)($wrap_height * ($pattern_display_width / $wrap_width));
-    }
+    file_put_contents($log_dir . '/visualizer_v2_debug.log',
+        date('Y-m-d H:i:s') . " | Car: {$car_width}x{$car_height}, Wrap: {$wrap_width}x{$wrap_height}\n", FILE_APPEND);
 
     // Create composite canvas
-    $total_width = $car_width + $pattern_display_width + 20; // 20px gap
-    $total_height = max($car_height, $pattern_display_height);
+    $total_width = $car_width + $wrap_width + 20; // 20px gap
+    $total_height = max($car_height, $wrap_height);
 
     $composite = imagecreatetruecolor($total_width, $total_height);
 
@@ -118,40 +146,43 @@ function createCompositeImage($car_base64, $wrap_base64) {
     $white = imagecolorallocate($composite, 255, 255, 255);
     imagefill($composite, 0, 0, $white);
 
-    // Place car on left
+    // Place car on left (centered vertically)
     $car_y = ($total_height - $car_height) / 2;
     imagecopy($composite, $car_img, 0, (int)$car_y, 0, 0, $car_width, $car_height);
 
-    // Place pattern on right (scaled)
+    // Place pattern on right (centered vertically)
     $pattern_x = $car_width + 20;
-    $pattern_y = ($total_height - $pattern_display_height) / 2;
-    imagecopyresampled(
-        $composite, $wrap_img,
-        $pattern_x, (int)$pattern_y,
-        0, 0,
-        $pattern_display_width, $pattern_display_height,
-        $wrap_width, $wrap_height
-    );
+    $pattern_y = ($total_height - $wrap_height) / 2;
+    imagecopy($composite, $wrap_img, $pattern_x, (int)$pattern_y, 0, 0, $wrap_width, $wrap_height);
 
     // Add a thin border around the pattern
     $border_color = imagecolorallocate($composite, 200, 200, 200);
     imagerectangle($composite, $pattern_x - 1, (int)$pattern_y - 1,
-                   $pattern_x + $pattern_display_width, (int)$pattern_y + $pattern_display_height, $border_color);
+                   $pattern_x + $wrap_width, (int)$pattern_y + $wrap_height, $border_color);
 
-    // Convert to base64 PNG
+    file_put_contents($log_dir . '/visualizer_v2_debug.log',
+        date('Y-m-d H:i:s') . " | Converting to JPEG...\n", FILE_APPEND);
+
+    // Convert to base64 JPEG (smaller than PNG)
     ob_start();
-    imagepng($composite, null, 6);
+    imagejpeg($composite, null, 85);
     $output = ob_get_clean();
 
     imagedestroy($car_img);
     imagedestroy($wrap_img);
     imagedestroy($composite);
 
-    return 'data:image/png;base64,' . base64_encode($output);
+    file_put_contents($log_dir . '/visualizer_v2_debug.log',
+        date('Y-m-d H:i:s') . " | Composite created, size: " . strlen($output) . " bytes\n", FILE_APPEND);
+
+    return 'data:image/jpeg;base64,' . base64_encode($output);
 }
 
 // Create the composite image
-$composite_image = createCompositeImage($car_image, $wrap_image);
+file_put_contents($log_dir . '/visualizer_v2_debug.log',
+    date('Y-m-d H:i:s') . " | Starting composite creation...\n", FILE_APPEND);
+
+$composite_image = createCompositeImage($car_image, $wrap_image, $log_dir);
 
 if (!$composite_image) {
     http_response_code(500);
