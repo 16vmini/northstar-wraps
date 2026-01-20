@@ -314,8 +314,9 @@ if ($selected_wrap) {
         $prompt = "Change the car's body paint to {$wrap_name} color ({$wrap_hex}) with a {$wrap_finish} finish. Keep everything else exactly the same - same car, same angle, same background, same wheels.";
     }
 } else {
-    // Custom wrap
-    $prompt = "Change the car's body color to the custom wrap pattern. Keep everything else exactly the same.";
+    // Custom wrap - Note: FLUX Kontext doesn't use the uploaded pattern directly,
+    // it interprets the prompt. Custom patterns have limited accuracy.
+    $prompt = "Apply a colorful custom vinyl wrap pattern to the car's body panels. Make it look like a professional vehicle wrap with a bold, eye-catching design. Keep the car's shape, wheels, windows, and background exactly the same.";
 }
 
 // Log for debugging
