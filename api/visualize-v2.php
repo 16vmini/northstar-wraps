@@ -11,6 +11,7 @@ header('Content-Type: application/json');
 // Load configs
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/api-config.php';
+require_once __DIR__ . '/../includes/visualizer-share.php';
 
 // Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -353,10 +354,22 @@ file_put_contents($log_dir . '/visualizer_v2_debug.log',
     date('Y-m-d H:i:s') . " | SUCCESS | Image generated\n",
     FILE_APPEND);
 
+// Save image for sharing/gallery
+$save_result = saveVisualizerImage($image_data, 'Custom Pattern', 'Wrapinator 1000');
+$share_id = $save_result['share_id'];
+
+if ($share_id) {
+    file_put_contents($log_dir . '/visualizer_v2_debug.log',
+        date('Y-m-d H:i:s') . " | Saved with share_id: {$share_id}\n",
+        FILE_APPEND);
+}
+
 // Return result
 echo json_encode([
     'success' => true,
     'image' => 'data:image/png;base64,' . $generated_image,
+    'share_id' => $share_id,
+    'wrap' => 'Custom Pattern',
     'debug' => [
         'model' => 'flux-kontext-pro',
         'prompt' => $prompt,

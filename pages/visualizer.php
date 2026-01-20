@@ -1543,10 +1543,10 @@ require_once '../includes/header.php';
                     // Show result
                     resultLoading.style.display = 'none';
                     generatedImage.src = data.image;
-                    wrapBadge.textContent = 'Custom Pattern';
+                    wrapBadge.textContent = data.wrap || 'Custom Pattern';
                     resultImage.style.display = 'block';
                     resultActions.style.display = 'flex';
-                    currentShareId = null; // No sharing for custom patterns yet
+                    currentShareId = data.share_id || null;
 
                 } else {
                     // Use classic V1 API (or V2 with colour for pro mode without pattern)
