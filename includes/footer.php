@@ -88,6 +88,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 
     <!-- Custom JavaScript -->
-    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/main.js?v=<?php echo SITE_VERSION; ?>"></script>
 </body>
 </html>

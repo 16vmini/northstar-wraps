@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <?php
+    // Load version numbers
+    require_once __DIR__ . '/version.php';
+
     // SEO Meta - Page specific or defaults
     $meta_description = isset($page_description) ? $page_description : SITE_NAME . ' - ' . SITE_TAGLINE . '. Professional vehicle wrapping, full colour changes, partial wraps, chrome delete and commercial fleet graphics.';
     $meta_title = isset($page_title) ? $page_title . ' | ' . SITE_NAME : SITE_NAME . ' - ' . SITE_TAGLINE;
@@ -50,7 +53,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css?v=<?php echo SITE_VERSION; ?>">
 </head>
 <body>
     <!-- Top Bar -->

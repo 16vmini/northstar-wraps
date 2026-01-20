@@ -589,4 +589,4 @@ require_once '../includes/header.php';
 <?php require_once '../includes/footer.php'; ?>
 
     <!-- Calculator Script (loaded after footer, separate file for cleaner code) -->
-    <script src="/assets/js/calculator.js"></script>
+    <script src="/assets/js/calculator.js?v=<?php echo CALC_VERSION; ?>"></script>
