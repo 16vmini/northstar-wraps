@@ -25,7 +25,7 @@ require_once '../includes/header.php';
     .calculator-section {
         padding: 60px 0 80px;
         background: #f5f5f5;
-        overflow: visible;
+        overflow-x: hidden;
     }
 
     .calculator-section .container {
@@ -38,6 +38,12 @@ require_once '../includes/header.php';
         gap: 40px;
         align-items: start;
         overflow: visible;
+    }
+
+    .calculator-form-inner,
+    .extras-grid,
+    .extra-item {
+        box-sizing: border-box;
     }
 
     .calculator-form-inner {
