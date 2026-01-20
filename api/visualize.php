@@ -1,7 +1,7 @@
 <?php
 /**
  * Wrap Visualizer API Endpoint
- * Handles image generation via OpenAI
+ * Handles image generation via Replicate FLUX Kontext Pro
  */
 
 session_start();
@@ -67,6 +67,20 @@ function addWatermark($base64_image) {
     imagedestroy($image);
 
     return base64_encode($output);
+}
+
+/**
+ * Upload image to a temporary hosting service and get URL
+ * Replicate needs a URL, not base64
+ */
+function uploadImageForReplicate($base64_data) {
+    // Remove data URL prefix if present
+    $base64_data = preg_replace('/^data:image\/\w+;base64,/', '', $base64_data);
+
+    // Use imgbb.com free API for temporary image hosting
+    // Or we can use data URI directly with Replicate (they support it)
+    // Let's try data URI first as it's simpler
+    return 'data:image/png;base64,' . $base64_data;
 }
 
 // Only accept POST
@@ -177,9 +191,9 @@ if (!preg_match('/^data:image\/(jpeg|jpg|png|webp);base64,/', $car_image)) {
     exit;
 }
 
-// Check API key
-$api_key = defined('OPENAI_API_KEY') ? OPENAI_API_KEY : '';
-if (empty($api_key) || $api_key === 'YOUR_API_KEY_HERE') {
+// Check Replicate API key
+$replicate_key = defined('REPLICATE_API_KEY') ? REPLICATE_API_KEY : '';
+if (empty($replicate_key) || $replicate_key === 'YOUR_API_KEY_HERE') {
     http_response_code(500);
     echo json_encode(['error' => 'Visualizer is not configured. Please contact the administrator.']);
     exit;
@@ -206,22 +220,23 @@ if (!$selected_wrap && !$wrap_image) {
     exit;
 }
 
-// Build the prompt for GPT-4o image editing
+// Build the prompt for FLUX Kontext
 $wrap_name = $selected_wrap ? $selected_wrap['name'] : 'Custom';
 $wrap_finish = $selected_wrap ? $selected_wrap['finish'] : 'Custom';
 $wrap_hex = $selected_wrap ? $selected_wrap['hex'] : '';
 
+// FLUX Kontext works best with direct instructions
 if ($selected_wrap) {
     if ($selected_wrap['image']) {
         // Texture/pattern wrap
-        $prompt = "Edit this car image: Change ONLY the car's body paint/panels to a {$wrap_name} vinyl wrap with a {$wrap_finish} finish. Keep the EXACT same car, angle, background, lighting, windows, headlights, taillights, wheels, tires, and all other details identical. Only change the body color/texture.";
+        $prompt = "Change the car's body color to {$wrap_name} with a {$wrap_finish} finish. Keep everything else exactly the same.";
     } else {
         // Solid color wrap
-        $prompt = "Edit this car image: Change ONLY the car's body paint/panels to {$wrap_name} color (hex {$wrap_hex}) with a {$wrap_finish} finish. Keep the EXACT same car, angle, background, lighting, windows, headlights, taillights, wheels, tires, and all other details identical. Only change the body color.";
+        $prompt = "Change the car's body paint to {$wrap_name} color ({$wrap_hex}) with a {$wrap_finish} finish. Keep everything else exactly the same - same car, same angle, same background, same wheels.";
     }
 } else {
     // Custom wrap
-    $prompt = "Edit this car image: Apply the pattern/texture from the reference image as a vinyl wrap to ONLY the car's body panels. Keep the EXACT same car, angle, background, lighting, windows, headlights, taillights, wheels, tires, and all other details identical.";
+    $prompt = "Change the car's body color to the custom wrap pattern. Keep everything else exactly the same.";
 }
 
 // Log for debugging
@@ -231,125 +246,37 @@ if (!is_dir($log_dir)) {
 }
 
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Starting visualization | Wrap: {$wrap_name}\n",
+    date('Y-m-d H:i:s') . " | Starting visualization | Wrap: {$wrap_name} | Prompt: {$prompt}\n",
     FILE_APPEND);
 
-// Get Stability AI API key
-$stability_key = defined('STABILITY_API_KEY') ? STABILITY_API_KEY : '';
-if (empty($stability_key)) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Visualizer is not configured. Please contact the administrator.']);
-    exit;
-}
+// Prepare the image - Replicate accepts data URIs
+$image_uri = $car_image;
 
-// Decode the base64 image
-$car_image_data = preg_replace('/^data:image\/\w+;base64,/', '', $car_image);
-$car_image_binary = base64_decode($car_image_data);
-
-// Convert to PNG for Stability AI
-$source_image = imagecreatefromstring($car_image_binary);
-if (!$source_image) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Could not process the uploaded image']);
-    exit;
-}
-
-// Get dimensions and resize to allowed SDXL dimensions
-$orig_width = imagesx($source_image);
-$orig_height = imagesy($source_image);
-
-// Stability AI SDXL allowed dimensions
-$allowed_dimensions = [
-    [1024, 1024], // 1:1
-    [1152, 896],  // ~1.29:1 landscape
-    [1216, 832],  // ~1.46:1 landscape
-    [1344, 768],  // 1.75:1 landscape
-    [1536, 640],  // 2.4:1 landscape
-    [640, 1536],  // portrait
-    [768, 1344],  // portrait
-    [832, 1216],  // portrait
-    [896, 1152],  // portrait
-];
-
-// Find the best matching dimension based on aspect ratio
-$orig_ratio = $orig_width / $orig_height;
-$best_match = [1024, 1024];
-$best_diff = PHP_FLOAT_MAX;
-
-foreach ($allowed_dimensions as $dim) {
-    $dim_ratio = $dim[0] / $dim[1];
-    $diff = abs($orig_ratio - $dim_ratio);
-    if ($diff < $best_diff) {
-        $best_diff = $diff;
-        $best_match = $dim;
-    }
-}
-
-$target_width = $best_match[0];
-$target_height = $best_match[1];
-
-// Create new image with exact target dimensions
-$resized = imagecreatetruecolor($target_width, $target_height);
-
-// Fill with black background (for letterboxing if needed)
-$black = imagecolorallocate($resized, 0, 0, 0);
-imagefill($resized, 0, 0, $black);
-
-// Calculate scaling to fit within target while maintaining aspect ratio
-$scale = min($target_width / $orig_width, $target_height / $orig_height);
-$new_width = (int)($orig_width * $scale);
-$new_height = (int)($orig_height * $scale);
-
-// Center the image
-$x_offset = (int)(($target_width - $new_width) / 2);
-$y_offset = (int)(($target_height - $new_height) / 2);
-
-imagecopyresampled($resized, $source_image, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
-imagedestroy($source_image);
-$source_image = $resized;
-
-// Save to temp file as PNG
-$temp_dir = sys_get_temp_dir();
-$temp_image_path = $temp_dir . '/car_' . uniqid() . '.png';
-imagepng($source_image, $temp_image_path);
-imagedestroy($source_image);
-
-file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Saved temp image: {$temp_image_path}\n",
-    FILE_APPEND);
-
-// Build the prompt for Stability AI
-// Be specific about what to change and what to keep
-$edit_prompt = "Change the car body paint color to {$wrap_name} {$wrap_finish} vinyl wrap" . ($wrap_hex ? " ({$wrap_hex})" : "") . ". Keep the exact same car, angle, background, windows, wheels, lights, and all details. Only change the body panel color.";
-
-file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Prompt: {$edit_prompt}\n",
-    FILE_APPEND);
-
-// Use Stability AI image-to-image API
+// Step 1: Create prediction on Replicate
 $ch = curl_init();
 
-// Stability AI uses multipart form data
-$post_fields = [
-    'init_image' => new CURLFile($temp_image_path, 'image/png', 'image.png'),
-    'text_prompts[0][text]' => $edit_prompt,
-    'text_prompts[0][weight]' => 1,
-    'cfg_scale' => 7,
-    'samples' => 1,
-    'steps' => 30,
-    'image_strength' => 0.35  // Lower = more faithful to original image
+$payload = [
+    'version' => 'flux-kontext-pro',  // Use the model identifier
+    'input' => [
+        'prompt' => $prompt,
+        'input_image' => $image_uri,
+        'aspect_ratio' => 'match_input_image',
+        'output_format' => 'png',
+        'safety_tolerance' => 2
+    ]
 ];
 
 curl_setopt_array($ch, [
-    CURLOPT_URL => 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/image-to-image',
+    CURLOPT_URL => 'https://api.replicate.com/v1/models/black-forest-labs/flux-kontext-pro/predictions',
     CURLOPT_POST => true,
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 120,
+    CURLOPT_TIMEOUT => 30,
     CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $stability_key,
-        'Accept: application/json'
+        'Authorization: Bearer ' . $replicate_key,
+        'Content-Type: application/json',
+        'Prefer: wait'  // Wait for result synchronously (up to 60s)
     ],
-    CURLOPT_POSTFIELDS => $post_fields
+    CURLOPT_POSTFIELDS => json_encode($payload)
 ]);
 
 $response = curl_exec($ch);
@@ -357,29 +284,118 @@ $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curl_error = curl_error($ch);
 curl_close($ch);
 
-// Clean up temp file
-@unlink($temp_image_path);
-
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | Stability AI HTTP {$http_code} | Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
+    date('Y-m-d H:i:s') . " | Replicate create HTTP {$http_code} | Error: {$curl_error} | Response: " . substr($response, 0, 1000) . "\n",
     FILE_APPEND);
 
-if ($http_code !== 200) {
+if ($http_code !== 200 && $http_code !== 201) {
     $error_data = json_decode($response, true);
-    $error_msg = $error_data['message'] ?? ($error_data['name'] ?? 'Unknown error');
+    $error_msg = $error_data['detail'] ?? ($error_data['error'] ?? 'Unknown error');
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to edit image: ' . $error_msg]);
+    echo json_encode(['error' => 'Failed to start image generation: ' . $error_msg]);
     exit;
 }
 
 $result = json_decode($response, true);
-$generated_image = $result['artifacts'][0]['base64'] ?? null;
 
-if (!$generated_image) {
+// Check if we got the result immediately (with Prefer: wait header)
+$status = $result['status'] ?? '';
+$output = $result['output'] ?? null;
+$prediction_id = $result['id'] ?? null;
+
+// If not completed, poll for result
+if ($status !== 'succeeded' && $status !== 'failed') {
+    $get_url = $result['urls']['get'] ?? "https://api.replicate.com/v1/predictions/{$prediction_id}";
+    $max_attempts = 60; // Max 60 seconds
+    $attempt = 0;
+
+    while ($attempt < $max_attempts) {
+        sleep(1);
+        $attempt++;
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $get_url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $replicate_key,
+                'Content-Type: application/json'
+            ]
+        ]);
+
+        $poll_response = curl_exec($ch);
+        $poll_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($poll_code === 200) {
+            $poll_result = json_decode($poll_response, true);
+            $status = $poll_result['status'] ?? '';
+
+            if ($status === 'succeeded') {
+                $output = $poll_result['output'] ?? null;
+                break;
+            } elseif ($status === 'failed') {
+                $error_msg = $poll_result['error'] ?? 'Generation failed';
+                file_put_contents($log_dir . '/visualizer_debug.log',
+                    date('Y-m-d H:i:s') . " | Replicate failed: {$error_msg}\n",
+                    FILE_APPEND);
+                http_response_code(500);
+                echo json_encode(['error' => 'Image generation failed: ' . $error_msg]);
+                exit;
+            }
+            // Still processing, continue polling
+        }
+    }
+
+    if ($status !== 'succeeded') {
+        http_response_code(500);
+        echo json_encode(['error' => 'Image generation timed out. Please try again.']);
+        exit;
+    }
+}
+
+// Handle failed status from immediate response
+if ($status === 'failed') {
+    $error_msg = $result['error'] ?? 'Generation failed';
+    http_response_code(500);
+    echo json_encode(['error' => 'Image generation failed: ' . $error_msg]);
+    exit;
+}
+
+file_put_contents($log_dir . '/visualizer_debug.log',
+    date('Y-m-d H:i:s') . " | Replicate succeeded | Output: " . json_encode($output) . "\n",
+    FILE_APPEND);
+
+// Get the output image URL
+$output_url = is_array($output) ? ($output[0] ?? null) : $output;
+
+if (!$output_url) {
     http_response_code(500);
     echo json_encode(['error' => 'No image generated']);
     exit;
 }
+
+// Download the generated image
+$ch = curl_init();
+curl_setopt_array($ch, [
+    CURLOPT_URL => $output_url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_FOLLOWLOCATION => true
+]);
+$image_data = curl_exec($ch);
+$download_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+if ($download_code !== 200 || !$image_data) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to download generated image']);
+    exit;
+}
+
+// Convert to base64
+$generated_image = base64_encode($image_data);
 
 // Add watermark
 $generated_image = addWatermark($generated_image);
