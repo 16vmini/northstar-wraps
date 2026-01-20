@@ -25,6 +25,11 @@ require_once '../includes/header.php';
     .calculator-section {
         padding: 60px 0 80px;
         background: #f5f5f5;
+        overflow: visible;
+    }
+
+    .calculator-section .container {
+        overflow: visible;
     }
 
     .calculator-wrapper {
@@ -32,6 +37,7 @@ require_once '../includes/header.php';
         grid-template-columns: 1fr 380px;
         gap: 40px;
         align-items: start;
+        overflow: visible;
     }
 
     .calculator-form-inner {
