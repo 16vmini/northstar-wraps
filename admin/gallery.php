@@ -339,7 +339,7 @@ $approved_count = count(glob($upload_dir . '/[!p]*.png') ?: []);
             </div>
         <?php endif; ?>
 
-        <a href="/gallery" class="gallery-link" target="_blank">
+        <a href="/wrapinator-gallery" class="gallery-link" target="_blank">
             <i class="fas fa-external-link-alt"></i> View Public Gallery
         </a>
     </div>
