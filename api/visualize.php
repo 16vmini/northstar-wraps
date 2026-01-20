@@ -485,11 +485,11 @@ if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-// Save the image
-$image_path = $upload_dir . '/' . $share_id . '.png';
+// Save the image with pending_ prefix (needs approval for gallery)
+$image_path = $upload_dir . '/pending_' . $share_id . '.png';
 file_put_contents($image_path, base64_decode($generated_image));
 
-// Save metadata
+// Save metadata with pending_ prefix
 $metadata = [
     'id' => $share_id,
     'wrap' => $selected_wrap ? $selected_wrap['name'] : 'Custom',
@@ -497,9 +497,10 @@ $metadata = [
     'finish' => $selected_wrap ? $selected_wrap['finish'] : 'Custom',
     'created' => date('Y-m-d H:i:s'),
     'ip' => $_SERVER['REMOTE_ADDR'],
-    'email' => $_SESSION['visualizer_email'] ?? null
+    'email' => $_SESSION['visualizer_email'] ?? null,
+    'status' => 'pending'
 ];
-file_put_contents($upload_dir . '/' . $share_id . '.json', json_encode($metadata, JSON_PRETTY_PRINT));
+file_put_contents($upload_dir . '/pending_' . $share_id . '.json', json_encode($metadata, JSON_PRETTY_PRINT));
 
 // Log to gallery index
 $gallery_log = $upload_dir . '/gallery.log';

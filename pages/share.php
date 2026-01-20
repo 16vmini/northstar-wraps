@@ -13,10 +13,16 @@ if (empty($share_id)) {
     exit;
 }
 
-// Load metadata
+// Load metadata (check both approved and pending)
 $upload_dir = __DIR__ . '/../uploads/visualizer';
 $metadata_file = $upload_dir . '/' . $share_id . '.json';
 $image_file = $upload_dir . '/' . $share_id . '.png';
+
+// Check for pending files if approved not found
+if (!file_exists($metadata_file)) {
+    $metadata_file = $upload_dir . '/pending_' . $share_id . '.json';
+    $image_file = $upload_dir . '/pending_' . $share_id . '.png';
+}
 
 if (!file_exists($metadata_file) || !file_exists($image_file)) {
     header('Location: /visualizer');

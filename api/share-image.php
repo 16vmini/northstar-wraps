@@ -12,9 +12,12 @@ if (empty($share_id)) {
     exit;
 }
 
-// Find the image
+// Find the image (check both approved and pending)
 $upload_dir = __DIR__ . '/../uploads/visualizer';
-$image_file = $upload_dir . '/' . $share_id . '.png';
+$image_file = $upload_dir . '/' . $share_id . '.png'; // Approved
+if (!file_exists($image_file)) {
+    $image_file = $upload_dir . '/pending_' . $share_id . '.png'; // Pending
+}
 
 if (!file_exists($image_file)) {
     http_response_code(404);
