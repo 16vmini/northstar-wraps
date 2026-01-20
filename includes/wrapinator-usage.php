@@ -171,6 +171,9 @@ function getWrapinatorStatus() {
  * @return array ['allowed' => bool, 'error' => string|null, 'error_code' => string|null]
  */
 function checkWrapinatorUsage() {
+    // TEMP: Limits disabled for testing - remove this line to re-enable
+    return ['allowed' => true, 'error' => null];
+
     initWrapinatorUsage();
     $limits = getWrapinatorLimits();
 
