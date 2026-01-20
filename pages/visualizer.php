@@ -801,23 +801,210 @@ require_once '../includes/header.php';
         }
     }
 
+    @media (max-width: 768px) {
+        .visualizer-section {
+            padding: 30px 0;
+        }
+
+        .visualizer-intro {
+            margin-bottom: 25px;
+        }
+
+        .visualizer-intro h2 {
+            font-size: 1.5rem;
+        }
+
+        .visualizer-intro p {
+            font-size: 0.9rem;
+        }
+
+        .visualizer-controls {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .visualizer-controls h3 {
+            font-size: 1rem;
+        }
+
+        .upload-area {
+            padding: 20px 15px;
+        }
+
+        .upload-placeholder i {
+            font-size: 2rem;
+        }
+
+        .upload-placeholder p {
+            font-size: 0.95rem;
+        }
+
+        .upload-tips {
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+
+        .upload-tips p {
+            font-size: 0.85rem;
+        }
+
+        .upload-tips ul {
+            font-size: 0.8rem;
+        }
+
+        .result-container {
+            min-height: 280px;
+            border-radius: 12px;
+        }
+
+        .result-placeholder {
+            padding: 25px 15px;
+        }
+
+        .result-placeholder i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .result-placeholder h3 {
+            font-size: 1.1rem;
+        }
+
+        .result-placeholder p {
+            font-size: 0.85rem;
+        }
+
+        .wrap-selection {
+            margin-bottom: 20px;
+        }
+
+        .wrap-options {
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+        }
+
+        .wrap-option {
+            padding: 8px;
+        }
+
+        .wrap-swatch {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 6px;
+        }
+
+        .wrap-name {
+            font-size: 0.7rem;
+        }
+
+        .wrap-finish {
+            font-size: 0.6rem;
+        }
+
+        .how-it-works-section {
+            padding: 50px 0;
+        }
+
+        .how-it-works-section h2 {
+            font-size: 1.5rem;
+        }
+
+        .step-card {
+            padding: 25px 15px;
+        }
+
+        .disclaimer-section {
+            padding: 30px 0 50px;
+        }
+
+        .disclaimer-box {
+            padding: 15px;
+        }
+
+        .disclaimer-box i {
+            font-size: 1.2rem;
+        }
+
+        .disclaimer-box p {
+            font-size: 0.8rem;
+        }
+    }
+
     @media (max-width: 640px) {
         .wrap-categories {
             overflow-x: auto;
             flex-wrap: nowrap;
             padding-bottom: 10px;
+            margin: 0 -20px 15px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .wrap-categories::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .wrap-categories::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 2px;
         }
 
         .category-tab {
             flex-shrink: 0;
+            padding: 6px 12px;
+            font-size: 0.8rem;
         }
 
         .steps-grid {
             grid-template-columns: 1fr;
+            gap: 20px;
         }
 
         .result-actions {
             flex-direction: column;
+            gap: 10px;
+        }
+
+        .visualizer-actions {
+            margin-top: 15px;
+        }
+
+        .usage-info {
+            font-size: 0.8rem;
+        }
+
+        .modal-content {
+            padding: 30px 20px;
+            margin: 20px;
+            width: calc(100% - 40px);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .modal-icon i {
+            font-size: 1.5rem;
+        }
+
+        .modal-content h3 {
+            font-size: 1.1rem;
+        }
+
+        .modal-content p {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .wrap-options {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .wrap-swatch {
+            width: 35px;
+            height: 35px;
         }
     }
     </style>
