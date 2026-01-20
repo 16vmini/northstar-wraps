@@ -7,8 +7,9 @@
 .env.local
 .env.*.local
 
-# Email config (contains API keys)
+# Config files (contain API keys)
 includes/email-config.php
+includes/api-config.php
 
 # IDE
 .idea/

@@ -1,0 +1,324 @@
+{
+    "categories": [
+        {
+            "id": "solid",
+            "name": "Solid Colours",
+            "wraps": [
+                {
+                    "id": "gloss-black",
+                    "name": "Gloss Black",
+                    "hex": "#0a0a0a",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "satin-black",
+                    "name": "Satin Black",
+                    "hex": "#1a1a1a",
+                    "finish": "Satin",
+                    "image": null
+                },
+                {
+                    "id": "matte-black",
+                    "name": "Matte Black",
+                    "hex": "#2a2a2a",
+                    "finish": "Matte",
+                    "image": null
+                },
+                {
+                    "id": "gloss-white",
+                    "name": "Gloss White",
+                    "hex": "#ffffff",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "satin-white",
+                    "name": "Satin White",
+                    "hex": "#f5f5f5",
+                    "finish": "Satin",
+                    "image": null
+                }
+            ]
+        },
+        {
+            "id": "grey",
+            "name": "Greys",
+            "wraps": [
+                {
+                    "id": "nardo-grey",
+                    "name": "Nardo Grey",
+                    "hex": "#8f8f8f",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "battleship-grey",
+                    "name": "Battleship Grey",
+                    "hex": "#5c5c5c",
+                    "finish": "Satin",
+                    "image": null
+                },
+                {
+                    "id": "cement-grey",
+                    "name": "Cement Grey",
+                    "hex": "#a3a3a3",
+                    "finish": "Matte",
+                    "image": null
+                },
+                {
+                    "id": "gunmetal",
+                    "name": "Gunmetal",
+                    "hex": "#4a4a4a",
+                    "finish": "Gloss",
+                    "image": null
+                }
+            ]
+        },
+        {
+            "id": "blue",
+            "name": "Blues",
+            "wraps": [
+                {
+                    "id": "miami-blue",
+                    "name": "Miami Blue",
+                    "hex": "#00b4d8",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "midnight-blue",
+                    "name": "Midnight Blue",
+                    "hex": "#1a1a4e",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "satin-ocean-blue",
+                    "name": "Satin Ocean Blue",
+                    "hex": "#2563eb",
+                    "finish": "Satin",
+                    "image": null
+                },
+                {
+                    "id": "matte-navy",
+                    "name": "Matte Navy",
+                    "hex": "#1e3a5f",
+                    "finish": "Matte",
+                    "image": null
+                }
+            ]
+        },
+        {
+            "id": "red",
+            "name": "Reds",
+            "wraps": [
+                {
+                    "id": "gloss-red",
+                    "name": "Gloss Red",
+                    "hex": "#dc2626",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "satin-red",
+                    "name": "Satin Red",
+                    "hex": "#b91c1c",
+                    "finish": "Satin",
+                    "image": null
+                },
+                {
+                    "id": "matte-cherry",
+                    "name": "Matte Cherry",
+                    "hex": "#7f1d1d",
+                    "finish": "Matte",
+                    "image": null
+                },
+                {
+                    "id": "burgundy",
+                    "name": "Burgundy",
+                    "hex": "#4a1c1c",
+                    "finish": "Gloss",
+                    "image": null
+                }
+            ]
+        },
+        {
+            "id": "green",
+            "name": "Greens",
+            "wraps": [
+                {
+                    "id": "british-racing-green",
+                    "name": "British Racing Green",
+                    "hex": "#004225",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "matte-army-green",
+                    "name": "Matte Army Green",
+                    "hex": "#4b5320",
+                    "finish": "Matte",
+                    "image": null
+                },
+                {
+                    "id": "satin-olive",
+                    "name": "Satin Olive",
+                    "hex": "#6b7b3c",
+                    "finish": "Satin",
+                    "image": null
+                },
+                {
+                    "id": "lime-green",
+                    "name": "Lime Green",
+                    "hex": "#7cb518",
+                    "finish": "Gloss",
+                    "image": null
+                }
+            ]
+        },
+        {
+            "id": "purple",
+            "name": "Purples",
+            "wraps": [
+                {
+                    "id": "midnight-purple",
+                    "name": "Midnight Purple",
+                    "hex": "#2d1b4e",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "matte-purple",
+                    "name": "Matte Purple",
+                    "hex": "#5b21b6",
+                    "finish": "Matte",
+                    "image": null
+                },
+                {
+                    "id": "satin-plum",
+                    "name": "Satin Plum",
+                    "hex": "#4a1259",
+                    "finish": "Satin",
+                    "image": null
+                }
+            ]
+        },
+        {
+            "id": "orange-yellow",
+            "name": "Orange & Yellow",
+            "wraps": [
+                {
+                    "id": "gloss-orange",
+                    "name": "Gloss Orange",
+                    "hex": "#ea580c",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "matte-orange",
+                    "name": "Matte Orange",
+                    "hex": "#c2410c",
+                    "finish": "Matte",
+                    "image": null
+                },
+                {
+                    "id": "gloss-yellow",
+                    "name": "Gloss Yellow",
+                    "hex": "#eab308",
+                    "finish": "Gloss",
+                    "image": null
+                },
+                {
+                    "id": "taxi-yellow",
+                    "name": "Taxi Yellow",
+                    "hex": "#fbbf24",
+                    "finish": "Gloss",
+                    "image": null
+                }
+            ]
+        },
+        {
+            "id": "metallic",
+            "name": "Metallic",
+            "wraps": [
+                {
+                    "id": "chrome-silver",
+                    "name": "Chrome Silver",
+                    "hex": "#c0c0c0",
+                    "finish": "Chrome",
+                    "image": "chrome-silver.png"
+                },
+                {
+                    "id": "chrome-gold",
+                    "name": "Chrome Gold",
+                    "hex": "#d4af37",
+                    "finish": "Chrome",
+                    "image": "chrome-gold.png"
+                },
+                {
+                    "id": "chrome-rose-gold",
+                    "name": "Chrome Rose Gold",
+                    "hex": "#b76e79",
+                    "finish": "Chrome",
+                    "image": "chrome-rose-gold.png"
+                },
+                {
+                    "id": "brushed-aluminium",
+                    "name": "Brushed Aluminium",
+                    "hex": "#a8a8a8",
+                    "finish": "Brushed",
+                    "image": "brushed-aluminium.png"
+                },
+                {
+                    "id": "brushed-black",
+                    "name": "Brushed Black",
+                    "hex": "#3a3a3a",
+                    "finish": "Brushed",
+                    "image": "brushed-black.png"
+                }
+            ]
+        },
+        {
+            "id": "texture",
+            "name": "Textures & Patterns",
+            "wraps": [
+                {
+                    "id": "carbon-fibre",
+                    "name": "Carbon Fibre",
+                    "hex": "#1a1a1a",
+                    "finish": "Texture",
+                    "image": "carbon-fibre.png"
+                },
+                {
+                    "id": "carbon-fibre-gloss",
+                    "name": "Carbon Fibre Gloss",
+                    "hex": "#2a2a2a",
+                    "finish": "Texture",
+                    "image": "carbon-fibre-gloss.png"
+                },
+                {
+                    "id": "forged-carbon",
+                    "name": "Forged Carbon",
+                    "hex": "#1a1a1a",
+                    "finish": "Texture",
+                    "image": "forged-carbon.png"
+                },
+                {
+                    "id": "camo-green",
+                    "name": "Camo Green",
+                    "hex": "#4b5320",
+                    "finish": "Pattern",
+                    "image": "camo-green.png"
+                },
+                {
+                    "id": "camo-urban",
+                    "name": "Camo Urban",
+                    "hex": "#5c5c5c",
+                    "finish": "Pattern",
+                    "image": "camo-urban.png"
+                }
+            ]
+        }
+    ]
+}
