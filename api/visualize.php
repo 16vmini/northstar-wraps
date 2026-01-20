@@ -256,7 +256,6 @@ $image_uri = $car_image;
 $ch = curl_init();
 
 $payload = [
-    'version' => 'flux-kontext-pro',  // Use the model identifier
     'input' => [
         'prompt' => $prompt,
         'input_image' => $image_uri,
