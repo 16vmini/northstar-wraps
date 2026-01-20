@@ -6,7 +6,7 @@
 
 // Main site version (CSS, main.js, general changes)
 if (!defined('SITE_VERSION')) {
-    define('SITE_VERSION', '1.0.2');
+    define('SITE_VERSION', '1.0.3');
 }
 
 // Calculator version (calculator.php, calculator.js, pricing-config.json)

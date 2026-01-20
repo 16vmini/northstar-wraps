@@ -279,6 +279,59 @@ require_once 'includes/header.php';
         </div>
     </section>
 
+    <!-- Wrapinator Feature Section -->
+    <section class="wrapinator-feature">
+        <div class="container">
+            <div class="wrapinator-content" data-aos="fade-up">
+                <div class="wrapinator-text">
+                    <span class="section-tag">Try It Free</span>
+                    <h2>Visualize Your Dream Wrap</h2>
+                    <p>Not sure what colour to choose? Our AI-powered <strong>Wrapinator</strong> lets you upload a photo of your car and preview different wrap colours instantly. See the result before you commit!</p>
+                    <div class="wrapinator-features">
+                        <div class="wf-item">
+                            <i class="fas fa-camera"></i>
+                            <span>Upload your car photo</span>
+                        </div>
+                        <div class="wf-item">
+                            <i class="fas fa-palette"></i>
+                            <span>Choose from 40+ colours</span>
+                        </div>
+                        <div class="wf-item">
+                            <i class="fas fa-magic"></i>
+                            <span>AI generates preview</span>
+                        </div>
+                        <div class="wf-item">
+                            <i class="fas fa-share-alt"></i>
+                            <span>Share with friends</span>
+                        </div>
+                    </div>
+                    <div class="wrapinator-cta">
+                        <a href="/visualizer" class="btn btn-primary btn-lg">
+                            <i class="fas fa-magic"></i> Try Wrapinator Free
+                        </a>
+                        <a href="/wrapinator-gallery" class="btn btn-outline btn-lg">
+                            <i class="fas fa-images"></i> View Gallery
+                        </a>
+                    </div>
+                </div>
+                <div class="wrapinator-visual">
+                    <div class="wrapinator-mockup">
+                        <div class="mockup-screen">
+                            <i class="fas fa-car-side"></i>
+                            <div class="mockup-colors">
+                                <span style="background: #dc2626;"></span>
+                                <span style="background: #2563eb;"></span>
+                                <span style="background: #7cb518;"></span>
+                                <span style="background: #1a1a1a;"></span>
+                            </div>
+                            <span class="mockup-label">Wrapinator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Testimonials Section -->
     <section class="testimonials">
         <div class="container">

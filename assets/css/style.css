@@ -3112,6 +3112,216 @@ section {
     }
 }
 
+/* ==================== WRAPINATOR FEATURE SECTION ==================== */
+.wrapinator-feature {
+    padding: var(--section-padding) 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    color: #fff;
+    overflow: hidden;
+}
+
+.wrapinator-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.wrapinator-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.wrapinator-text p {
+    color: #9ca3af;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.wrapinator-text p strong {
+    color: var(--primary);
+}
+
+.wrapinator-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.wf-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.wf-item i {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.wf-item span {
+    font-size: 0.9rem;
+    color: #d1d5db;
+}
+
+.wrapinator-cta {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.wrapinator-visual {
+    display: flex;
+    justify-content: center;
+}
+
+.wrapinator-mockup {
+    position: relative;
+    width: 320px;
+    height: 320px;
+}
+
+.mockup-screen {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%);
+    border-radius: 20px;
+    border: 3px solid #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.mockup-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: #333;
+    border-radius: 17px 17px 0 0;
+}
+
+.mockup-screen i {
+    font-size: 5rem;
+    color: #444;
+    margin-top: 30px;
+}
+
+.mockup-colors {
+    display: flex;
+    gap: 10px;
+}
+
+.mockup-colors span {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid #444;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.mockup-colors span:hover {
+    transform: scale(1.15);
+}
+
+.mockup-label {
+    position: absolute;
+    bottom: 15px;
+    font-size: 0.8rem;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+@media (max-width: 1024px) {
+    .wrapinator-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .wrapinator-text {
+        text-align: center;
+    }
+
+    .wrapinator-text h2 {
+        font-size: 2rem;
+    }
+
+    .wrapinator-cta {
+        justify-content: center;
+    }
+
+    .wrapinator-visual {
+        order: -1;
+    }
+
+    .wrapinator-mockup {
+        width: 260px;
+        height: 260px;
+    }
+
+    .mockup-screen i {
+        font-size: 4rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .wrapinator-feature {
+        padding: 60px 0;
+    }
+
+    .wrapinator-text h2 {
+        font-size: 1.6rem;
+    }
+
+    .wrapinator-text p {
+        font-size: 1rem;
+    }
+
+    .wrapinator-features {
+        grid-template-columns: 1fr;
+    }
+
+    .wrapinator-cta {
+        flex-direction: column;
+    }
+
+    .wrapinator-cta .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .wrapinator-mockup {
+        width: 220px;
+        height: 220px;
+    }
+
+    .mockup-screen i {
+        font-size: 3rem;
+    }
+
+    .mockup-colors span {
+        width: 28px;
+        height: 28px;
+    }
+}
+
 /* ==================== ANIMATIONS ==================== */
 [data-aos] {
     pointer-events: auto !important;
