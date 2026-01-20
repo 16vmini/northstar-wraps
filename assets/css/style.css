@@ -2727,6 +2727,16 @@ section {
 }
 
 @media (max-width: 480px) {
+    .hero-title-line {
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+        word-break: break-word;
+    }
+
+    .hero-title-accent {
+        font-size: clamp(1.5rem, 7vw, 2rem);
+        word-break: break-word;
+    }
+
     .hero-cta {
         flex-direction: column;
     }
