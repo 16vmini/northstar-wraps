@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Smooth Scroll for anchor links
     initSmoothScroll();
+
+    // Price Calculator
+    initPriceCalculator();
 });
 
 /**
@@ -437,3 +440,233 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+/**
+ * Price Calculator
+ */
+function initPriceCalculator() {
+    // Check if we're on the calculator page
+    if (!window.pricingConfig) return;
+
+    const config = window.pricingConfig;
+    const currency = config.currency;
+
+    // Get all input elements
+    const vehicleInputs = document.querySelectorAll('input[name="vehicleType"]');
+    const coverageInputs = document.querySelectorAll('input[name="coverageType"]');
+    const finishInputs = document.querySelectorAll('input[name="finishType"]');
+    const brandInputs = document.querySelectorAll('input[name="brandTier"]');
+    const conditionInputs = document.querySelectorAll('input[name="condition"]');
+    const doorShutsInput = document.querySelector('input[name="doorShuts"]');
+    const wrapRemovalInput = document.querySelector('input[name="wrapRemoval"]');
+    const addonInputs = document.querySelectorAll('input[name="addons[]"]');
+
+    // Summary elements
+    const summaryVehicle = document.querySelector('#summary-vehicle .calc-summary-value');
+    const summaryCoverage = document.querySelector('#summary-coverage .calc-summary-value');
+    const summaryFinish = document.querySelector('#summary-finish .calc-summary-value');
+    const summaryBrand = document.querySelector('#summary-brand .calc-summary-value');
+    const summaryCondition = document.querySelector('#summary-condition .calc-summary-value');
+    const summaryExtras = document.querySelector('#summary-extras .calc-summary-value');
+
+    // Price elements
+    const priceBreakdown = document.getElementById('price-breakdown');
+    const breakdownBase = document.getElementById('breakdown-base');
+    const breakdownExtrasRow = document.getElementById('breakdown-extras-row');
+    const breakdownExtras = document.getElementById('breakdown-extras');
+    const totalPrice = document.getElementById('total-price');
+
+    // Current selections
+    let selections = {
+        vehicle: null,
+        coverage: null,
+        finish: null,
+        brand: null,
+        condition: null,
+        doorShuts: false,
+        wrapRemoval: false,
+        addons: []
+    };
+
+    // Calculate and update price
+    function calculatePrice() {
+        // Check if we have minimum required selections
+        if (!selections.coverage) {
+            totalPrice.textContent = currency + '0';
+            priceBreakdown.style.display = 'none';
+            return;
+        }
+
+        // Get multipliers
+        const vehicleMultiplier = selections.vehicle?.multiplier || 1;
+        const finishMultiplier = selections.finish?.multiplier || 1;
+        const brandMultiplier = selections.brand?.multiplier || 1;
+        const conditionMultiplier = selections.condition?.multiplier || 1;
+
+        // Calculate base price with multipliers
+        let basePrice = selections.coverage.basePrice;
+        basePrice *= vehicleMultiplier;
+        basePrice *= finishMultiplier;
+        basePrice *= brandMultiplier;
+        basePrice *= conditionMultiplier;
+
+        // Calculate extras
+        let extrasPrice = 0;
+        if (selections.doorShuts) {
+            extrasPrice += config.doorShuts.price;
+        }
+        if (selections.wrapRemoval) {
+            extrasPrice += config.existingWrapRemoval.price;
+        }
+        selections.addons.forEach(addon => {
+            extrasPrice += addon.price;
+        });
+
+        // Total
+        const total = Math.round(basePrice + extrasPrice);
+
+        // Update display
+        priceBreakdown.style.display = 'block';
+        breakdownBase.textContent = currency + numberWithCommas(Math.round(basePrice));
+
+        if (extrasPrice > 0) {
+            breakdownExtrasRow.style.display = 'flex';
+            breakdownExtras.textContent = currency + numberWithCommas(extrasPrice);
+        } else {
+            breakdownExtrasRow.style.display = 'none';
+        }
+
+        totalPrice.textContent = currency + numberWithCommas(total);
+
+        // Add animation
+        totalPrice.classList.add('price-updated');
+        setTimeout(() => totalPrice.classList.remove('price-updated'), 300);
+    }
+
+    // Update summary display
+    function updateSummary() {
+        summaryVehicle.textContent = selections.vehicle?.name || '-';
+        summaryCoverage.textContent = selections.coverage?.name || '-';
+        summaryFinish.textContent = selections.finish?.name || '-';
+        summaryBrand.textContent = selections.brand?.name || '-';
+        summaryCondition.textContent = selections.condition?.name || '-';
+
+        // Build extras list
+        let extras = [];
+        if (selections.doorShuts) extras.push('Door Shuts');
+        if (selections.wrapRemoval) extras.push('Wrap Removal');
+        selections.addons.forEach(addon => extras.push(addon.name));
+        summaryExtras.textContent = extras.length > 0 ? extras.join(', ') : '-';
+    }
+
+    // Helper function
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Find item in config by id
+    function findInConfig(array, id) {
+        return array.find(item => item.id === id);
+    }
+
+    // Event listeners for radio buttons
+    vehicleInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            selections.vehicle = findInConfig(config.vehicleTypes, this.value);
+            updateSummary();
+            calculatePrice();
+            highlightSelected(this);
+        });
+    });
+
+    coverageInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            selections.coverage = findInConfig(config.coverageTypes, this.value);
+            updateSummary();
+            calculatePrice();
+            highlightSelected(this);
+        });
+    });
+
+    finishInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            selections.finish = findInConfig(config.finishTypes, this.value);
+            updateSummary();
+            calculatePrice();
+            highlightSelected(this);
+        });
+    });
+
+    brandInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            selections.brand = findInConfig(config.brandTiers, this.value);
+            updateSummary();
+            calculatePrice();
+            highlightSelected(this);
+        });
+    });
+
+    conditionInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            selections.condition = findInConfig(config.conditions, this.value);
+            updateSummary();
+            calculatePrice();
+            highlightSelected(this);
+        });
+    });
+
+    // Event listeners for checkboxes
+    if (doorShutsInput) {
+        doorShutsInput.addEventListener('change', function() {
+            selections.doorShuts = this.checked;
+            updateSummary();
+            calculatePrice();
+        });
+    }
+
+    if (wrapRemovalInput) {
+        wrapRemovalInput.addEventListener('change', function() {
+            selections.wrapRemoval = this.checked;
+            updateSummary();
+            calculatePrice();
+        });
+    }
+
+    addonInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.checked) {
+                const addon = findInConfig(config.addOns, this.value);
+                if (addon) selections.addons.push(addon);
+            } else {
+                selections.addons = selections.addons.filter(a => a.id !== this.value);
+            }
+            updateSummary();
+            calculatePrice();
+        });
+    });
+
+    // Highlight selected card
+    function highlightSelected(input) {
+        const card = input.closest('.calc-option-card');
+        if (!card) return;
+
+        // Remove selected from siblings
+        const parent = card.parentElement;
+        parent.querySelectorAll('.calc-option-card').forEach(c => {
+            c.classList.remove('selected');
+        });
+
+        // Add selected to current
+        card.classList.add('selected');
+    }
+
+    // Add checkbox highlight handling
+    document.querySelectorAll('.calc-checkbox-card input').forEach(input => {
+        input.addEventListener('change', function() {
+            const card = this.closest('.calc-checkbox-card');
+            if (card) {
+                card.classList.toggle('selected', this.checked);
+            }
+        });
+    });
+}

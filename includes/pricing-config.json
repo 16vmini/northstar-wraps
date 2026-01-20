@@ -1,0 +1,79 @@
+{
+  "currency": "£",
+  "disclaimer": "This calculator provides an estimate only. Final pricing may vary based on exact vehicle model, current condition, material availability, and custom requirements. Contact us for an accurate quote.",
+
+  "vehicleTypes": [
+    { "id": "small", "name": "Small Car", "examples": "Smart Car, Fiat 500, Mini Cooper", "multiplier": 0.7 },
+    { "id": "compact", "name": "Compact Car", "examples": "VW Golf, Ford Fiesta, Audi A3", "multiplier": 0.85 },
+    { "id": "saloon", "name": "Saloon", "examples": "BMW 3 Series, Mercedes C-Class, Audi A4", "multiplier": 1.0 },
+    { "id": "estate", "name": "Estate", "examples": "BMW 3 Touring, Audi A4 Avant", "multiplier": 1.15 },
+    { "id": "large-saloon", "name": "Large Saloon", "examples": "BMW 5 Series, Mercedes E-Class, Audi A6", "multiplier": 1.2 },
+    { "id": "suv-small", "name": "Small SUV", "examples": "Nissan Juke, VW T-Roc, Audi Q2", "multiplier": 1.1 },
+    { "id": "suv-medium", "name": "Medium SUV", "examples": "Range Rover Sport, BMW X3, Audi Q5", "multiplier": 1.3 },
+    { "id": "suv-large", "name": "Large SUV", "examples": "Range Rover, BMW X5, Mercedes GLE", "multiplier": 1.5 },
+    { "id": "sports", "name": "Sports Car", "examples": "Porsche 911, Audi TT, BMW Z4", "multiplier": 1.1 },
+    { "id": "supercar", "name": "Supercar", "examples": "Ferrari, Lamborghini, McLaren", "multiplier": 1.8 },
+    { "id": "van-small", "name": "Small Van", "examples": "Ford Transit Connect, VW Caddy", "multiplier": 1.2 },
+    { "id": "van-large", "name": "Large Van", "examples": "Ford Transit, Mercedes Sprinter", "multiplier": 1.8 },
+    { "id": "pickup", "name": "Pickup Truck", "examples": "Ford Ranger, Toyota Hilux", "multiplier": 1.4 }
+  ],
+
+  "coverageTypes": [
+    { "id": "full", "name": "Full Wrap", "description": "All exterior panels", "basePrice": 2500 },
+    { "id": "three-quarter", "name": "3/4 Wrap", "description": "Full minus roof or bonnet", "basePrice": 2000 },
+    { "id": "half", "name": "Half Wrap", "description": "Front or rear half only", "basePrice": 1500 },
+    { "id": "roof", "name": "Roof Only", "description": "Roof panel and pillars", "basePrice": 350 },
+    { "id": "bonnet", "name": "Bonnet Only", "description": "Bonnet/hood panel", "basePrice": 250 },
+    { "id": "roof-bonnet", "name": "Roof + Bonnet", "description": "Popular combination", "basePrice": 550 },
+    { "id": "mirrors", "name": "Mirrors Only", "description": "Wing mirrors", "basePrice": 80 },
+    { "id": "chrome-delete", "name": "Chrome Delete", "description": "Black out chrome trim", "basePrice": 400 }
+  ],
+
+  "finishTypes": [
+    { "id": "gloss", "name": "Gloss", "description": "High shine, like paint", "multiplier": 1.0 },
+    { "id": "matte", "name": "Matte", "description": "Flat, non-reflective", "multiplier": 1.05 },
+    { "id": "satin", "name": "Satin", "description": "Between gloss and matte", "multiplier": 1.05 },
+    { "id": "metallic", "name": "Metallic", "description": "Contains metal flakes", "multiplier": 1.1 },
+    { "id": "gloss-metallic", "name": "Gloss Metallic", "description": "Shiny with flakes", "multiplier": 1.1 },
+    { "id": "pearl", "name": "Pearl", "description": "Subtle colour shifting", "multiplier": 1.15 },
+    { "id": "carbon-fibre", "name": "Carbon Fibre", "description": "Textured weave pattern", "multiplier": 1.15 },
+    { "id": "brushed-metal", "name": "Brushed Metal", "description": "Directional metallic texture", "multiplier": 1.2 },
+    { "id": "colour-shift", "name": "Colour Shift", "description": "Changes with viewing angle", "multiplier": 1.6 },
+    { "id": "chrome", "name": "Chrome", "description": "Mirror finish", "multiplier": 1.8 }
+  ],
+
+  "brandTiers": [
+    { "id": "economy", "name": "Economy", "description": "Budget films, 3-4 year lifespan", "multiplier": 0.85 },
+    { "id": "standard", "name": "Standard", "description": "Avery, Oracal - 5-6 year lifespan", "multiplier": 1.0 },
+    { "id": "premium", "name": "Premium", "description": "3M 2080, Avery Supreme - 7+ years", "multiplier": 1.15 },
+    { "id": "ultra", "name": "Ultra Premium", "description": "KPMF, Inozetek, Hexis - best quality", "multiplier": 1.25 }
+  ],
+
+  "doorShuts": {
+    "label": "Include Door Shuts",
+    "description": "Wrap inner door edges for OEM finish",
+    "price": 400
+  },
+
+  "addOns": [
+    { "id": "badge-removal", "name": "Badge Removal", "description": "De-badge and wrap smooth", "price": 75 },
+    { "id": "badge-colour", "name": "Badge Colour Change", "description": "Wrap or paint badges", "price": 100 },
+    { "id": "window-tints", "name": "Window Tints", "description": "Professional tint installation", "price": 250 },
+    { "id": "headlight-tint", "name": "Headlight/Taillight Tint", "description": "Smoked lights", "price": 150 },
+    { "id": "ceramic-coating", "name": "Ceramic Coating", "description": "Protect the wrap finish", "price": 350 },
+    { "id": "paint-correction", "name": "Paint Correction", "description": "Pre-wrap surface prep", "price": 250 }
+  ],
+
+  "conditions": [
+    { "id": "excellent", "name": "Excellent", "description": "New or like-new paint", "multiplier": 1.0 },
+    { "id": "good", "name": "Good", "description": "Minor imperfections", "multiplier": 1.05 },
+    { "id": "fair", "name": "Fair", "description": "Some chips or scratches", "multiplier": 1.1 },
+    { "id": "poor", "name": "Poor", "description": "Requires inspection", "multiplier": 1.2 }
+  ],
+
+  "existingWrapRemoval": {
+    "label": "Existing Wrap Removal",
+    "description": "Remove current wrap before new installation",
+    "price": 350
+  }
+}
