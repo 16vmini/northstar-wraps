@@ -451,10 +451,11 @@ function initPriceCalculator() {
         return;
     }
 
-    console.log('Calculator: Initializing with config', window.pricingConfig);
+    console.log('Calculator: Initializing...');
+    console.log('Calculator: Config loaded:', window.pricingConfig);
 
     const config = window.pricingConfig;
-    const currency = config.currency;
+    const currency = config.currency || '£';
 
     // Get dropdown elements
     const vehicleSelect = document.getElementById('vehicleType');
@@ -463,10 +464,24 @@ function initPriceCalculator() {
     const brandSelect = document.getElementById('brandTier');
     const conditionSelect = document.getElementById('condition');
 
+    console.log('Calculator: Found selects:', {
+        vehicle: !!vehicleSelect,
+        coverage: !!coverageSelect,
+        finish: !!finishSelect,
+        brand: !!brandSelect,
+        condition: !!conditionSelect
+    });
+
     // Get checkbox elements
     const doorShutsCheckbox = document.getElementById('doorShuts');
     const wrapRemovalCheckbox = document.getElementById('wrapRemoval');
     const addonCheckboxes = document.querySelectorAll('.addon-checkbox');
+
+    console.log('Calculator: Found checkboxes:', {
+        doorShuts: !!doorShutsCheckbox,
+        wrapRemoval: !!wrapRemovalCheckbox,
+        addons: addonCheckboxes.length
+    });
 
     // Get price display elements
     const totalPriceEl = document.getElementById('totalPrice');
@@ -625,19 +640,44 @@ function initPriceCalculator() {
     }
 
     // Add event listeners to all inputs
-    [vehicleSelect, coverageSelect, finishSelect, brandSelect, conditionSelect].forEach(select => {
+    console.log('Calculator: Attaching event listeners...');
+
+    const selects = [vehicleSelect, coverageSelect, finishSelect, brandSelect, conditionSelect];
+    selects.forEach((select, index) => {
         if (select) {
-            select.addEventListener('change', calculate);
+            select.addEventListener('change', function() {
+                console.log('Calculator: Select changed:', select.id, '=', select.value);
+                calculate();
+            });
+            console.log('Calculator: Attached listener to', select.id);
         }
     });
 
-    if (doorShutsCheckbox) doorShutsCheckbox.addEventListener('change', calculate);
-    if (wrapRemovalCheckbox) wrapRemovalCheckbox.addEventListener('change', calculate);
+    if (doorShutsCheckbox) {
+        doorShutsCheckbox.addEventListener('change', function() {
+            console.log('Calculator: Door shuts toggled:', this.checked);
+            calculate();
+        });
+    }
+
+    if (wrapRemovalCheckbox) {
+        wrapRemovalCheckbox.addEventListener('change', function() {
+            console.log('Calculator: Wrap removal toggled:', this.checked);
+            calculate();
+        });
+    }
 
     addonCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', calculate);
+        checkbox.addEventListener('change', function() {
+            console.log('Calculator: Addon toggled:', this.dataset.addonId, '=', this.checked);
+            calculate();
+        });
     });
+
+    console.log('Calculator: All listeners attached, running initial calculation...');
 
     // Initial calculation
     calculate();
+
+    console.log('Calculator: Initialization complete!');
 }
