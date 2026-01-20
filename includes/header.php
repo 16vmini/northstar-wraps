@@ -93,7 +93,7 @@
                     <li><a href="/" class="<?php echo isCurrentPage('home') ? 'active' : ''; ?>">Home</a></li>
                     <li><a href="/pages/services.php" class="<?php echo isCurrentPage('services') ? 'active' : ''; ?>">Services</a></li>
                     <li><a href="/pages/gallery.php" class="<?php echo isCurrentPage('gallery') ? 'active' : ''; ?>">Gallery</a></li>
-                    <li><a href="/pages/visualizer.php" class="<?php echo isCurrentPage('visualizer') ? 'active' : ''; ?>">Visualizer</a></li>
+                    <li><a href="/pages/visualizer.php" class="<?php echo isCurrentPage('visualizer') ? 'active' : ''; ?>">Wrapinator</a></li>
                     <li><a href="/pages/calculator.php" class="<?php echo isCurrentPage('calculator') ? 'active' : ''; ?>">Price Calculator</a></li>
                     <li><a href="/pages/about.php" class="<?php echo isCurrentPage('about') ? 'active' : ''; ?>">About Us</a></li>
                     <li><a href="/pages/contact.php" class="<?php echo isCurrentPage('contact') ? 'active' : ''; ?>">Contact</a></li>
