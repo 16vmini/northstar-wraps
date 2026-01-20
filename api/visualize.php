@@ -478,6 +478,34 @@ $generated_image = base64_encode($image_data);
 // Add watermark
 $generated_image = addWatermark($generated_image);
 
+// Save the image to uploads folder
+$share_id = bin2hex(random_bytes(8)); // 16 char unique ID
+$upload_dir = dirname(__DIR__) . '/uploads/visualizer';
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0755, true);
+}
+
+// Save the image
+$image_path = $upload_dir . '/' . $share_id . '.png';
+file_put_contents($image_path, base64_decode($generated_image));
+
+// Save metadata
+$metadata = [
+    'id' => $share_id,
+    'wrap' => $selected_wrap ? $selected_wrap['name'] : 'Custom',
+    'wrap_id' => $wrap,
+    'finish' => $selected_wrap ? $selected_wrap['finish'] : 'Custom',
+    'created' => date('Y-m-d H:i:s'),
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'email' => $_SESSION['visualizer_email'] ?? null
+];
+file_put_contents($upload_dir . '/' . $share_id . '.json', json_encode($metadata, JSON_PRETTY_PRINT));
+
+// Log to gallery index
+$gallery_log = $upload_dir . '/gallery.log';
+$log_entry = date('Y-m-d H:i:s') . " | {$share_id} | " . ($selected_wrap ? $selected_wrap['name'] : 'Custom') . "\n";
+file_put_contents($gallery_log, $log_entry, FILE_APPEND | LOCK_EX);
+
 // Increment usage counter
 $_SESSION['visualizer_count']++;
 
@@ -486,11 +514,12 @@ $remaining = $_SESSION['visualizer_email']
     ? $max_limit - $_SESSION['visualizer_count']
     : $free_limit - $_SESSION['visualizer_count'];
 
-// Return the result
+// Return the result with share ID
 echo json_encode([
     'success' => true,
     'image' => 'data:image/png;base64,' . $generated_image,
     'wrap' => $selected_wrap ? $selected_wrap['name'] : 'Custom',
+    'share_id' => $share_id,
     'used' => $_SESSION['visualizer_count'],
     'remaining' => max(0, $remaining),
     'needs_email' => $remaining <= 0 && !$_SESSION['visualizer_email']

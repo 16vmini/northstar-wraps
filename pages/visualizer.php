@@ -163,9 +163,39 @@ require_once '../includes/header.php';
                         <button type="button" class="btn btn-outline" id="download-btn">
                             <i class="fas fa-download"></i> Download
                         </button>
+                        <button type="button" class="btn btn-outline" id="share-btn">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
                         <a href="/pages/contact.php?service=full-wrap" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i> Get a Quote
                         </a>
+                    </div>
+
+                    <!-- Share Modal -->
+                    <div class="share-modal" id="share-modal" style="display: none;">
+                        <div class="modal-overlay share-modal-overlay"></div>
+                        <div class="modal-content share-modal-content">
+                            <button type="button" class="modal-close" id="share-modal-close">&times;</button>
+                            <h3>Share Your Preview</h3>
+                            <p>Show off your wrapped car on social media!</p>
+                            <div class="share-buttons-grid">
+                                <a href="#" id="share-facebook" target="_blank" rel="noopener" class="share-btn-modal share-facebook">
+                                    <i class="fab fa-facebook-f"></i> Facebook
+                                </a>
+                                <a href="#" id="share-twitter" target="_blank" rel="noopener" class="share-btn-modal share-twitter">
+                                    <i class="fab fa-x-twitter"></i> X
+                                </a>
+                                <a href="#" id="share-whatsapp" target="_blank" rel="noopener" class="share-btn-modal share-whatsapp">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                <button type="button" class="share-btn-modal share-copy-modal" id="copy-link-btn">
+                                    <i class="fas fa-link"></i> Copy Link
+                                </button>
+                            </div>
+                            <div class="share-link-input">
+                                <input type="text" id="share-link-input" readonly>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -767,6 +797,95 @@ require_once '../includes/header.php';
         margin: 0;
     }
 
+    /* Share Modal */
+    .share-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .share-modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    .share-modal-content {
+        position: relative;
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+    }
+
+    .share-modal-content h3 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .share-modal-content > p {
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .share-buttons-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .share-btn-modal {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+    }
+
+    .share-btn-modal.share-facebook { background: #1877f2; }
+    .share-btn-modal.share-facebook:hover { background: #0d65d9; }
+    .share-btn-modal.share-twitter { background: #000; }
+    .share-btn-modal.share-twitter:hover { background: #333; }
+    .share-btn-modal.share-whatsapp { background: #25d366; }
+    .share-btn-modal.share-whatsapp:hover { background: #1da851; }
+    .share-btn-modal.share-copy-modal { background: #6b7280; }
+    .share-btn-modal.share-copy-modal:hover { background: #4b5563; }
+
+    .share-link-input {
+        display: flex;
+        gap: 10px;
+    }
+
+    .share-link-input input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        background: #f9fafb;
+        text-align: center;
+    }
+
     /* Disclaimer */
     .disclaimer-section {
         padding: 40px 0 80px;
@@ -1061,11 +1180,21 @@ require_once '../includes/header.php';
         const emailInput = document.getElementById('email-input');
         const modalClose = document.getElementById('modal-close');
 
+        const shareBtn = document.getElementById('share-btn');
+        const shareModal = document.getElementById('share-modal');
+        const shareModalClose = document.getElementById('share-modal-close');
+        const shareFacebook = document.getElementById('share-facebook');
+        const shareTwitter = document.getElementById('share-twitter');
+        const shareWhatsapp = document.getElementById('share-whatsapp');
+        const copyLinkBtn = document.getElementById('copy-link-btn');
+        const shareLinkInput = document.getElementById('share-link-input');
+
         // State
         let carImageData = null;
         let selectedWrap = null;
         let selectedWrapName = null;
         let customWrapData = null;
+        let currentShareId = null;
 
         // Initialize
         checkStatus();
@@ -1260,6 +1389,9 @@ require_once '../includes/header.php';
                 resultImage.style.display = 'block';
                 resultActions.style.display = 'flex';
 
+                // Store share ID for sharing
+                currentShareId = data.share_id;
+
                 // Update usage
                 updateUsageText(data.remaining, data.needs_email);
 
@@ -1278,6 +1410,44 @@ require_once '../includes/header.php';
             link.download = 'wrap-preview.png';
             link.href = generatedImage.src;
             link.click();
+        });
+
+        // Share button
+        shareBtn.addEventListener('click', () => {
+            if (!currentShareId) return;
+
+            const shareUrl = window.location.origin + '/share/' + currentShareId;
+            const shareText = 'Check out this ' + wrapBadge.textContent + ' wrap preview from North Star Wrap!';
+
+            // Update share links
+            shareFacebook.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl);
+            shareTwitter.href = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareText);
+            shareWhatsapp.href = 'https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl);
+            shareLinkInput.value = shareUrl;
+
+            shareModal.style.display = 'flex';
+        });
+
+        // Share modal close handlers
+        shareModalClose.addEventListener('click', () => {
+            shareModal.style.display = 'none';
+        });
+
+        document.querySelector('.share-modal-overlay').addEventListener('click', () => {
+            shareModal.style.display = 'none';
+        });
+
+        // Copy link button
+        copyLinkBtn.addEventListener('click', () => {
+            shareLinkInput.select();
+            shareLinkInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+                const originalText = copyLinkBtn.innerHTML;
+                copyLinkBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyLinkBtn.innerHTML = originalText;
+                }, 2000);
+            });
         });
 
         // Email modal

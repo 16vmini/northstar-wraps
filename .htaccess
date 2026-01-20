@@ -7,6 +7,9 @@ RewriteEngine On
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Share page URL rewrite (must be before .php extension removal)
+RewriteRule ^share/([a-f0-9]+)$ /pages/share.php?id=$1 [NC,L]
+
 # Remove .php extension
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
