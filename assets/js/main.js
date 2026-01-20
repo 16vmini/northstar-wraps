@@ -494,7 +494,7 @@ function initPriceCalculator() {
 
     // Main calculation function
     function calculate() {
-        console.log('Calculator: Running calculation...');
+        console.log('Calculator: ========== Running calculation ==========');
 
         // Get selected values
         const vehicleId = vehicleSelect ? vehicleSelect.value : '';
@@ -527,89 +527,92 @@ function initPriceCalculator() {
             return;
         }
 
-        // Start with base price
-        let basePrice = coverage.basePrice;
-        priceBaseEl.textContent = formatPrice(basePrice);
+        // Get multipliers (default to 1 if not selected)
+        const vehicleMult = vehicle ? vehicle.multiplier : 1;
+        const finishMult = finish ? finish.multiplier : 1;
+        const brandMult = brand ? brand.multiplier : 1;
+        const conditionMult = condition ? condition.multiplier : 1;
+        const basePrice = coverage.basePrice;
 
-        // Running total starts at base
-        let runningTotal = basePrice;
+        console.log('Calculator: Base price:', basePrice);
+        console.log('Calculator: Multipliers:', { vehicleMult, finishMult, brandMult, conditionMult });
 
-        // Apply vehicle multiplier
-        if (vehicle && vehicle.multiplier !== 1) {
-            const vehicleAdjustment = basePrice * (vehicle.multiplier - 1);
-            runningTotal += vehicleAdjustment;
-            priceVehicleEl.textContent = (vehicleAdjustment >= 0 ? '+' : '') + formatPrice(vehicleAdjustment);
-            rowVehicle.style.display = 'flex';
+        // Formula: Base × Vehicle × Finish × Brand × Condition + Extras
+        const wrapSubtotal = basePrice * vehicleMult * finishMult * brandMult * conditionMult;
+        console.log('Calculator: Wrap subtotal:', wrapSubtotal);
+
+        // Update breakdown display
+        if (priceBaseEl) priceBaseEl.textContent = formatPrice(basePrice);
+
+        // Show vehicle adjustment
+        if (vehicle && vehicleMult !== 1) {
+            const adjustment = basePrice * (vehicleMult - 1);
+            if (priceVehicleEl) priceVehicleEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            if (rowVehicle) rowVehicle.style.display = 'flex';
         } else {
-            rowVehicle.style.display = 'none';
+            if (rowVehicle) rowVehicle.style.display = 'none';
         }
 
-        // Apply finish multiplier (on top of vehicle-adjusted price)
-        if (finish && finish.multiplier !== 1) {
-            const finishAdjustment = basePrice * (vehicle?.multiplier || 1) * (finish.multiplier - 1);
-            runningTotal += finishAdjustment;
-            priceFinishEl.textContent = (finishAdjustment >= 0 ? '+' : '') + formatPrice(finishAdjustment);
-            rowFinish.style.display = 'flex';
+        // Show finish adjustment
+        if (finish && finishMult !== 1) {
+            const adjustment = basePrice * vehicleMult * (finishMult - 1);
+            if (priceFinishEl) priceFinishEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            if (rowFinish) rowFinish.style.display = 'flex';
         } else {
-            rowFinish.style.display = 'none';
+            if (rowFinish) rowFinish.style.display = 'none';
         }
 
-        // Apply material/brand multiplier
-        if (brand && brand.multiplier !== 1) {
-            const currentSubtotal = basePrice * (vehicle?.multiplier || 1) * (finish?.multiplier || 1);
-            const materialAdjustment = currentSubtotal * (brand.multiplier - 1);
-            runningTotal += materialAdjustment;
-            priceMaterialEl.textContent = (materialAdjustment >= 0 ? '+' : '') + formatPrice(materialAdjustment);
-            rowMaterial.style.display = 'flex';
+        // Show brand/material adjustment
+        if (brand && brandMult !== 1) {
+            const adjustment = basePrice * vehicleMult * finishMult * (brandMult - 1);
+            if (priceMaterialEl) priceMaterialEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            if (rowMaterial) rowMaterial.style.display = 'flex';
         } else {
-            rowMaterial.style.display = 'none';
+            if (rowMaterial) rowMaterial.style.display = 'none';
         }
 
-        // Apply condition multiplier
-        if (condition && condition.multiplier !== 1) {
-            const currentSubtotal = basePrice * (vehicle?.multiplier || 1) * (finish?.multiplier || 1) * (brand?.multiplier || 1);
-            const conditionAdjustment = currentSubtotal * (condition.multiplier - 1);
-            runningTotal += conditionAdjustment;
-            priceConditionEl.textContent = (conditionAdjustment >= 0 ? '+' : '') + formatPrice(conditionAdjustment);
-            rowCondition.style.display = 'flex';
+        // Show condition adjustment
+        if (condition && conditionMult !== 1) {
+            const adjustment = basePrice * vehicleMult * finishMult * brandMult * (conditionMult - 1);
+            if (priceConditionEl) priceConditionEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            if (rowCondition) rowCondition.style.display = 'flex';
         } else {
-            rowCondition.style.display = 'none';
+            if (rowCondition) rowCondition.style.display = 'none';
         }
-
-        // Calculate correct base with all multipliers
-        const wrapSubtotal = basePrice *
-            (vehicle?.multiplier || 1) *
-            (finish?.multiplier || 1) *
-            (brand?.multiplier || 1) *
-            (condition?.multiplier || 1);
 
         // Calculate extras
         let extrasTotal = 0;
 
         if (doorShutsCheckbox && doorShutsCheckbox.checked) {
-            extrasTotal += parseInt(doorShutsCheckbox.dataset.price) || 0;
+            const price = parseInt(doorShutsCheckbox.dataset.price) || 0;
+            console.log('Calculator: Door shuts checked, price:', price);
+            extrasTotal += price;
         }
 
         if (wrapRemovalCheckbox && wrapRemovalCheckbox.checked) {
-            extrasTotal += parseInt(wrapRemovalCheckbox.dataset.price) || 0;
+            const price = parseInt(wrapRemovalCheckbox.dataset.price) || 0;
+            console.log('Calculator: Wrap removal checked, price:', price);
+            extrasTotal += price;
         }
 
         addonCheckboxes.forEach(checkbox => {
             if (checkbox.checked) {
-                extrasTotal += parseInt(checkbox.dataset.price) || 0;
+                const price = parseInt(checkbox.dataset.price) || 0;
+                console.log('Calculator: Addon checked:', checkbox.dataset.addonId, 'price:', price);
+                extrasTotal += price;
             }
         });
 
         if (extrasTotal > 0) {
-            priceExtrasEl.textContent = '+' + formatPrice(extrasTotal);
-            rowExtras.style.display = 'flex';
+            if (priceExtrasEl) priceExtrasEl.textContent = '+' + formatPrice(extrasTotal);
+            if (rowExtras) rowExtras.style.display = 'flex';
         } else {
-            rowExtras.style.display = 'none';
+            if (rowExtras) rowExtras.style.display = 'none';
         }
 
         // Final total
         const finalTotal = wrapSubtotal + extrasTotal;
-        console.log('Calculator: Final total:', finalTotal, '(wrap:', wrapSubtotal, '+ extras:', extrasTotal, ')');
+        console.log('Calculator: FINAL TOTAL:', formatPrice(finalTotal), '(wrap:', wrapSubtotal, '+ extras:', extrasTotal, ')');
 
         if (totalPriceEl) {
             totalPriceEl.textContent = formatPrice(finalTotal);
