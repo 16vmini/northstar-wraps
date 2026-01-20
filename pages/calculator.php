@@ -371,6 +371,10 @@ require_once '../includes/header.php';
         .calculator-section {
             padding: 40px 0 60px;
         }
+        .calculator-section .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
         .form-row {
             grid-template-columns: 1fr;
             gap: 15px;
@@ -404,6 +408,10 @@ require_once '../includes/header.php';
     }
 
     @media (max-width: 400px) {
+        .calculator-section .container {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
         .calculator-form-inner {
             padding: 15px;
         }

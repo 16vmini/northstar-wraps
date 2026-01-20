@@ -126,6 +126,7 @@ h4 { font-size: clamp(1.25rem, 2vw, 1.5rem); }
     max-width: var(--container-width);
     margin: 0 auto;
     padding: 0 20px;
+    box-sizing: border-box;
 }
 
 section {
@@ -2623,6 +2624,10 @@ section {
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+
     section {
         padding: 60px 0;
     }
