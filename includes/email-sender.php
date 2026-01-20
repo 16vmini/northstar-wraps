@@ -67,13 +67,23 @@ function sendEmailViaBevo($to_email, $to_name, $subject, $html_content, $reply_t
     $error = curl_error($ch);
     curl_close($ch);
 
+    // Log to file for debugging
+    $log_dir = dirname(__DIR__) . '/logs';
+    if (!is_dir($log_dir)) {
+        mkdir($log_dir, 0755, true);
+    }
+    $debug_log = $log_dir . '/brevo_debug.log';
+
     if ($error) {
         // cURL error - log and fall back to PHP mail
-        error_log("Brevo API cURL error: " . $error);
+        file_put_contents($debug_log, date('Y-m-d H:i:s') . " | cURL Error: {$error}\n", FILE_APPEND);
         return sendEmailViaPhpMail($to_email, $to_name, $subject, $html_content, $reply_to);
     }
 
     $result = json_decode($response, true);
+
+    // Log the response
+    file_put_contents($debug_log, date('Y-m-d H:i:s') . " | HTTP {$http_code} | To: {$to_email} | Response: {$response}\n", FILE_APPEND);
 
     if ($http_code >= 200 && $http_code < 300) {
         return [
@@ -84,7 +94,7 @@ function sendEmailViaBevo($to_email, $to_name, $subject, $html_content, $reply_t
     }
 
     // API error - log and fall back to PHP mail
-    error_log("Brevo API error ({$http_code}): " . $response);
+    file_put_contents($debug_log, date('Y-m-d H:i:s') . " | FALLBACK to PHP mail due to error\n", FILE_APPEND);
     return sendEmailViaPhpMail($to_email, $to_name, $subject, $html_content, $reply_to);
 }
 
