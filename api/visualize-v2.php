@@ -348,6 +348,44 @@ if ($download_code !== 200 || !$image_data) {
     exit;
 }
 
+// Check if we need to crop out the reference pattern box from the right side
+// The composite was: car (800px max) + gap (20px) + pattern (300px max) = ~1120px wide
+// If the output is wider than ~1000px, the AI likely kept the reference box
+$img = imagecreatefromstring($image_data);
+if ($img) {
+    $orig_width = imagesx($img);
+    $orig_height = imagesy($img);
+
+    // Only crop if image is unusually wide (likely has reference box)
+    // A normal car photo aspect ratio would be around 4:3 or 16:9
+    // If width is more than 1.5x the height, it probably has the pattern box
+    $aspect_ratio = $orig_width / $orig_height;
+
+    if ($aspect_ratio > 1.6) {
+        // Crop to remove the pattern reference on the right (keep ~73% of width)
+        $crop_width = (int)($orig_width * 0.73);
+        $cropped = imagecreatetruecolor($crop_width, $orig_height);
+        imagecopy($cropped, $img, 0, 0, 0, 0, $crop_width, $orig_height);
+
+        // Convert back to PNG
+        ob_start();
+        imagepng($cropped);
+        $image_data = ob_get_clean();
+
+        imagedestroy($cropped);
+
+        file_put_contents($log_dir . '/visualizer_v2_debug.log',
+            date('Y-m-d H:i:s') . " | Cropped from {$orig_width}x{$orig_height} to {$crop_width}x{$orig_height} (aspect ratio was {$aspect_ratio})\n",
+            FILE_APPEND);
+    } else {
+        file_put_contents($log_dir . '/visualizer_v2_debug.log',
+            date('Y-m-d H:i:s') . " | No crop needed, aspect ratio {$aspect_ratio} is normal\n",
+            FILE_APPEND);
+    }
+
+    imagedestroy($img);
+}
+
 $generated_image = base64_encode($image_data);
 
 file_put_contents($log_dir . '/visualizer_v2_debug.log',
