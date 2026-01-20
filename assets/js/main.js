@@ -442,9 +442,11 @@ style.textContent = `
 document.head.appendChild(style);
 
 /**
- * Price Calculator - Dropdown Version
+ * Price Calculator - Dropdown Version (ES5 Compatible for Safari/iOS)
  */
 function initPriceCalculator() {
+    'use strict';
+
     // Check if we're on the calculator page
     if (!window.pricingConfig) {
         console.log('Calculator: No pricing config found, skipping init');
@@ -452,57 +454,46 @@ function initPriceCalculator() {
     }
 
     console.log('Calculator: Initializing...');
-    console.log('Calculator: Config loaded:', window.pricingConfig);
 
-    const config = window.pricingConfig;
-    const currency = config.currency || '£';
+    var config = window.pricingConfig;
+    var currency = config.currency || '£';
 
     // Get dropdown elements
-    const vehicleSelect = document.getElementById('vehicleType');
-    const coverageSelect = document.getElementById('coverageType');
-    const finishSelect = document.getElementById('finishType');
-    const brandSelect = document.getElementById('brandTier');
-    const conditionSelect = document.getElementById('condition');
+    var vehicleSelect = document.getElementById('vehicleType');
+    var coverageSelect = document.getElementById('coverageType');
+    var finishSelect = document.getElementById('finishType');
+    var brandSelect = document.getElementById('brandTier');
+    var conditionSelect = document.getElementById('condition');
 
-    console.log('Calculator: Found selects:', {
-        vehicle: !!vehicleSelect,
-        coverage: !!coverageSelect,
-        finish: !!finishSelect,
-        brand: !!brandSelect,
-        condition: !!conditionSelect
-    });
+    console.log('Calculator: Found selects - vehicle:', !!vehicleSelect, 'coverage:', !!coverageSelect);
 
     // Get checkbox elements
-    const doorShutsCheckbox = document.getElementById('doorShuts');
-    const wrapRemovalCheckbox = document.getElementById('wrapRemoval');
-    const addonCheckboxes = document.querySelectorAll('.addon-checkbox');
+    var doorShutsCheckbox = document.getElementById('doorShuts');
+    var wrapRemovalCheckbox = document.getElementById('wrapRemoval');
+    var addonCheckboxes = document.querySelectorAll('.addon-checkbox');
 
-    console.log('Calculator: Found checkboxes:', {
-        doorShuts: !!doorShutsCheckbox,
-        wrapRemoval: !!wrapRemovalCheckbox,
-        addons: addonCheckboxes.length
-    });
+    console.log('Calculator: Found checkboxes - doorShuts:', !!doorShutsCheckbox, 'addons:', addonCheckboxes.length);
 
     // Get price display elements
-    const totalPriceEl = document.getElementById('totalPrice');
-    const priceBaseEl = document.getElementById('price-base');
-    const priceVehicleEl = document.getElementById('price-vehicle');
-    const priceFinishEl = document.getElementById('price-finish');
-    const priceMaterialEl = document.getElementById('price-material');
-    const priceConditionEl = document.getElementById('price-condition');
-    const priceExtrasEl = document.getElementById('price-extras');
-    const rowVehicle = document.getElementById('row-vehicle');
-    const rowFinish = document.getElementById('row-finish');
-    const rowMaterial = document.getElementById('row-material');
-    const rowCondition = document.getElementById('row-condition');
-    const rowExtras = document.getElementById('row-extras');
+    var totalPriceEl = document.getElementById('totalPrice');
+    var priceBaseEl = document.getElementById('price-base');
+    var priceVehicleEl = document.getElementById('price-vehicle');
+    var priceFinishEl = document.getElementById('price-finish');
+    var priceMaterialEl = document.getElementById('price-material');
+    var priceConditionEl = document.getElementById('price-condition');
+    var priceExtrasEl = document.getElementById('price-extras');
+    var rowVehicle = document.getElementById('row-vehicle');
+    var rowFinish = document.getElementById('row-finish');
+    var rowMaterial = document.getElementById('row-material');
+    var rowCondition = document.getElementById('row-condition');
+    var rowExtras = document.getElementById('row-extras');
 
     // Helper: format number with commas
     function formatPrice(num) {
         return currency + Math.round(num).toLocaleString();
     }
 
-    // Helper: find item in config array by ID (Safari compatible)
+    // Helper: find item in config array by ID
     function findById(array, id) {
         if (!array || !id) return null;
         for (var i = 0; i < array.length; i++) {
@@ -513,31 +504,36 @@ function initPriceCalculator() {
         return null;
     }
 
+    // Helper: get attribute safely (for older browsers)
+    function getDataPrice(el) {
+        if (!el) return 0;
+        var price = el.getAttribute('data-price');
+        return parseInt(price, 10) || 0;
+    }
+
     // Main calculation function
     function calculate() {
-        console.log('Calculator: ========== Running calculation ==========');
+        console.log('Calculator: Running calculation...');
 
         // Get selected values
-        const vehicleId = vehicleSelect ? vehicleSelect.value : '';
-        const coverageId = coverageSelect ? coverageSelect.value : '';
-        const finishId = finishSelect ? finishSelect.value : '';
-        const brandId = brandSelect ? brandSelect.value : '';
-        const conditionId = conditionSelect ? conditionSelect.value : '';
+        var vehicleId = vehicleSelect ? vehicleSelect.value : '';
+        var coverageId = coverageSelect ? coverageSelect.value : '';
+        var finishId = finishSelect ? finishSelect.value : '';
+        var brandId = brandSelect ? brandSelect.value : '';
+        var conditionId = conditionSelect ? conditionSelect.value : '';
 
-        console.log('Calculator: Selected IDs:', { vehicleId, coverageId, finishId, brandId, conditionId });
+        console.log('Calculator: IDs - coverage:', coverageId, 'vehicle:', vehicleId);
 
         // Get data from config
-        const vehicle = findById(config.vehicleTypes, vehicleId);
-        const coverage = findById(config.coverageTypes, coverageId);
-        const finish = findById(config.finishTypes, finishId);
-        const brand = findById(config.brandTiers, brandId);
-        const condition = findById(config.conditions, conditionId);
-
-        console.log('Calculator: Found data:', { vehicle, coverage, finish, brand, condition });
+        var vehicle = findById(config.vehicleTypes, vehicleId);
+        var coverage = findById(config.coverageTypes, coverageId);
+        var finish = findById(config.finishTypes, finishId);
+        var brand = findById(config.brandTiers, brandId);
+        var condition = findById(config.conditions, conditionId);
 
         // If no coverage selected, show zero
         if (!coverage) {
-            console.log('Calculator: No coverage selected, showing £0');
+            console.log('Calculator: No coverage, showing 0');
             if (totalPriceEl) totalPriceEl.textContent = currency + '0';
             if (priceBaseEl) priceBaseEl.textContent = '-';
             if (rowVehicle) rowVehicle.style.display = 'none';
@@ -549,26 +545,24 @@ function initPriceCalculator() {
         }
 
         // Get multipliers (default to 1 if not selected)
-        const vehicleMult = vehicle ? vehicle.multiplier : 1;
-        const finishMult = finish ? finish.multiplier : 1;
-        const brandMult = brand ? brand.multiplier : 1;
-        const conditionMult = condition ? condition.multiplier : 1;
-        const basePrice = coverage.basePrice;
+        var vehicleMult = vehicle ? vehicle.multiplier : 1;
+        var finishMult = finish ? finish.multiplier : 1;
+        var brandMult = brand ? brand.multiplier : 1;
+        var conditionMult = condition ? condition.multiplier : 1;
+        var basePrice = coverage.basePrice;
 
-        console.log('Calculator: Base price:', basePrice);
-        console.log('Calculator: Multipliers:', { vehicleMult, finishMult, brandMult, conditionMult });
+        console.log('Calculator: Base:', basePrice, 'Mults:', vehicleMult, finishMult, brandMult, conditionMult);
 
         // Formula: Base × Vehicle × Finish × Brand × Condition + Extras
-        const wrapSubtotal = basePrice * vehicleMult * finishMult * brandMult * conditionMult;
-        console.log('Calculator: Wrap subtotal:', wrapSubtotal);
+        var wrapSubtotal = basePrice * vehicleMult * finishMult * brandMult * conditionMult;
 
         // Update breakdown display
         if (priceBaseEl) priceBaseEl.textContent = formatPrice(basePrice);
 
         // Show vehicle adjustment
         if (vehicle && vehicleMult !== 1) {
-            const adjustment = basePrice * (vehicleMult - 1);
-            if (priceVehicleEl) priceVehicleEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            var vehicleAdj = basePrice * (vehicleMult - 1);
+            if (priceVehicleEl) priceVehicleEl.textContent = (vehicleAdj >= 0 ? '+' : '') + formatPrice(vehicleAdj);
             if (rowVehicle) rowVehicle.style.display = 'flex';
         } else {
             if (rowVehicle) rowVehicle.style.display = 'none';
@@ -576,8 +570,8 @@ function initPriceCalculator() {
 
         // Show finish adjustment
         if (finish && finishMult !== 1) {
-            const adjustment = basePrice * vehicleMult * (finishMult - 1);
-            if (priceFinishEl) priceFinishEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            var finishAdj = basePrice * vehicleMult * (finishMult - 1);
+            if (priceFinishEl) priceFinishEl.textContent = (finishAdj >= 0 ? '+' : '') + formatPrice(finishAdj);
             if (rowFinish) rowFinish.style.display = 'flex';
         } else {
             if (rowFinish) rowFinish.style.display = 'none';
@@ -585,8 +579,8 @@ function initPriceCalculator() {
 
         // Show brand/material adjustment
         if (brand && brandMult !== 1) {
-            const adjustment = basePrice * vehicleMult * finishMult * (brandMult - 1);
-            if (priceMaterialEl) priceMaterialEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            var brandAdj = basePrice * vehicleMult * finishMult * (brandMult - 1);
+            if (priceMaterialEl) priceMaterialEl.textContent = (brandAdj >= 0 ? '+' : '') + formatPrice(brandAdj);
             if (rowMaterial) rowMaterial.style.display = 'flex';
         } else {
             if (rowMaterial) rowMaterial.style.display = 'none';
@@ -594,35 +588,30 @@ function initPriceCalculator() {
 
         // Show condition adjustment
         if (condition && conditionMult !== 1) {
-            const adjustment = basePrice * vehicleMult * finishMult * brandMult * (conditionMult - 1);
-            if (priceConditionEl) priceConditionEl.textContent = (adjustment >= 0 ? '+' : '') + formatPrice(adjustment);
+            var condAdj = basePrice * vehicleMult * finishMult * brandMult * (conditionMult - 1);
+            if (priceConditionEl) priceConditionEl.textContent = (condAdj >= 0 ? '+' : '') + formatPrice(condAdj);
             if (rowCondition) rowCondition.style.display = 'flex';
         } else {
             if (rowCondition) rowCondition.style.display = 'none';
         }
 
         // Calculate extras
-        let extrasTotal = 0;
+        var extrasTotal = 0;
 
         if (doorShutsCheckbox && doorShutsCheckbox.checked) {
-            const price = parseInt(doorShutsCheckbox.dataset.price) || 0;
-            console.log('Calculator: Door shuts checked, price:', price);
-            extrasTotal += price;
+            extrasTotal += getDataPrice(doorShutsCheckbox);
         }
 
         if (wrapRemovalCheckbox && wrapRemovalCheckbox.checked) {
-            const price = parseInt(wrapRemovalCheckbox.dataset.price) || 0;
-            console.log('Calculator: Wrap removal checked, price:', price);
-            extrasTotal += price;
+            extrasTotal += getDataPrice(wrapRemovalCheckbox);
         }
 
-        addonCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const price = parseInt(checkbox.dataset.price) || 0;
-                console.log('Calculator: Addon checked:', checkbox.dataset.addonId, 'price:', price);
-                extrasTotal += price;
+        // Loop through addon checkboxes (ES5 compatible)
+        for (var j = 0; j < addonCheckboxes.length; j++) {
+            if (addonCheckboxes[j].checked) {
+                extrasTotal += getDataPrice(addonCheckboxes[j]);
             }
-        });
+        }
 
         if (extrasTotal > 0) {
             if (priceExtrasEl) priceExtrasEl.textContent = '+' + formatPrice(extrasTotal);
@@ -632,68 +621,47 @@ function initPriceCalculator() {
         }
 
         // Final total
-        const finalTotal = wrapSubtotal + extrasTotal;
-        console.log('Calculator: FINAL TOTAL:', formatPrice(finalTotal), '(wrap:', wrapSubtotal, '+ extras:', extrasTotal, ')');
+        var finalTotal = wrapSubtotal + extrasTotal;
+        console.log('Calculator: TOTAL:', formatPrice(finalTotal));
 
         if (totalPriceEl) {
             totalPriceEl.textContent = formatPrice(finalTotal);
-
-            // Animate the price
-            totalPriceEl.classList.remove('pulse');
-            void totalPriceEl.offsetWidth; // Trigger reflow
-            totalPriceEl.classList.add('pulse');
         }
     }
 
-    // Add event listeners to all inputs (Safari/iOS compatible)
-    console.log('Calculator: Attaching event listeners...');
+    // Attach event listeners (Safari/iOS compatible)
+    console.log('Calculator: Attaching listeners...');
 
-    // Helper to attach change listener
-    function attachChangeListener(element, name) {
+    function attachListener(element) {
         if (!element) return;
 
-        // Use both 'change' and 'input' for better iOS Safari support
-        element.addEventListener('change', function(e) {
-            console.log('Calculator: ' + name + ' changed:', e.target.value || e.target.checked);
+        // Use onchange for maximum compatibility
+        element.onchange = function() {
+            console.log('Calculator: Changed -', element.id);
             calculate();
-        });
-
-        // For select elements, also listen to 'input' event for iOS
-        if (element.tagName === 'SELECT') {
-            element.addEventListener('input', function(e) {
-                console.log('Calculator: ' + name + ' input:', e.target.value);
-                calculate();
-            });
-        }
-
-        console.log('Calculator: Attached listener to', name);
+        };
     }
 
     // Attach to all select elements
-    attachChangeListener(vehicleSelect, 'vehicleType');
-    attachChangeListener(coverageSelect, 'coverageType');
-    attachChangeListener(finishSelect, 'finishType');
-    attachChangeListener(brandSelect, 'brandTier');
-    attachChangeListener(conditionSelect, 'condition');
+    attachListener(vehicleSelect);
+    attachListener(coverageSelect);
+    attachListener(finishSelect);
+    attachListener(brandSelect);
+    attachListener(conditionSelect);
 
     // Attach to checkboxes
-    attachChangeListener(doorShutsCheckbox, 'doorShuts');
-    attachChangeListener(wrapRemovalCheckbox, 'wrapRemoval');
+    attachListener(doorShutsCheckbox);
+    attachListener(wrapRemovalCheckbox);
 
     // Attach to addon checkboxes
-    for (var i = 0; i < addonCheckboxes.length; i++) {
-        (function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                console.log('Calculator: Addon toggled:', checkbox.dataset.addonId, '=', checkbox.checked);
-                calculate();
-            });
-        })(addonCheckboxes[i]);
+    for (var k = 0; k < addonCheckboxes.length; k++) {
+        attachListener(addonCheckboxes[k]);
     }
 
-    console.log('Calculator: All listeners attached, running initial calculation...');
+    console.log('Calculator: Listeners attached, running calc...');
 
     // Initial calculation
     calculate();
 
-    console.log('Calculator: Initialization complete!');
+    console.log('Calculator: Init complete!');
 }
