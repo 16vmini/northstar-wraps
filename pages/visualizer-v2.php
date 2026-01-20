@@ -447,6 +447,35 @@ require_once '../includes/header.php';
             debugLog.scrollTop = debugLog.scrollHeight;
         }
 
+        // Resize image on client side to reduce payload size
+        function resizeImage(dataUrl, maxWidth, maxHeight) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Calculate new dimensions
+                    if (width > maxWidth || height > maxHeight) {
+                        const ratio = Math.min(maxWidth / width, maxHeight / height);
+                        width = Math.round(width * ratio);
+                        height = Math.round(height * ratio);
+                    }
+
+                    // Create canvas and resize
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Return as JPEG for smaller size
+                    resolve(canvas.toDataURL('image/jpeg', 0.85));
+                };
+                img.src = dataUrl;
+            });
+        }
+
         // Car upload handlers
         carUploadArea.addEventListener('click', () => carUpload.click());
         carUploadArea.addEventListener('dragover', (e) => {
@@ -478,7 +507,7 @@ require_once '../includes/header.php';
             updateGenerateButton();
         });
 
-        function handleCarUpload(file) {
+        async function handleCarUpload(file) {
             if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
                 alert('Please upload a JPEG, PNG or WebP image');
                 return;
@@ -489,12 +518,14 @@ require_once '../includes/header.php';
             }
 
             const reader = new FileReader();
-            reader.onload = (e) => {
-                carImageData = e.target.result;
+            reader.onload = async (e) => {
+                log('Resizing car image...');
+                // Resize to max 1024x768 on client side to reduce payload
+                carImageData = await resizeImage(e.target.result, 1024, 768);
                 carPreviewImage.src = carImageData;
                 carPlaceholder.style.display = 'none';
                 carPreview.style.display = 'block';
-                log('Car image uploaded');
+                log('Car image uploaded and resized');
                 updateGenerateButton();
             };
             reader.readAsDataURL(file);
@@ -531,7 +562,7 @@ require_once '../includes/header.php';
             updateGenerateButton();
         });
 
-        function handleWrapUpload(file) {
+        async function handleWrapUpload(file) {
             if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
                 alert('Please upload a JPEG, PNG or WebP image');
                 return;
@@ -542,12 +573,14 @@ require_once '../includes/header.php';
             }
 
             const reader = new FileReader();
-            reader.onload = (e) => {
-                wrapImageData = e.target.result;
+            reader.onload = async (e) => {
+                log('Resizing wrap pattern...');
+                // Resize to max 512x512 on client side to reduce payload
+                wrapImageData = await resizeImage(e.target.result, 512, 512);
                 wrapPreviewImage.src = wrapImageData;
                 wrapPlaceholder.style.display = 'none';
                 wrapPreview.style.display = 'block';
-                log('Wrap pattern uploaded');
+                log('Wrap pattern uploaded and resized');
                 updateGenerateButton();
             };
             reader.readAsDataURL(file);
