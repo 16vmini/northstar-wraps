@@ -234,11 +234,19 @@ file_put_contents($log_dir . '/visualizer_debug.log',
     date('Y-m-d H:i:s') . " | Starting visualization | Wrap: {$wrap_name}\n",
     FILE_APPEND);
 
-// Decode the base64 image and save as PNG for the edit API
+// Get Stability AI API key
+$stability_key = defined('STABILITY_API_KEY') ? STABILITY_API_KEY : '';
+if (empty($stability_key)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Visualizer is not configured. Please contact the administrator.']);
+    exit;
+}
+
+// Decode the base64 image
 $car_image_data = preg_replace('/^data:image\/\w+;base64,/', '', $car_image);
 $car_image_binary = base64_decode($car_image_data);
 
-// Convert to PNG (required by DALL-E edit API)
+// Convert to PNG for Stability AI
 $source_image = imagecreatefromstring($car_image_binary);
 if (!$source_image) {
     http_response_code(400);
@@ -246,67 +254,63 @@ if (!$source_image) {
     exit;
 }
 
-// Resize to 1024x1024 (required by DALL-E)
-// DALL-E edit API requires RGBA format with alpha channel
-$resized = imagecreatetruecolor(1024, 1024);
+// Get dimensions and resize if needed (max 1024x1024 for cost efficiency)
 $orig_width = imagesx($source_image);
 $orig_height = imagesy($source_image);
 
-// Enable alpha blending and save alpha channel
-imagesavealpha($resized, true);
-imagealphablending($resized, false);
+// Scale down if larger than 1024 on any side
+$max_size = 1024;
+if ($orig_width > $max_size || $orig_height > $max_size) {
+    $scale = min($max_size / $orig_width, $max_size / $orig_height);
+    $new_width = (int)($orig_width * $scale);
+    $new_height = (int)($orig_height * $scale);
 
-// Fill with transparent background
-$transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
-imagefill($resized, 0, 0, $transparent);
+    $resized = imagecreatetruecolor($new_width, $new_height);
+    imagecopyresampled($resized, $source_image, 0, 0, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
+    imagedestroy($source_image);
+    $source_image = $resized;
+}
 
-// Calculate aspect-ratio-preserving resize
-$scale = min(1024 / $orig_width, 1024 / $orig_height);
-$new_width = (int)($orig_width * $scale);
-$new_height = (int)($orig_height * $scale);
-$x_offset = (int)((1024 - $new_width) / 2);
-$y_offset = (int)((1024 - $new_height) / 2);
-
-// Enable alpha blending for the copy operation
-imagealphablending($resized, true);
-
-// Copy resized image centered
-imagecopyresampled($resized, $source_image, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
-imagedestroy($source_image);
-
-// Save to temp file as PNG with alpha
+// Save to temp file as PNG
 $temp_dir = sys_get_temp_dir();
 $temp_image_path = $temp_dir . '/car_' . uniqid() . '.png';
-imagesavealpha($resized, true);
-imagepng($resized, $temp_image_path);
-imagedestroy($resized);
+imagepng($source_image, $temp_image_path);
+imagedestroy($source_image);
 
 file_put_contents($log_dir . '/visualizer_debug.log',
     date('Y-m-d H:i:s') . " | Saved temp image: {$temp_image_path}\n",
     FILE_APPEND);
 
-// Build the edit prompt
-$edit_prompt = "Change the car body color to {$wrap_name} ({$wrap_finish} finish" . ($wrap_hex ? ", {$wrap_hex}" : "") . ") vinyl wrap. Keep everything else exactly the same - windows, wheels, background, lighting.";
+// Build the prompt for Stability AI
+// Be specific about what to change and what to keep
+$edit_prompt = "Change the car body paint color to {$wrap_name} {$wrap_finish} vinyl wrap" . ($wrap_hex ? " ({$wrap_hex})" : "") . ". Keep the exact same car, angle, background, windows, wheels, lights, and all details. Only change the body panel color.";
 
-// Try DALL-E 2 edit API with multipart form data
+file_put_contents($log_dir . '/visualizer_debug.log',
+    date('Y-m-d H:i:s') . " | Prompt: {$edit_prompt}\n",
+    FILE_APPEND);
+
+// Use Stability AI image-to-image API
 $ch = curl_init();
 
+// Stability AI uses multipart form data
 $post_fields = [
-    'model' => 'dall-e-2',
-    'image' => new CURLFile($temp_image_path, 'image/png', 'image.png'),
-    'prompt' => $edit_prompt,
-    'n' => 1,
-    'size' => '1024x1024',
-    'response_format' => 'b64_json'
+    'init_image' => new CURLFile($temp_image_path, 'image/png', 'image.png'),
+    'text_prompts[0][text]' => $edit_prompt,
+    'text_prompts[0][weight]' => 1,
+    'cfg_scale' => 7,
+    'samples' => 1,
+    'steps' => 30,
+    'image_strength' => 0.35  // Lower = more faithful to original image
 ];
 
 curl_setopt_array($ch, [
-    CURLOPT_URL => 'https://api.openai.com/v1/images/edits',
+    CURLOPT_URL => 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/image-to-image',
     CURLOPT_POST => true,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT => 120,
     CURLOPT_HTTPHEADER => [
-        'Authorization: Bearer ' . $api_key
+        'Authorization: Bearer ' . $stability_key,
+        'Accept: application/json'
     ],
     CURLOPT_POSTFIELDS => $post_fields
 ]);
@@ -320,18 +324,19 @@ curl_close($ch);
 @unlink($temp_image_path);
 
 file_put_contents($log_dir . '/visualizer_debug.log',
-    date('Y-m-d H:i:s') . " | DALL-E Edit HTTP {$http_code} | Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
+    date('Y-m-d H:i:s') . " | Stability AI HTTP {$http_code} | Error: {$curl_error} | Response: " . substr($response, 0, 500) . "\n",
     FILE_APPEND);
 
 if ($http_code !== 200) {
     $error_data = json_decode($response, true);
+    $error_msg = $error_data['message'] ?? ($error_data['name'] ?? 'Unknown error');
     http_response_code(500);
-    echo json_encode(['error' => 'Failed to edit image: ' . ($error_data['error']['message'] ?? 'Unknown error')]);
+    echo json_encode(['error' => 'Failed to edit image: ' . $error_msg]);
     exit;
 }
 
 $result = json_decode($response, true);
-$generated_image = $result['data'][0]['b64_json'] ?? null;
+$generated_image = $result['artifacts'][0]['base64'] ?? null;
 
 if (!$generated_image) {
     http_response_code(500);
