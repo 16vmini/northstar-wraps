@@ -262,9 +262,9 @@ require_once '../includes/header.php';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 0;
-        border-top: 2px solid #7CB518;
-        margin-bottom: 20px;
+        padding: 15px 0;
+        border-bottom: 2px solid #7CB518;
+        margin-bottom: 15px;
     }
 
     .price-total span:first-child {
@@ -302,14 +302,62 @@ require_once '../includes/header.php';
         text-align: center;
     }
 
+    /* Mobile footer - hidden on desktop */
+    .result-footer-mobile {
+        display: none;
+    }
+
+    /* Desktop footer - shown by default */
+    .result-footer-desktop {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
     @media (max-width: 1024px) {
         .calculator-wrapper {
             grid-template-columns: 1fr;
         }
+        /* Make estimate sticky on tablet/mobile */
         .calculator-result {
-            position: relative;
-            top: 0;
+            position: sticky;
+            top: 70px;
+            z-index: 100;
             order: -1;
+        }
+        /* Hide desktop footer, show mobile footer */
+        .result-footer-desktop {
+            display: none;
+        }
+        .result-footer-mobile {
+            display: block;
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .result-footer-mobile .price-disclaimer {
+            background: #f5f5f5;
+            color: #666;
+        }
+        .result-footer-mobile .price-disclaimer i {
+            color: #7CB518;
+        }
+        /* Make sticky box more compact */
+        .calculator-result-inner {
+            padding: 15px 20px;
+        }
+        .price-breakdown {
+            display: none;
+        }
+        .price-total {
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+        .total-value {
+            font-size: 1.8rem;
         }
     }
 
@@ -325,10 +373,6 @@ require_once '../includes/header.php';
             grid-template-columns: 1fr;
         }
         .calculator-form-inner {
-            padding: 20px;
-            border-radius: 12px;
-        }
-        .calculator-result-inner {
             padding: 20px;
             border-radius: 12px;
         }
@@ -351,22 +395,14 @@ require_once '../includes/header.php';
         .extra-cost {
             font-size: 0.85rem;
         }
-        .total-value {
-            font-size: 1.8rem;
-        }
-        .price-total {
-            padding: 15px 0;
-        }
-        .breakdown-line {
-            font-size: 0.8rem;
-            padding: 6px 0;
-        }
     }
 
     @media (max-width: 400px) {
-        .calculator-form-inner,
-        .calculator-result-inner {
+        .calculator-form-inner {
             padding: 15px;
+        }
+        .calculator-result-inner {
+            padding: 12px 15px;
         }
         .form-col label {
             font-size: 0.8rem;
@@ -487,8 +523,12 @@ require_once '../includes/header.php';
 
                 <!-- Right: Price Card -->
                 <div class="calculator-result">
+                    <!-- Sticky estimate box (compact on mobile) -->
                     <div class="calculator-result-inner">
-                        <h3><i class="fas fa-receipt"></i> Your Estimate</h3>
+                        <div class="price-total">
+                            <span>Estimated Total</span>
+                            <span class="total-value" id="totalPrice">£0</span>
+                        </div>
 
                         <div class="price-breakdown" id="priceBreakdown">
                             <div class="breakdown-line" id="row-base">
@@ -517,19 +557,26 @@ require_once '../includes/header.php';
                             </div>
                         </div>
 
-                        <div class="price-total">
-                            <span>Estimated Total</span>
-                            <span class="total-value" id="totalPrice">£0</span>
+                        <!-- Desktop only: disclaimer and button inside card -->
+                        <div class="result-footer-desktop">
+                            <p class="price-disclaimer">
+                                <i class="fas fa-info-circle"></i> <?php echo $pricingConfig['disclaimer']; ?>
+                            </p>
+                            <a href="/pages/contact.php" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-paper-plane"></i> Get Exact Quote
+                            </a>
                         </div>
-
-                        <p class="price-disclaimer">
-                            <i class="fas fa-info-circle"></i> <?php echo $pricingConfig['disclaimer']; ?>
-                        </p>
-
-                        <a href="/pages/contact.php" class="btn btn-primary btn-lg btn-block">
-                            <i class="fas fa-paper-plane"></i> Get Exact Quote
-                        </a>
                     </div>
+                </div>
+
+                <!-- Mobile only: disclaimer and CTA at bottom of form -->
+                <div class="result-footer-mobile">
+                    <p class="price-disclaimer">
+                        <i class="fas fa-info-circle"></i> <?php echo $pricingConfig['disclaimer']; ?>
+                    </p>
+                    <a href="/pages/contact.php" class="btn btn-primary btn-lg btn-block">
+                        <i class="fas fa-paper-plane"></i> Get Exact Quote
+                    </a>
                 </div>
 
             </div>
