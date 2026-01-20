@@ -349,19 +349,35 @@ if ($download_code !== 200 || !$image_data) {
 }
 
 // Check if we need to crop out the reference pattern box from the right side
-// The composite was: car (800px max) + gap (20px) + pattern (300px max) = ~1120px wide
-// If the output is wider than ~1000px, the AI likely kept the reference box
+// Detect by checking for white pixels in the top-right corner (10x10 area)
+// The reference box has a white background, so if we find mostly white pixels there,
+// the AI likely kept the reference box in the output
 $img = imagecreatefromstring($image_data);
 if ($img) {
     $orig_width = imagesx($img);
     $orig_height = imagesy($img);
 
-    // Only crop if image is unusually wide (likely has reference box)
-    // A normal car photo aspect ratio would be around 4:3 or 16:9
-    // If width is more than 1.5x the height, it probably has the pattern box
-    $aspect_ratio = $orig_width / $orig_height;
+    // Check top-right corner for white pixels (indicates reference box present)
+    $white_pixel_count = 0;
+    $total_pixels = 100; // 10x10 area
 
-    if ($aspect_ratio > 1.6) {
+    for ($x = $orig_width - 10; $x < $orig_width; $x++) {
+        for ($y = 0; $y < 10; $y++) {
+            $rgb = imagecolorat($img, $x, $y);
+            $r = ($rgb >> 16) & 0xFF;
+            $g = ($rgb >> 8) & 0xFF;
+            $b = $rgb & 0xFF;
+            // Check if pixel is nearly white (RGB all above 245)
+            if ($r >= 245 && $g >= 245 && $b >= 245) {
+                $white_pixel_count++;
+            }
+        }
+    }
+
+    // If most pixels in top-right corner are white, crop the reference box
+    $has_white_corner = ($white_pixel_count >= 80); // 80% threshold
+
+    if ($has_white_corner) {
         // Crop to remove the pattern reference on the right (keep ~73% of width)
         $crop_width = (int)($orig_width * 0.73);
         $cropped = imagecreatetruecolor($crop_width, $orig_height);
@@ -375,11 +391,11 @@ if ($img) {
         imagedestroy($cropped);
 
         file_put_contents($log_dir . '/visualizer_v2_debug.log',
-            date('Y-m-d H:i:s') . " | Cropped from {$orig_width}x{$orig_height} to {$crop_width}x{$orig_height} (aspect ratio was {$aspect_ratio})\n",
+            date('Y-m-d H:i:s') . " | Cropped from {$orig_width}x{$orig_height} to {$crop_width}x{$orig_height} (white corner detected: {$white_pixel_count}/100 white pixels)\n",
             FILE_APPEND);
     } else {
         file_put_contents($log_dir . '/visualizer_v2_debug.log',
-            date('Y-m-d H:i:s') . " | No crop needed, aspect ratio {$aspect_ratio} is normal\n",
+            date('Y-m-d H:i:s') . " | No crop needed, top-right corner not white ({$white_pixel_count}/100 white pixels)\n",
             FILE_APPEND);
     }
 
