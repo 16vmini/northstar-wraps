@@ -1223,6 +1223,11 @@ require_once '../includes/header.php';
             resultActions.style.display = 'none';
             generateBtn.disabled = true;
 
+            // On mobile, scroll to result area so user can see the loading/result
+            if (window.innerWidth <= 1024) {
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
             try {
                 const response = await fetch('/api/visualize.php', {
                     method: 'POST',
