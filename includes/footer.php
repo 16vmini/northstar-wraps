@@ -88,6 +88,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 
     <!-- Custom JavaScript -->
+    <?php if (!defined('SITE_VERSION')) require_once __DIR__ . '/version.php'; ?>
     <script src="/assets/js/main.js?v=<?php echo SITE_VERSION; ?>"></script>
 </body>
 </html>

@@ -5,7 +5,11 @@
  */
 
 // Main site version (CSS, main.js, general changes)
-define('SITE_VERSION', '1.0.0');
+if (!defined('SITE_VERSION')) {
+    define('SITE_VERSION', '1.0.0');
+}
 
 // Calculator version (calculator.php, calculator.js, pricing-config.json)
-define('CALC_VERSION', '1.0.1');
+if (!defined('CALC_VERSION')) {
+    define('CALC_VERSION', '1.0.1');
+}
