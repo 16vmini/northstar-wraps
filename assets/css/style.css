@@ -68,6 +68,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -2746,339 +2747,281 @@ section {
 }
 
 /* ==================== PRICE CALCULATOR ==================== */
-.calculator-section {
-    padding: 60px 0 100px;
+.page-hero-compact {
+    padding: 60px 0 40px;
 }
 
-.calculator-wrapper {
+.page-hero-compact .page-hero-content h1 {
+    margin-bottom: 10px;
+}
+
+.calculator-section {
+    padding: 40px 0 80px;
+}
+
+/* Compact Calculator Layout */
+.calculator-compact {
     display: grid;
     grid-template-columns: 1fr 380px;
     gap: 40px;
     align-items: start;
 }
 
-.calculator-form {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-/* Calculator Steps */
-.calc-step {
+/* Form Card */
+.calc-form-card {
     background: var(--white);
     border-radius: var(--radius-lg);
-    padding: 30px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--chrome);
+    padding: 35px;
+    box-shadow: var(--shadow);
 }
 
-.calc-step-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.calc-step-number {
-    width: 36px;
-    height: 36px;
-    background: var(--primary);
-    color: var(--white);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1rem;
-}
-
-.calc-step-header h3 {
-    font-family: var(--font-subheading);
-    font-size: 1.25rem;
-    color: var(--dark);
-    margin: 0;
-}
-
-/* Calculator Options Grid */
-.calc-options-grid {
+.calc-form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
 }
 
-.calc-options-list {
+/* Form Fields */
+.calc-field {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
-/* Option Cards */
-.calc-option-card {
-    position: relative;
-    background: var(--light);
-    border: 2px solid transparent;
-    border-radius: var(--radius);
-    padding: 18px;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.calc-option-card:hover {
-    border-color: var(--chrome);
-    background: var(--white);
-}
-
-.calc-option-card.selected {
-    border-color: var(--primary);
-    background: rgba(124, 181, 24, 0.05);
-}
-
-.calc-option-card input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.calc-option-content {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.calc-option-name {
-    font-family: var(--font-subheading);
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--dark);
-}
-
-.calc-option-detail {
-    font-size: 0.8125rem;
-    color: var(--gray);
-    line-height: 1.4;
-}
-
-.calc-option-price {
+.calc-field label {
     font-family: var(--font-subheading);
     font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--primary);
-    margin-top: 5px;
-}
-
-.calc-option-modifier {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--primary);
-    background: rgba(124, 181, 24, 0.15);
-    padding: 3px 8px;
-    border-radius: 20px;
-    margin-top: 5px;
-}
-
-/* Horizontal Option Cards */
-.calc-option-horizontal {
+    color: var(--dark);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 8px;
 }
 
-.calc-option-horizontal .calc-option-content {
-    flex: 1;
-}
-
-.calc-option-modifier-right {
-    font-family: var(--font-subheading);
-    font-size: 0.875rem;
-    font-weight: 600;
+.calc-field label i {
     color: var(--primary);
-    padding: 5px 12px;
-    background: rgba(124, 181, 24, 0.1);
-    border-radius: 20px;
-    white-space: nowrap;
+    font-size: 1rem;
+}
+
+.calc-field select {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--dark);
+    background: var(--light);
+    border: 2px solid var(--chrome);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+}
+
+.calc-field select:hover {
+    border-color: var(--primary-light);
+}
+
+.calc-field select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 /* Extras Section */
-.calc-extras-section {
-    margin-bottom: 20px;
+.calc-extras {
+    border-top: 1px solid var(--chrome);
+    padding-top: 25px;
 }
 
-.calc-extras-title {
+.calc-extras h4 {
     font-family: var(--font-subheading);
     font-size: 1rem;
-    color: var(--gray-dark);
-    margin-bottom: 15px;
-    padding-top: 15px;
-    border-top: 1px solid var(--chrome);
+    color: var(--dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.calc-extras-grid {
+.calc-extras h4 i {
+    color: var(--primary);
+}
+
+.calc-extras-checkboxes {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
-/* Checkbox Cards */
-.calc-checkbox-card {
+/* Custom Checkbox */
+.calc-checkbox {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 15px;
     background: var(--light);
-    border: 2px solid transparent;
     border-radius: var(--radius);
-    padding: 15px 18px;
     cursor: pointer;
     transition: var(--transition);
-}
-
-.calc-checkbox-card:hover {
-    border-color: var(--chrome);
-    background: var(--white);
-}
-
-.calc-checkbox-card.selected {
-    border-color: var(--primary);
-    background: rgba(124, 181, 24, 0.05);
-}
-
-.calc-checkbox-card input {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--primary);
-    cursor: pointer;
-}
-
-.calc-checkbox-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.calc-checkbox-name {
-    font-family: var(--font-subheading);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    color: var(--dark);
-}
-
-.calc-checkbox-detail {
-    font-size: 0.8125rem;
-    color: var(--gray);
-}
-
-.calc-checkbox-price {
-    font-family: var(--font-subheading);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--primary);
-    white-space: nowrap;
-}
-
-/* Calculator Summary Sidebar */
-.calculator-summary {
     position: relative;
 }
 
-.calc-summary-sticky {
+.calc-checkbox:hover {
+    background: rgba(124, 181, 24, 0.08);
+}
+
+.calc-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.calc-checkbox .checkmark {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    background: var(--white);
+    border: 2px solid var(--chrome);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    margin-top: 2px;
+}
+
+.calc-checkbox .checkmark::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.75rem;
+    color: var(--white);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.calc-checkbox input:checked ~ .checkmark {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.calc-checkbox input:checked ~ .checkmark::after {
+    opacity: 1;
+}
+
+.calc-checkbox .checkbox-label {
+    font-family: var(--font-subheading);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--dark);
+    display: block;
+}
+
+.calc-checkbox .checkbox-hint {
+    font-size: 0.75rem;
+    color: var(--gray);
+    display: block;
+    margin-top: 2px;
+}
+
+/* Price Card */
+.calc-price-card {
     position: sticky;
-    top: 120px;
+    top: 100px;
+}
+
+.calc-price-inner {
     background: var(--dark);
     border-radius: var(--radius-lg);
     padding: 30px;
     color: var(--white);
 }
 
-.calc-summary-sticky h3 {
+.calc-price-inner h3 {
     font-family: var(--font-heading);
     font-size: 1.25rem;
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid var(--dark-light);
-}
-
-/* Summary Selections */
-.calc-summary-selections {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 25px;
-}
-
-.calc-summary-item {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    font-size: 0.9375rem;
-}
-
-.calc-summary-label {
-    color: var(--gray-light);
-}
-
-.calc-summary-value {
-    color: var(--white);
-    font-weight: 500;
-    text-align: right;
+    text-align: center;
 }
 
 /* Price Breakdown */
-.calc-summary-breakdown {
+.calc-price-breakdown {
     background: var(--dark-light);
     border-radius: var(--radius);
     padding: 15px;
     margin-bottom: 20px;
 }
 
-.calc-breakdown-item {
+.breakdown-row {
     display: flex;
     justify-content: space-between;
     font-size: 0.875rem;
     color: var(--chrome-light);
-    padding: 5px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-/* Total Price */
-.calc-summary-total {
+.breakdown-row:last-child {
+    border-bottom: none;
+}
+
+.breakdown-row span:last-child {
+    font-weight: 500;
+    color: var(--white);
+}
+
+/* Total */
+.calc-price-total {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 0;
     border-top: 2px solid var(--primary);
-    border-bottom: 1px solid var(--dark-light);
     margin-bottom: 20px;
 }
 
-.calc-summary-total span:first-child {
+.calc-price-total span:first-child {
     font-family: var(--font-subheading);
     font-size: 1rem;
     color: var(--chrome-light);
 }
 
-.calc-total-price {
+.total-amount {
     font-family: var(--font-heading);
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: var(--primary);
     transition: var(--transition);
 }
 
-.calc-total-price.price-updated {
-    transform: scale(1.1);
-    color: var(--primary-light);
+.total-amount.pulse {
+    animation: pricePulse 0.3s ease;
 }
 
-/* Summary Note */
-.calc-summary-note {
+@keyframes pricePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); color: var(--primary-light); }
+    100% { transform: scale(1); }
+}
+
+/* Disclaimer */
+.calc-disclaimer {
     font-size: 0.75rem;
     color: var(--gray);
     line-height: 1.5;
     margin-bottom: 20px;
+    text-align: center;
 }
 
-/* Quote Button */
+/* Button */
 .btn-block {
     display: block;
     width: 100%;
@@ -3087,41 +3030,32 @@ section {
 
 /* Calculator Responsive */
 @media (max-width: 1024px) {
-    .calculator-wrapper {
+    .calculator-compact {
         grid-template-columns: 1fr;
     }
 
-    .calc-summary-sticky {
+    .calc-price-card {
         position: relative;
         top: 0;
-    }
-
-    .calculator-summary {
         order: -1;
     }
 }
 
 @media (max-width: 768px) {
-    .calc-options-grid {
+    .calc-form-grid {
         grid-template-columns: 1fr;
     }
 
-    .calc-extras-grid {
+    .calc-extras-checkboxes {
         grid-template-columns: 1fr;
     }
 
-    .calc-step {
-        padding: 20px;
+    .calc-form-card {
+        padding: 25px;
     }
 
-    .calc-option-horizontal {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .calc-option-modifier-right {
-        align-self: flex-start;
+    .total-amount {
+        font-size: 1.75rem;
     }
 }
 
