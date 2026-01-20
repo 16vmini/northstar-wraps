@@ -21,24 +21,25 @@ require_once '../includes/header.php';
     </section>
 
     <!-- Calculator Section -->
-    <section class="calculator-section">
+    <section class="calculator-section" style="background: #f5f5f5;">
         <div class="container">
             <div class="calculator-compact" data-aos="fade-up">
 
                 <!-- Calculator Form -->
                 <div class="calc-form-card">
-                    <div class="calc-form-grid">
+                    <h3 class="calc-form-title"><i class="fas fa-calculator"></i> Configure Your Wrap</h3>
 
+                    <div class="calc-form-grid">
                         <!-- Vehicle Type -->
                         <div class="calc-field">
                             <label for="vehicleType">
                                 <i class="fas fa-car"></i> Vehicle Type
                             </label>
                             <select id="vehicleType" name="vehicleType">
-                                <option value="">Select your vehicle...</option>
+                                <option value="">-- Select vehicle --</option>
                                 <?php foreach ($pricingConfig['vehicleTypes'] as $vehicle): ?>
-                                <option value="<?php echo $vehicle['id']; ?>" data-multiplier="<?php echo $vehicle['multiplier']; ?>">
-                                    <?php echo $vehicle['name']; ?> (<?php echo $vehicle['examples']; ?>)
+                                <option value="<?php echo $vehicle['id']; ?>">
+                                    <?php echo $vehicle['name']; ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
@@ -50,10 +51,10 @@ require_once '../includes/header.php';
                                 <i class="fas fa-paint-roller"></i> Wrap Coverage
                             </label>
                             <select id="coverageType" name="coverageType">
-                                <option value="">Select coverage type...</option>
+                                <option value="">-- Select coverage --</option>
                                 <?php foreach ($pricingConfig['coverageTypes'] as $coverage): ?>
-                                <option value="<?php echo $coverage['id']; ?>" data-base-price="<?php echo $coverage['basePrice']; ?>">
-                                    <?php echo $coverage['name']; ?> - <?php echo $coverage['description']; ?>
+                                <option value="<?php echo $coverage['id']; ?>">
+                                    <?php echo $coverage['name']; ?> (from £<?php echo number_format($coverage['basePrice']); ?>)
                                 </option>
                                 <?php endforeach; ?>
                             </select>
@@ -65,10 +66,10 @@ require_once '../includes/header.php';
                                 <i class="fas fa-palette"></i> Wrap Finish
                             </label>
                             <select id="finishType" name="finishType">
-                                <option value="">Select finish...</option>
+                                <option value="">-- Select finish --</option>
                                 <?php foreach ($pricingConfig['finishTypes'] as $finish): ?>
-                                <option value="<?php echo $finish['id']; ?>" data-multiplier="<?php echo $finish['multiplier']; ?>">
-                                    <?php echo $finish['name']; ?><?php echo $finish['multiplier'] > 1 ? ' (+' . (($finish['multiplier'] - 1) * 100) . '%)' : ''; ?>
+                                <option value="<?php echo $finish['id']; ?>">
+                                    <?php echo $finish['name']; ?><?php echo $finish['multiplier'] > 1 ? ' (+' . round(($finish['multiplier'] - 1) * 100) . '%)' : ''; ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
@@ -80,56 +81,64 @@ require_once '../includes/header.php';
                                 <i class="fas fa-award"></i> Material Quality
                             </label>
                             <select id="brandTier" name="brandTier">
-                                <option value="">Select quality...</option>
+                                <option value="">-- Select quality --</option>
                                 <?php foreach ($pricingConfig['brandTiers'] as $brand): ?>
-                                <option value="<?php echo $brand['id']; ?>" data-multiplier="<?php echo $brand['multiplier']; ?>">
-                                    <?php echo $brand['name']; ?> - <?php echo $brand['description']; ?>
+                                <option value="<?php echo $brand['id']; ?>">
+                                    <?php echo $brand['name']; ?><?php
+                                        if ($brand['multiplier'] < 1) echo ' (-' . round((1 - $brand['multiplier']) * 100) . '%)';
+                                        elseif ($brand['multiplier'] > 1) echo ' (+' . round(($brand['multiplier'] - 1) * 100) . '%)';
+                                    ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
 
                         <!-- Vehicle Condition -->
-                        <div class="calc-field">
+                        <div class="calc-field calc-field-full">
                             <label for="condition">
                                 <i class="fas fa-clipboard-check"></i> Vehicle Condition
                             </label>
                             <select id="condition" name="condition">
-                                <option value="">Select condition...</option>
+                                <option value="">-- Select condition --</option>
                                 <?php foreach ($pricingConfig['conditions'] as $condition): ?>
-                                <option value="<?php echo $condition['id']; ?>" data-multiplier="<?php echo $condition['multiplier']; ?>">
-                                    <?php echo $condition['name']; ?> - <?php echo $condition['description']; ?><?php echo $condition['multiplier'] > 1 ? ' (+' . (($condition['multiplier'] - 1) * 100) . '%)' : ''; ?>
+                                <option value="<?php echo $condition['id']; ?>">
+                                    <?php echo $condition['name']; ?> - <?php echo $condition['description']; ?><?php echo $condition['multiplier'] > 1 ? ' (+' . round(($condition['multiplier'] - 1) * 100) . '%)' : ''; ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
                     </div>
 
                     <!-- Extras Section -->
                     <div class="calc-extras">
                         <h4><i class="fas fa-plus-circle"></i> Optional Extras</h4>
-                        <div class="calc-extras-checkboxes">
-                            <label class="calc-checkbox">
+                        <div class="calc-extras-grid">
+                            <label class="calc-extra-item">
                                 <input type="checkbox" id="doorShuts" data-price="<?php echo $pricingConfig['doorShuts']['price']; ?>">
-                                <span class="checkmark"></span>
-                                <span class="checkbox-label">Door Shuts (+<?php echo $pricingConfig['currency'] . $pricingConfig['doorShuts']['price']; ?>)</span>
-                                <span class="checkbox-hint"><?php echo $pricingConfig['doorShuts']['description']; ?></span>
+                                <span class="extra-info">
+                                    <strong>Door Shuts</strong>
+                                    <small><?php echo $pricingConfig['doorShuts']['description']; ?></small>
+                                </span>
+                                <span class="extra-price">+£<?php echo $pricingConfig['doorShuts']['price']; ?></span>
                             </label>
 
-                            <label class="calc-checkbox">
+                            <label class="calc-extra-item">
                                 <input type="checkbox" id="wrapRemoval" data-price="<?php echo $pricingConfig['existingWrapRemoval']['price']; ?>">
-                                <span class="checkmark"></span>
-                                <span class="checkbox-label">Existing Wrap Removal (+<?php echo $pricingConfig['currency'] . $pricingConfig['existingWrapRemoval']['price']; ?>)</span>
-                                <span class="checkbox-hint"><?php echo $pricingConfig['existingWrapRemoval']['description']; ?></span>
+                                <span class="extra-info">
+                                    <strong>Existing Wrap Removal</strong>
+                                    <small><?php echo $pricingConfig['existingWrapRemoval']['description']; ?></small>
+                                </span>
+                                <span class="extra-price">+£<?php echo $pricingConfig['existingWrapRemoval']['price']; ?></span>
                             </label>
 
                             <?php foreach ($pricingConfig['addOns'] as $addon): ?>
-                            <label class="calc-checkbox">
+                            <label class="calc-extra-item">
                                 <input type="checkbox" class="addon-checkbox" data-addon-id="<?php echo $addon['id']; ?>" data-price="<?php echo $addon['price']; ?>">
-                                <span class="checkmark"></span>
-                                <span class="checkbox-label"><?php echo $addon['name']; ?> (+<?php echo $pricingConfig['currency'] . $addon['price']; ?>)</span>
-                                <span class="checkbox-hint"><?php echo $addon['description']; ?></span>
+                                <span class="extra-info">
+                                    <strong><?php echo $addon['name']; ?></strong>
+                                    <small><?php echo $addon['description']; ?></small>
+                                </span>
+                                <span class="extra-price">+£<?php echo $addon['price']; ?></span>
                             </label>
                             <?php endforeach; ?>
                         </div>
@@ -139,7 +148,7 @@ require_once '../includes/header.php';
                 <!-- Price Display -->
                 <div class="calc-price-card">
                     <div class="calc-price-inner">
-                        <h3>Your Estimate</h3>
+                        <h3><i class="fas fa-receipt"></i> Your Estimate</h3>
 
                         <div class="calc-price-breakdown" id="priceBreakdown">
                             <div class="breakdown-row" id="row-base">
@@ -147,19 +156,19 @@ require_once '../includes/header.php';
                                 <span id="price-base">-</span>
                             </div>
                             <div class="breakdown-row" id="row-vehicle" style="display:none;">
-                                <span>Vehicle size adjustment:</span>
+                                <span>Vehicle size:</span>
                                 <span id="price-vehicle">-</span>
                             </div>
                             <div class="breakdown-row" id="row-finish" style="display:none;">
-                                <span>Finish adjustment:</span>
+                                <span>Finish type:</span>
                                 <span id="price-finish">-</span>
                             </div>
                             <div class="breakdown-row" id="row-material" style="display:none;">
-                                <span>Material adjustment:</span>
+                                <span>Material quality:</span>
                                 <span id="price-material">-</span>
                             </div>
                             <div class="breakdown-row" id="row-condition" style="display:none;">
-                                <span>Condition adjustment:</span>
+                                <span>Condition prep:</span>
                                 <span id="price-condition">-</span>
                             </div>
                             <div class="breakdown-row" id="row-extras" style="display:none;">
@@ -174,7 +183,7 @@ require_once '../includes/header.php';
                         </div>
 
                         <p class="calc-disclaimer">
-                            <?php echo $pricingConfig['disclaimer']; ?>
+                            <i class="fas fa-info-circle"></i> <?php echo $pricingConfig['disclaimer']; ?>
                         </p>
 
                         <a href="/pages/contact.php" class="btn btn-primary btn-lg btn-block">
@@ -190,6 +199,7 @@ require_once '../includes/header.php';
     <!-- Pass config to JavaScript -->
     <script>
         window.pricingConfig = <?php echo json_encode($pricingConfig); ?>;
+        console.log('Calculator config loaded:', window.pricingConfig);
     </script>
 
 <?php require_once '../includes/footer.php'; ?>

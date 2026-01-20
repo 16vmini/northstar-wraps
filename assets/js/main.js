@@ -446,7 +446,12 @@ document.head.appendChild(style);
  */
 function initPriceCalculator() {
     // Check if we're on the calculator page
-    if (!window.pricingConfig) return;
+    if (!window.pricingConfig) {
+        console.log('Calculator: No pricing config found, skipping init');
+        return;
+    }
+
+    console.log('Calculator: Initializing with config', window.pricingConfig);
 
     const config = window.pricingConfig;
     const currency = config.currency;
@@ -489,12 +494,16 @@ function initPriceCalculator() {
 
     // Main calculation function
     function calculate() {
+        console.log('Calculator: Running calculation...');
+
         // Get selected values
-        const vehicleId = vehicleSelect.value;
-        const coverageId = coverageSelect.value;
-        const finishId = finishSelect.value;
-        const brandId = brandSelect.value;
-        const conditionId = conditionSelect.value;
+        const vehicleId = vehicleSelect ? vehicleSelect.value : '';
+        const coverageId = coverageSelect ? coverageSelect.value : '';
+        const finishId = finishSelect ? finishSelect.value : '';
+        const brandId = brandSelect ? brandSelect.value : '';
+        const conditionId = conditionSelect ? conditionSelect.value : '';
+
+        console.log('Calculator: Selected IDs:', { vehicleId, coverageId, finishId, brandId, conditionId });
 
         // Get data from config
         const vehicle = findById(config.vehicleTypes, vehicleId);
@@ -503,15 +512,18 @@ function initPriceCalculator() {
         const brand = findById(config.brandTiers, brandId);
         const condition = findById(config.conditions, conditionId);
 
+        console.log('Calculator: Found data:', { vehicle, coverage, finish, brand, condition });
+
         // If no coverage selected, show zero
         if (!coverage) {
-            totalPriceEl.textContent = currency + '0';
-            priceBaseEl.textContent = '-';
-            rowVehicle.style.display = 'none';
-            rowFinish.style.display = 'none';
-            rowMaterial.style.display = 'none';
-            rowCondition.style.display = 'none';
-            rowExtras.style.display = 'none';
+            console.log('Calculator: No coverage selected, showing £0');
+            if (totalPriceEl) totalPriceEl.textContent = currency + '0';
+            if (priceBaseEl) priceBaseEl.textContent = '-';
+            if (rowVehicle) rowVehicle.style.display = 'none';
+            if (rowFinish) rowFinish.style.display = 'none';
+            if (rowMaterial) rowMaterial.style.display = 'none';
+            if (rowCondition) rowCondition.style.display = 'none';
+            if (rowExtras) rowExtras.style.display = 'none';
             return;
         }
 
@@ -597,12 +609,16 @@ function initPriceCalculator() {
 
         // Final total
         const finalTotal = wrapSubtotal + extrasTotal;
-        totalPriceEl.textContent = formatPrice(finalTotal);
+        console.log('Calculator: Final total:', finalTotal, '(wrap:', wrapSubtotal, '+ extras:', extrasTotal, ')');
 
-        // Animate the price
-        totalPriceEl.classList.remove('pulse');
-        void totalPriceEl.offsetWidth; // Trigger reflow
-        totalPriceEl.classList.add('pulse');
+        if (totalPriceEl) {
+            totalPriceEl.textContent = formatPrice(finalTotal);
+
+            // Animate the price
+            totalPriceEl.classList.remove('pulse');
+            void totalPriceEl.offsetWidth; // Trigger reflow
+            totalPriceEl.classList.add('pulse');
+        }
     }
 
     // Add event listeners to all inputs
