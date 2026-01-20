@@ -7,6 +7,9 @@
 .env.local
 .env.*.local
 
+# Email config (contains API keys)
+includes/email-config.php
+
 # IDE
 .idea/
 .vscode/

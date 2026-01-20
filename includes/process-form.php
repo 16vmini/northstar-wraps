@@ -6,6 +6,7 @@
 
 session_start();
 require_once 'config.php';
+require_once 'email-sender.php';
 
 // Only process POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -189,81 +190,21 @@ if (empty($vehicle_info)) {
     $vehicle_info = 'Not specified';
 }
 
-// Build email content
-$email_subject = "New Quote Request - {$service_display}";
-
-$email_body = "
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #7CB518; color: white; padding: 20px; text-align: center; }
-        .header h1 { margin: 0; font-size: 24px; }
-        .content { background: #f9f9f9; padding: 20px; }
-        .section { margin-bottom: 20px; }
-        .section h3 { color: #7CB518; margin-bottom: 10px; border-bottom: 2px solid #7CB518; padding-bottom: 5px; }
-        .field { margin-bottom: 8px; }
-        .label { font-weight: bold; color: #666; }
-        .message-box { background: white; padding: 15px; border-left: 4px solid #7CB518; margin-top: 10px; }
-        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>
-            <h1>New Quote Request</h1>
-        </div>
-        <div class='content'>
-            <div class='section'>
-                <h3>Contact Information</h3>
-                <div class='field'><span class='label'>Name:</span> {$name}</div>
-                <div class='field'><span class='label'>Email:</span> {$email}</div>
-                <div class='field'><span class='label'>Phone:</span> {$phone}</div>
-                <div class='field'><span class='label'>Preferred Contact:</span> " . ucfirst($preferred_contact) . "</div>
-            </div>
-
-            <div class='section'>
-                <h3>Project Details</h3>
-                <div class='field'><span class='label'>Service:</span> {$service_display}</div>
-                <div class='field'><span class='label'>Budget Range:</span> {$budget_display}</div>
-                <div class='field'><span class='label'>Vehicle:</span> {$vehicle_info}</div>
-                <div class='field'><span class='label'>Color/Finish Preference:</span> " . ($color_preference ?: 'Not specified') . "</div>
-            </div>
-
-            <div class='section'>
-                <h3>Project Description</h3>
-                <div class='message-box'>" . nl2br($message) . "</div>
-            </div>
-
-            <div class='section'>
-                <h3>Additional Info</h3>
-                <div class='field'><span class='label'>How they heard about us:</span> {$heard_display}</div>
-                <div class='field'><span class='label'>Submitted:</span> " . date('F j, Y \a\t g:i A') . "</div>
-            </div>
-        </div>
-        <div class='footer'>
-            This quote request was submitted via the North Star Wraps website.
-        </div>
-    </div>
-</body>
-</html>
-";
-
-// Email headers
-$headers = [
-    'MIME-Version: 1.0',
-    'Content-type: text/html; charset=UTF-8',
-    'From: ' . SITE_NAME . ' Website <noreply@' . $_SERVER['HTTP_HOST'] . '>',
-    'Reply-To: ' . $email,
-    'X-Mailer: PHP/' . phpversion()
+// Prepare form data for email functions
+$form_data = [
+    'name' => $name,
+    'email' => $email,
+    'phone' => $phone,
+    'preferred_contact' => $preferred_contact,
+    'service_display' => $service_display,
+    'budget_display' => $budget_display,
+    'vehicle_info' => $vehicle_info,
+    'color_preference' => $color_preference,
+    'message' => $message,
+    'heard_display' => $heard_display
 ];
 
-// Send email
-$mail_sent = mail(SITE_EMAIL, $email_subject, $email_body, implode("\r\n", $headers));
-
-// Also save to a log file (backup in case email fails)
+// Save to log file (backup in case email fails)
 $log_entry = date('Y-m-d H:i:s') . " | {$name} | {$email} | {$phone} | {$service_display} | {$vehicle_info}\n";
 $log_file = __DIR__ . '/../logs/quotes.log';
 
@@ -275,63 +216,16 @@ if (!is_dir($logs_dir)) {
 
 file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
 
+// Send notification email to business (via Brevo or fallback to PHP mail)
+$notification_result = sendContactNotification($form_data);
+
 // Send auto-reply to customer
-$customer_subject = "Thank you for contacting " . SITE_NAME;
-$customer_body = "
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #7CB518; color: white; padding: 30px; text-align: center; }
-        .header h1 { margin: 0; font-size: 28px; }
-        .content { background: #f9f9f9; padding: 30px; }
-        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-        .cta { text-align: center; margin: 20px 0; }
-        .cta a { background: #7CB518; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; }
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>
-            <h1>" . SITE_NAME . "</h1>
-        </div>
-        <div class='content'>
-            <p>Hi {$name},</p>
+$autoreply_result = sendCustomerAutoReply($form_data);
 
-            <p>Thank you for reaching out to " . SITE_NAME . "! We've received your quote request for <strong>{$service_display}</strong> and are excited to help transform your vehicle.</p>
-
-            <p>One of our team members will review your request and get back to you within <strong>24 hours</strong> during business days.</p>
-
-            <p>In the meantime, feel free to:</p>
-            <ul>
-                <li>Check out our <a href='https://" . $_SERVER['HTTP_HOST'] . "/pages/gallery.php'>gallery</a> for inspiration</li>
-                <li>Follow us on social media for our latest work</li>
-                <li>Give us a call at " . SITE_PHONE . " if you have any urgent questions</li>
-            </ul>
-
-            <p>We look forward to working with you!</p>
-
-            <p>Best regards,<br>The " . SITE_NAME . " Team</p>
-        </div>
-        <div class='footer'>
-            <p>" . SITE_ADDRESS . "</p>
-            <p>Phone: " . SITE_PHONE . " | Email: " . SITE_EMAIL . "</p>
-        </div>
-    </div>
-</body>
-</html>
-";
-
-$customer_headers = [
-    'MIME-Version: 1.0',
-    'Content-type: text/html; charset=UTF-8',
-    'From: ' . SITE_NAME . ' <' . SITE_EMAIL . '>',
-    'X-Mailer: PHP/' . phpversion()
-];
-
-mail($email, $customer_subject, $customer_body, implode("\r\n", $customer_headers));
+// Log email results
+$email_log = date('Y-m-d H:i:s') . " | Notification: " . ($notification_result['success'] ? 'OK' : 'FAIL') .
+             " | AutoReply: " . ($autoreply_result['success'] ? 'OK' : 'FAIL') . "\n";
+file_put_contents(__DIR__ . '/../logs/email.log', $email_log, FILE_APPEND | LOCK_EX);
 
 // Redirect back to contact page with success message
 header('Location: /pages/contact.php?submitted=true');
