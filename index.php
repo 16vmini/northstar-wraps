@@ -309,7 +309,7 @@ require_once 'includes/header.php';
                         <a href="/visualizer" class="btn btn-primary btn-lg">
                             <i class="fas fa-magic"></i> Try Wrapinator Free
                         </a>
-                        <a href="/wrapinator-gallery" class="btn btn-outline btn-lg">
+                        <a href="/pages/wrapinator-gallery" class="btn btn-outline btn-lg">
                             <i class="fas fa-images"></i> View Gallery
                         </a>
                     </div>

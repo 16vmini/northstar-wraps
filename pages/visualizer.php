@@ -32,7 +32,7 @@ require_once '../includes/header.php';
             <div class="visualizer-intro" data-aos="fade-up">
                 <h2>Preview Your Dream Wrap</h2>
                 <p>Upload a photo of your car and select a wrap colour or finish to see how it would look. Our AI-powered Wrapinator creates a realistic preview in seconds.</p>
-                <a href="/wrapinator-gallery" class="gallery-link-btn">
+                <a href="/pages/wrapinator-gallery" class="gallery-link-btn">
                     <i class="fas fa-images"></i> View Community Gallery
                 </a>
             </div>
@@ -80,9 +80,6 @@ require_once '../includes/header.php';
                                 <?php echo $category['name']; ?>
                             </button>
                             <?php endforeach; ?>
-                            <button type="button" class="category-tab" data-category="custom">
-                                <i class="fas fa-upload"></i> Custom
-                            </button>
                         </div>
 
                         <!-- Wrap Options -->
@@ -103,24 +100,6 @@ require_once '../includes/header.php';
                                 <?php endforeach; ?>
                             </div>
                             <?php endforeach; ?>
-
-                            <!-- Custom Upload -->
-                            <div class="wrap-options" data-category="custom">
-                                <div class="custom-wrap-upload">
-                                    <input type="file" id="custom-wrap-upload" accept="image/jpeg,image/png,image/webp" hidden>
-                                    <div class="custom-upload-area" id="custom-upload-area">
-                                        <i class="fas fa-image"></i>
-                                        <p>Upload a wrap pattern or texture</p>
-                                        <small>PNG with pattern works best</small>
-                                    </div>
-                                    <div class="custom-preview" id="custom-preview" style="display: none;">
-                                        <img id="custom-preview-image" src="" alt="Custom wrap">
-                                        <button type="button" class="btn-remove" id="remove-custom">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -515,41 +494,6 @@ require_once '../includes/header.php';
     .wrap-finish {
         font-size: 0.65rem;
         color: #999;
-    }
-
-    /* Custom Upload */
-    .custom-wrap-upload {
-        grid-column: 1 / -1;
-    }
-
-    .custom-upload-area {
-        border: 2px dashed #ddd;
-        border-radius: 12px;
-        padding: 30px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .custom-upload-area:hover {
-        border-color: #7CB518;
-    }
-
-    .custom-upload-area i {
-        font-size: 2rem;
-        color: #7CB518;
-        margin-bottom: 10px;
-    }
-
-    .custom-preview {
-        position: relative;
-        display: inline-block;
-    }
-
-    .custom-preview img {
-        max-width: 150px;
-        max-height: 100px;
-        border-radius: 8px;
     }
 
     /* Actions */
@@ -1180,12 +1124,6 @@ require_once '../includes/header.php';
         const wrapOptionsContainers = document.querySelectorAll('.wrap-options');
         const wrapOptions = document.querySelectorAll('.wrap-option');
 
-        const customUploadArea = document.getElementById('custom-upload-area');
-        const customWrapUpload = document.getElementById('custom-wrap-upload');
-        const customPreview = document.getElementById('custom-preview');
-        const customPreviewImage = document.getElementById('custom-preview-image');
-        const removeCustomBtn = document.getElementById('remove-custom');
-
         const generateBtn = document.getElementById('generate-btn');
         const usageText = document.getElementById('usage-text');
 
@@ -1219,7 +1157,6 @@ require_once '../includes/header.php';
         let carImageData = null;
         let selectedWrap = null;
         let selectedWrapName = null;
-        let customWrapData = null;
         let currentShareId = null;
 
         // Initialize
@@ -1287,19 +1224,6 @@ require_once '../includes/header.php';
                 wrapOptionsContainers.forEach(container => {
                     container.classList.toggle('active', container.dataset.category === category);
                 });
-
-                // Clear selection when switching categories
-                if (category === 'custom') {
-                    selectedWrap = null;
-                    selectedWrapName = null;
-                    wrapOptions.forEach(opt => opt.classList.remove('selected'));
-                } else {
-                    customWrapData = null;
-                    if (customPreview) {
-                        customPreview.style.display = 'none';
-                        customUploadArea.style.display = 'block';
-                    }
-                }
                 updateGenerateButton();
             });
         });
@@ -1311,55 +1235,13 @@ require_once '../includes/header.php';
                 option.classList.add('selected');
                 selectedWrap = option.dataset.wrapId;
                 selectedWrapName = option.dataset.wrapName;
-                customWrapData = null;
                 updateGenerateButton();
             });
         });
-
-        // Custom wrap upload
-        if (customUploadArea) {
-            customUploadArea.addEventListener('click', () => customWrapUpload.click());
-        }
-
-        customWrapUpload.addEventListener('change', (e) => {
-            if (e.target.files.length) {
-                handleCustomWrapUpload(e.target.files[0]);
-            }
-        });
-
-        if (removeCustomBtn) {
-            removeCustomBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                customWrapData = null;
-                customPreview.style.display = 'none';
-                customUploadArea.style.display = 'block';
-                updateGenerateButton();
-            });
-        }
-
-        function handleCustomWrapUpload(file) {
-            if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
-                alert('Please upload a JPEG, PNG or WebP image');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                customWrapData = e.target.result;
-                customPreviewImage.src = customWrapData;
-                customPreview.style.display = 'block';
-                customUploadArea.style.display = 'none';
-                selectedWrap = 'custom';
-                selectedWrapName = 'Custom Pattern';
-                wrapOptions.forEach(opt => opt.classList.remove('selected'));
-                updateGenerateButton();
-            };
-            reader.readAsDataURL(file);
-        }
 
         function updateGenerateButton() {
             const hasImage = !!carImageData;
-            const hasWrap = !!selectedWrap || !!customWrapData;
+            const hasWrap = !!selectedWrap;
             generateBtn.disabled = !(hasImage && hasWrap);
         }
 
@@ -1368,7 +1250,7 @@ require_once '../includes/header.php';
         retryBtn.addEventListener('click', generate);
 
         async function generate() {
-            if (!carImageData || (!selectedWrap && !customWrapData)) return;
+            if (!carImageData || !selectedWrap) return;
 
             // Show loading
             resultPlaceholder.style.display = 'none';
@@ -1389,8 +1271,7 @@ require_once '../includes/header.php';
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         car_image: carImageData,
-                        wrap: selectedWrap,
-                        wrap_image: customWrapData
+                        wrap: selectedWrap
                     })
                 });
 
