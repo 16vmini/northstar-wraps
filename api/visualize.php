@@ -213,8 +213,9 @@ $car_image = $input['car_image']; // Base64 encoded image
 $wrap = $input['wrap']; // Wrap ID or custom image
 $wrap_image = $input['wrap_image'] ?? null; // Optional custom wrap image (base64)
 
-// Validate car image (must be base64)
-if (!preg_match('/^data:image\/(jpeg|jpg|png|webp);base64,/', $car_image)) {
+// Validate car image (must be base64) - accept common formats including HEIC from iOS
+if (!preg_match('/^data:image\/(jpeg|jpg|png|webp|heic|heif);base64,/', $car_image) &&
+    !preg_match('/^data:application\/octet-stream;base64,/', $car_image)) {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid image format. Please upload a JPEG, PNG, or WebP image.']);
     exit;

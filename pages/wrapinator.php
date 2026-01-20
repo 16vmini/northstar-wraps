@@ -44,7 +44,7 @@ require_once '../includes/header.php';
                     <div class="upload-section">
                         <h3><i class="fas fa-camera"></i> Step 1: Upload Your Car</h3>
                         <div class="upload-area" id="upload-area">
-                            <input type="file" id="car-upload" accept="image/jpeg,image/png,image/webp" hidden>
+                            <input type="file" id="car-upload" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/*" hidden>
                             <div class="upload-placeholder" id="upload-placeholder">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 <p>Drag & drop your car photo here</p>
@@ -119,7 +119,7 @@ require_once '../includes/header.php';
                     <div class="pattern-upload-section" id="pattern-section" style="display: none;">
                         <h3><i class="fas fa-image"></i> Or Upload Custom Pattern</h3>
                         <div class="upload-area pattern-upload-area" id="pattern-upload-area">
-                            <input type="file" id="pattern-upload" accept="image/jpeg,image/png,image/webp" hidden>
+                            <input type="file" id="pattern-upload" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/*" hidden>
                             <div class="upload-placeholder" id="pattern-placeholder">
                                 <i class="fas fa-paint-roller"></i>
                                 <p>Upload a wrap pattern</p>
@@ -1379,7 +1379,9 @@ require_once '../includes/header.php';
         });
 
         function handleCarUpload(file) {
-            if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
+            // Accept common image types (iOS sometimes reports empty or heic type)
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif', ''];
+            if (!validTypes.includes(file.type) && !file.type.match(/image\//)) {
                 alert('Please upload a JPEG, PNG or WebP image');
                 return;
             }
@@ -1395,6 +1397,10 @@ require_once '../includes/header.php';
                 uploadPlaceholder.style.display = 'none';
                 uploadPreview.style.display = 'block';
                 updateGenerateButton();
+            };
+            reader.onerror = (e) => {
+                console.error('FileReader error:', e);
+                alert('Failed to read the image. Please try a different photo.');
             };
             reader.readAsDataURL(file);
         }
@@ -1431,7 +1437,9 @@ require_once '../includes/header.php';
         });
 
         async function handlePatternUpload(file) {
-            if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
+            // Accept common image types (iOS sometimes reports empty or heic type)
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif', ''];
+            if (!validTypes.includes(file.type) && !file.type.match(/image\//)) {
                 alert('Please upload a JPEG, PNG or WebP image');
                 return;
             }
@@ -1448,6 +1456,10 @@ require_once '../includes/header.php';
                 patternPlaceholder.style.display = 'none';
                 patternPreview.style.display = 'block';
                 updateGenerateButton();
+            };
+            reader.onerror = (e) => {
+                console.error('FileReader error:', e);
+                alert('Failed to read the image. Please try a different photo.');
             };
             reader.readAsDataURL(file);
         }

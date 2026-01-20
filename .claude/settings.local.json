@@ -27,7 +27,8 @@
       "Bash(gh run:*)",
       "Bash(gh workflow run:*)",
       "Bash(nslookup:*)",
-      "Bash(host:*)"
+      "Bash(host:*)",
+      "Bash(git mv:*)"
     ]
   }
 }
