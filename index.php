@@ -107,7 +107,7 @@ require_once 'includes/header.php';
                             </div>
                             <div class="feature-content">
                                 <h4>Premium Materials</h4>
-                                <p>We exclusively use top-tier vinyl from 3M, Avery Dennison, and XPEL with full manufacturer warranties.</p>
+                                <p>We exclusively use top-tier vinyl from Metamark, 3M, Avery Dennison, and XPEL with full manufacturer warranties.</p>
                             </div>
                         </div>
                         <div class="feature-item">
