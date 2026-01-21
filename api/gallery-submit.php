@@ -55,42 +55,34 @@ if (!$decoded_image) {
     exit;
 }
 
-// Save to uploads directory
+// Check uploads directory
 $upload_dir = dirname(__DIR__) . '/uploads/visualizer';
-if (!is_dir($upload_dir)) {
-    mkdir($upload_dir, 0755, true);
+$metadata_file = $upload_dir . '/pending_' . $share_id . '.json';
+
+// Check if metadata file exists (image was generated)
+if (!file_exists($metadata_file)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Image not found. Please generate an image first.']);
+    exit;
 }
 
-// Save the image with pending_ prefix (needs admin approval for gallery)
-$image_path = $upload_dir . '/pending_' . $share_id . '.png';
+// Load existing metadata
+$metadata = json_decode(file_get_contents($metadata_file), true);
 
-// Check if this share_id already exists (prevent duplicates)
-if (file_exists($image_path) || file_exists($upload_dir . '/' . $share_id . '.png')) {
+// Check if already submitted to gallery
+if (!empty($metadata['submitted_to_gallery'])) {
     http_response_code(400);
     echo json_encode(['error' => 'This image has already been submitted to the gallery']);
     exit;
 }
 
-$saved = file_put_contents($image_path, $decoded_image);
-
-if ($saved === false) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Failed to save image']);
-    exit;
+// Update metadata to mark as submitted to gallery
+$metadata['submitted_to_gallery'] = true;
+$metadata['submitted_at'] = date('Y-m-d H:i:s');
+if ($model) {
+    $metadata['model'] = $model;
 }
-
-// Save metadata
-$metadata = [
-    'id' => $share_id,
-    'wrap' => $wrap_name,
-    'finish' => '',
-    'model' => $model,
-    'created' => date('Y-m-d H:i:s'),
-    'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-    'email' => $_SESSION['visualizer_email'] ?? null,
-    'status' => 'pending'
-];
-file_put_contents($upload_dir . '/pending_' . $share_id . '.json', json_encode($metadata, JSON_PRETTY_PRINT));
+file_put_contents($metadata_file, json_encode($metadata, JSON_PRETTY_PRINT));
 
 // Log the submission
 $log_dir = dirname(__DIR__) . '/logs';
