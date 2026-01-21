@@ -8,9 +8,9 @@ $pageTitle = "Wrapinator Test";
 $pageDescription = "Testing Wrapinator.co.uk integration";
 $currentPage = 'wrapinator-test';
 
-// Test configuration - update these when ready
-$wrapinatorDomain = 'https://wrapinator.co.uk'; // Change to your domain
-$testApiKey = 'wk_test_xxxxx'; // Replace with a real API key from wrapinator dashboard
+// Test configuration
+$wrapinatorDomain = 'https://wrapinator.co.uk';
+$testApiKey = 'wk_aa031df03b7854ce46a11046260ee1f8838fa56e6d0d0951483f327ce0ba';
 
 require_once __DIR__ . '/../includes/header.php';
 ?>
