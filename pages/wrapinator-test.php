@@ -4,8 +4,10 @@
  * Test page for wrapinator.co.uk embed integration
  */
 
-$pageTitle = "Wrapinator Test";
-$pageDescription = "Testing Wrapinator.co.uk integration";
+require_once __DIR__ . '/../includes/config.php';
+
+$page_title = "Wrapinator Test";
+$page_description = "Testing Wrapinator.co.uk integration";
 $currentPage = 'wrapinator-test';
 
 // Test configuration
