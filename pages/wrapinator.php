@@ -186,6 +186,9 @@ require_once '../includes/header.php';
                         <button type="button" class="btn btn-outline" id="share-btn">
                             <i class="fas fa-share-alt"></i> Share
                         </button>
+                        <button type="button" class="btn btn-outline" id="gallery-btn">
+                            <i class="fas fa-images"></i> Add to Gallery
+                        </button>
                         <a href="/pages/contact.php?service=full-wrap" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i> Get a Quote
                         </a>
@@ -1284,6 +1287,7 @@ require_once '../includes/header.php';
         const modalClose = document.getElementById('modal-close');
 
         const shareBtn = document.getElementById('share-btn');
+        const galleryBtn = document.getElementById('gallery-btn');
         const shareModal = document.getElementById('share-modal');
         const shareModalClose = document.getElementById('share-modal-close');
         const shareFacebook = document.getElementById('share-facebook');
@@ -1567,6 +1571,10 @@ require_once '../includes/header.php';
                     resultImage.style.display = 'block';
                     resultActions.style.display = 'flex';
                     currentShareId = data.share_id || null;
+                    // Reset gallery button for new image
+                    galleryBtn.innerHTML = '<i class="fas fa-images"></i> Add to Gallery';
+                    galleryBtn.disabled = false;
+                    galleryBtn.classList.remove('btn-success');
                     updateUsageText(data.remaining, data.needs_email);
 
                 } else {
@@ -1601,6 +1609,10 @@ require_once '../includes/header.php';
                     resultImage.style.display = 'block';
                     resultActions.style.display = 'flex';
                     currentShareId = data.share_id;
+                    // Reset gallery button for new image
+                    galleryBtn.innerHTML = '<i class="fas fa-images"></i> Add to Gallery';
+                    galleryBtn.disabled = false;
+                    galleryBtn.classList.remove('btn-success');
                     updateUsageText(data.remaining, data.needs_email);
                 }
 
@@ -1644,6 +1656,42 @@ require_once '../includes/header.php';
 
         document.querySelector('.share-modal-overlay').addEventListener('click', () => {
             shareModal.style.display = 'none';
+        });
+
+        // Gallery submission button
+        galleryBtn.addEventListener('click', async () => {
+            if (!currentShareId || !generatedImage.src) return;
+
+            const originalText = galleryBtn.innerHTML;
+            galleryBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            galleryBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/gallery-submit.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        share_id: currentShareId,
+                        image: generatedImage.src,
+                        wrap: wrapBadge.textContent,
+                        model: currentMode === 'pro' ? 'T-1000' : 'T-800'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    galleryBtn.innerHTML = '<i class="fas fa-check"></i> Added!';
+                    galleryBtn.classList.add('btn-success');
+                    // Keep button disabled to prevent re-submission
+                } else {
+                    throw new Error(data.error || 'Failed to submit');
+                }
+            } catch (error) {
+                galleryBtn.innerHTML = originalText;
+                galleryBtn.disabled = false;
+                alert('Failed to add to gallery: ' + error.message);
+            }
         });
 
         // Copy link button

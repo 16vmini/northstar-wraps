@@ -446,6 +446,7 @@ $image_path = $upload_dir . '/pending_' . $share_id . '.png';
 file_put_contents($image_path, base64_decode($generated_image));
 
 // Save metadata with pending_ prefix
+// Note: submitted_to_gallery is false - only set true when user clicks "Add to Gallery"
 $metadata = [
     'id' => $share_id,
     'wrap' => $selected_wrap ? $selected_wrap['name'] : 'Custom',
@@ -455,14 +456,10 @@ $metadata = [
     'created' => date('Y-m-d H:i:s'),
     'ip' => $_SERVER['REMOTE_ADDR'],
     'email' => $_SESSION['visualizer_email'] ?? null,
-    'status' => 'pending'
+    'status' => 'pending',
+    'submitted_to_gallery' => false
 ];
 file_put_contents($upload_dir . '/pending_' . $share_id . '.json', json_encode($metadata, JSON_PRETTY_PRINT));
-
-// Log to gallery index
-$gallery_log = $upload_dir . '/gallery.log';
-$log_entry = date('Y-m-d H:i:s') . " | {$share_id} | " . ($selected_wrap ? $selected_wrap['name'] : 'Custom') . "\n";
-file_put_contents($gallery_log, $log_entry, FILE_APPEND | LOCK_EX);
 
 // Increment usage counter using shared function
 $usage_status = incrementWrapinatorUsage();
