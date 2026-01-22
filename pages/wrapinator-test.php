@@ -138,46 +138,6 @@ require_once __DIR__ . '/../includes/header.php';
         margin-bottom: 20px;
     }
 
-    .embed-tabs {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .embed-tab {
-        padding: 10px 20px;
-        background: #0a0a0a;
-        border: 1px solid #333;
-        border-radius: 8px;
-        color: #888;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .embed-tab:hover {
-        border-color: #7cb518;
-        color: #fff;
-    }
-
-    .embed-tab.active {
-        background: #7cb518;
-        border-color: #7cb518;
-        color: #fff;
-    }
-
-    .iframe-container {
-        background: #0a0a0a;
-        border-radius: 12px;
-        overflow: hidden;
-        min-height: 600px;
-    }
-
-    .iframe-container iframe {
-        width: 100%;
-        height: 700px;
-        border: none;
-    }
-
     .widget-container {
         background: #0a0a0a;
         border-radius: 12px;
@@ -257,22 +217,11 @@ require_once __DIR__ . '/../includes/header.php';
             </div>
         </div>
 
-        <!-- Integration Options -->
+        <!-- Integration Option -->
         <div class="test-options">
-            <div class="test-option">
-                <h3>Option 1: iFrame Embed</h3>
-                <p>Simple iframe integration - just add to your page</p>
-                <pre><code>&lt;iframe
-  src="<?= $wrapinatorDomain ?>/embed/iframe?key=YOUR_API_KEY&theme=dark&branding=false"
-  width="100%"
-  height="700"
-  frameborder="0"
-&gt;&lt;/iframe&gt;</code></pre>
-            </div>
-
-            <div class="test-option">
-                <h3>Option 2: JavaScript Widget</h3>
-                <p>More control with JS widget - customizable</p>
+            <div class="test-option" style="flex: 1; max-width: 600px;">
+                <h3>JavaScript Widget</h3>
+                <p>JS widget integration - customizable</p>
                 <pre><code>&lt;div id="wrapinator-widget"
      data-key="YOUR_API_KEY"
      data-theme="dark"
@@ -286,21 +235,8 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="embed-section">
             <h3>Live Test</h3>
 
-            <div class="embed-tabs">
-                <button class="embed-tab active" onclick="showEmbed('iframe')">iFrame Embed</button>
-                <button class="embed-tab" onclick="showEmbed('widget')">JS Widget</button>
-            </div>
-
-            <!-- iFrame Test -->
-            <div id="iframe-test" class="iframe-container">
-                <iframe
-                    src="<?= $wrapinatorDomain ?>/embed/iframe?key=<?= urlencode($testApiKey) ?>&theme=dark&branding=false"
-                    allow="clipboard-write"
-                ></iframe>
-            </div>
-
             <!-- Widget Test -->
-            <div id="widget-test" class="widget-container" style="display: none;">
+            <div id="widget-test" class="widget-container">
                 <div id="wrapinator-widget"
                      data-key="<?= htmlspecialchars($testApiKey) ?>"
                      data-theme="dark"
@@ -325,24 +261,12 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <script>
-function showEmbed(type) {
-    // Update tabs
-    document.querySelectorAll('.embed-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    event.target.classList.add('active');
-
-    // Show/hide containers
-    document.getElementById('iframe-test').style.display = type === 'iframe' ? 'block' : 'none';
-    document.getElementById('widget-test').style.display = type === 'widget' ? 'block' : 'none';
-
-    // Load widget script if showing widget
-    if (type === 'widget' && !window.WrapinatorWidget) {
-        const script = document.createElement('script');
-        script.src = '<?= $wrapinatorDomain ?>/embed/widget.js';
-        document.body.appendChild(script);
-    }
-}
+// Load widget script
+(function() {
+    const script = document.createElement('script');
+    script.src = '<?= $wrapinatorDomain ?>/embed/widget.js';
+    document.body.appendChild(script);
+})();
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
