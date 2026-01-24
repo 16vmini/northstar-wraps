@@ -27,6 +27,9 @@ require_once '../includes/header.php';
             <div class="wrapinator-intro" data-aos="fade-up">
                 <h2>Preview Your Dream Wrap</h2>
                 <p>Upload a photo of your car and select a wrap colour or finish to see how it would look. Our AI-powered Wrapinator creates a realistic preview in seconds.</p>
+                <a href="/pages/wrapinator-gallery.php" class="gallery-link-btn">
+                    <i class="fas fa-images"></i> View Community Gallery
+                </a>
             </div>
 
             <!-- Wrapinator Widget -->
@@ -99,6 +102,26 @@ require_once '../includes/header.php';
 
     .wrapinator-intro p {
         color: #666;
+        margin-bottom: 20px;
+    }
+
+    .gallery-link-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: #1a1a1a;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .gallery-link-btn:hover {
+        background: #333;
+        color: #fff;
     }
 
     .wrapinator-widget-wrapper {
