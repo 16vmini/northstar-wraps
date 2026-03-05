@@ -68,6 +68,76 @@ $gallery_items = [
         'color' => 'Custom Finish',
         'image' => '/assets/images/gallery/range-rover-sport-9.jpg'
     ],
+    [
+        'title' => 'Ice Hockey Helmet',
+        'category' => 'full-wrap',
+        'description' => 'Goalie Helmet Wrap',
+        'color' => 'Gloss Blue',
+        'image' => '/assets/images/gallery/ice-hockey-helmet-1.jpg'
+    ],
+    [
+        'title' => 'Ice Hockey Helmet',
+        'category' => 'full-wrap',
+        'description' => 'Goalie Helmet Wrap',
+        'color' => 'Gloss Blue',
+        'image' => '/assets/images/gallery/ice-hockey-helmet-2.jpg'
+    ],
+    [
+        'title' => 'Ice Hockey Helmet',
+        'category' => 'full-wrap',
+        'description' => 'Goalie Helmet Wrap',
+        'color' => 'Gloss Blue',
+        'image' => '/assets/images/gallery/ice-hockey-helmet-3.jpg'
+    ],
+    [
+        'title' => 'Ice Hockey Helmet',
+        'category' => 'full-wrap',
+        'description' => 'Goalie Helmet Wrap',
+        'color' => 'Gloss Blue & White',
+        'image' => '/assets/images/gallery/ice-hockey-helmet-4.jpg'
+    ],
+    [
+        'title' => 'VW T5 Camper',
+        'category' => 'partial-wrap',
+        'description' => 'Partial Color Change Wrap',
+        'color' => 'Matte Military Green',
+        'image' => '/assets/images/gallery/vw-t5-camper-1.jpg'
+    ],
+    [
+        'title' => 'VW T5 Camper',
+        'category' => 'partial-wrap',
+        'description' => 'Partial Color Change Wrap',
+        'color' => 'Matte Military Green',
+        'image' => '/assets/images/gallery/vw-t5-camper-2.jpg'
+    ],
+    [
+        'title' => 'VW T5 Camper',
+        'category' => 'partial-wrap',
+        'description' => 'Partial Color Change Wrap',
+        'color' => 'Matte Military Green',
+        'image' => '/assets/images/gallery/vw-t5-camper-3.jpg'
+    ],
+    [
+        'title' => 'VW T5 Camper',
+        'category' => 'partial-wrap',
+        'description' => 'Partial Color Change Wrap',
+        'color' => 'Matte Military Green',
+        'image' => '/assets/images/gallery/vw-t5-camper-4.jpg'
+    ],
+    [
+        'title' => 'VW T5 Camper',
+        'category' => 'partial-wrap',
+        'description' => 'Partial Color Change Wrap',
+        'color' => 'Matte Military Green',
+        'image' => '/assets/images/gallery/vw-t5-camper-5.jpg'
+    ],
+    [
+        'title' => 'VW T5 Camper',
+        'category' => 'partial-wrap',
+        'description' => 'Partial Color Change Wrap',
+        'color' => 'Matte Military Green',
+        'image' => '/assets/images/gallery/vw-t5-camper-6.jpg'
+    ],
 ];
 
 // Categories for filtering
