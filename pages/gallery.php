@@ -142,35 +142,35 @@ $gallery_items = [
         'title' => 'Vauxhall Vivaro',
         'category' => 'full-wrap',
         'description' => 'Full Color Change Wrap',
-        'color' => 'Nardo Grey',
+        'color' => 'Matte Forest Green',
         'image' => '/assets/images/gallery/vivaro-1.jpg'
     ],
     [
         'title' => 'Vauxhall Vivaro',
         'category' => 'full-wrap',
         'description' => 'Full Color Change Wrap',
-        'color' => 'Nardo Grey',
+        'color' => 'Matte Forest Green',
         'image' => '/assets/images/gallery/vivaro-2.jpg'
     ],
     [
         'title' => 'Vauxhall Vivaro',
         'category' => 'full-wrap',
         'description' => 'Full Color Change Wrap',
-        'color' => 'Nardo Grey',
+        'color' => 'Matte Forest Green',
         'image' => '/assets/images/gallery/vivaro-3.jpg'
     ],
     [
         'title' => 'Vauxhall Vivaro',
         'category' => 'full-wrap',
         'description' => 'Full Color Change Wrap',
-        'color' => 'Nardo Grey',
+        'color' => 'Matte Forest Green',
         'image' => '/assets/images/gallery/vivaro-4.jpg'
     ],
     [
         'title' => 'Vauxhall Vivaro',
         'category' => 'full-wrap',
         'description' => 'Full Color Change Wrap',
-        'color' => 'Nardo Grey',
+        'color' => 'Matte Forest Green',
         'image' => '/assets/images/gallery/vivaro-5.jpg'
     ],
 ];
