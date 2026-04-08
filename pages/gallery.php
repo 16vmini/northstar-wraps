@@ -139,39 +139,39 @@ $gallery_items = [
         'image' => '/assets/images/gallery/vw-t5-camper-6.jpg'
     ],
     [
-        'title' => 'VW T5 Camper',
-        'category' => 'partial-wrap',
-        'description' => 'Partial Color Change Wrap',
-        'color' => 'Matte Military Green',
-        'image' => '/assets/images/gallery/vw-t5-camper-7.jpg'
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Nardo Grey',
+        'image' => '/assets/images/gallery/vivaro-1.jpg'
     ],
     [
-        'title' => 'VW T5 Camper',
-        'category' => 'partial-wrap',
-        'description' => 'Partial Color Change Wrap',
-        'color' => 'Matte Military Green',
-        'image' => '/assets/images/gallery/vw-t5-camper-8.jpg'
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Nardo Grey',
+        'image' => '/assets/images/gallery/vivaro-2.jpg'
     ],
     [
-        'title' => 'VW T5 Camper',
-        'category' => 'partial-wrap',
-        'description' => 'Partial Color Change Wrap',
-        'color' => 'Matte Military Green',
-        'image' => '/assets/images/gallery/vw-t5-camper-9.jpg'
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Nardo Grey',
+        'image' => '/assets/images/gallery/vivaro-3.jpg'
     ],
     [
-        'title' => 'VW T5 Camper',
-        'category' => 'partial-wrap',
-        'description' => 'Partial Color Change Wrap',
-        'color' => 'Matte Military Green',
-        'image' => '/assets/images/gallery/vw-t5-camper-10.jpg'
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Nardo Grey',
+        'image' => '/assets/images/gallery/vivaro-4.jpg'
     ],
     [
-        'title' => 'VW T5 Camper',
-        'category' => 'partial-wrap',
-        'description' => 'Partial Color Change Wrap',
-        'color' => 'Matte Military Green',
-        'image' => '/assets/images/gallery/vw-t5-camper-11.jpg'
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Nardo Grey',
+        'image' => '/assets/images/gallery/vivaro-5.jpg'
     ],
 ];
 
