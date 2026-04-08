@@ -166,6 +166,13 @@ $gallery_items = [
         'color' => 'Matte Military Green',
         'image' => '/assets/images/gallery/vw-t5-camper-10.jpg'
     ],
+    [
+        'title' => 'VW T5 Camper',
+        'category' => 'partial-wrap',
+        'description' => 'Partial Color Change Wrap',
+        'color' => 'Matte Military Green',
+        'image' => '/assets/images/gallery/vw-t5-camper-11.jpg'
+    ],
 ];
 
 // Categories for filtering
