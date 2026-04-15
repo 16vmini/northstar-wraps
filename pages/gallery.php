@@ -173,6 +173,27 @@ $gallery_items = [
         'color' => 'Matte Forest Green',
         'image' => '/assets/images/gallery/vivaro-5.jpg'
     ],
+    [
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Matte Forest Green',
+        'image' => '/assets/images/gallery/vivaro-6.jpg'
+    ],
+    [
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Matte Forest Green',
+        'image' => '/assets/images/gallery/vivaro-7.jpg'
+    ],
+    [
+        'title' => 'Vauxhall Vivaro',
+        'category' => 'full-wrap',
+        'description' => 'Full Color Change Wrap',
+        'color' => 'Matte Forest Green',
+        'image' => '/assets/images/gallery/vivaro-8.jpg'
+    ],
 ];
 
 // Categories for filtering
