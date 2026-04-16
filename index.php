@@ -92,8 +92,8 @@ require_once 'includes/header.php';
                                 <i class="fas fa-certificate"></i>
                             </div>
                             <div class="feature-content">
-                                <h4>Premium Materials</h4>
-                                <p>We exclusively use top-tier vinyl from Metamark, 3M, Avery Dennison, and XPEL with full manufacturer warranties.</p>
+                                <h4>Quality Materials</h4>
+                                <p>We work with well-known wrap film brands and pick the right material for each job.</p>
                             </div>
                         </div>
                         <div class="feature-item">
@@ -101,8 +101,8 @@ require_once 'includes/header.php';
                                 <i class="fas fa-user-check"></i>
                             </div>
                             <div class="feature-content">
-                                <h4>Certified Installers</h4>
-                                <p>Our team is factory-trained and certified, ensuring flawless installation every time.</p>
+                                <h4>Careful, Unhurried Work</h4>
+                                <p>A background in bodywork and paint means we take prep seriously — it's the biggest factor in how a wrap turns out.</p>
                             </div>
                         </div>
                         <div class="feature-item">

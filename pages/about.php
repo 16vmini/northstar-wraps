@@ -140,30 +140,31 @@ require_once '../includes/header.php';
         </div>
     </section>
 
-    <!-- Certifications Section -->
+    <!-- Materials Section -->
     <section class="about-certifications">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <span class="section-tag">Credentials</span>
-                <h2 class="section-title">Certified & Trusted</h2>
+                <span class="section-tag">What We Use</span>
+                <h2 class="section-title">Quality Materials</h2>
+                <p class="section-subtitle">We stick to well-known wrap films from trusted manufacturers.</p>
             </div>
 
             <div class="certifications-grid" data-aos="fade-up">
                 <div class="cert-card">
-                    <div class="cert-logo">3M</div>
-                    <span>3M Preferred Installer</span>
+                    <div class="cert-logo"><i class="fas fa-shield-alt"></i></div>
+                    <span>Trusted wrap film brands</span>
                 </div>
                 <div class="cert-card">
-                    <div class="cert-logo">AVERY</div>
-                    <span>Avery Dennison Certified</span>
+                    <div class="cert-logo"><i class="fas fa-tools"></i></div>
+                    <span>Proper tools &amp; prep</span>
                 </div>
                 <div class="cert-card">
-                    <div class="cert-logo">XPEL</div>
-                    <span>XPEL Certified Installer</span>
+                    <div class="cert-logo"><i class="fas fa-hand-sparkles"></i></div>
+                    <span>Careful, unhurried work</span>
                 </div>
                 <div class="cert-card">
-                    <div class="cert-logo">PDDA</div>
-                    <span>PDDA Member</span>
+                    <div class="cert-logo"><i class="fas fa-comments"></i></div>
+                    <span>Honest advice up front</span>
                 </div>
             </div>
         </div>
