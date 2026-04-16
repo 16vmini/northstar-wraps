@@ -118,9 +118,9 @@ require_once '../includes/header.php';
                         </div>
                     </div>
                     <div class="team-info">
-                        <h4>Mike Johnson</h4>
-                        <span class="team-role">Founder & Lead Installer</span>
-                        <p>Background in bodywork and the paint shop trade. Detail-focused and car enthusiast.</p>
+                        <h4>The Owner</h4>
+                        <span class="team-role">Founder & Installer</span>
+                        <p>Years of hands-on experience in bodywork and the paint shop trade. Runs the business and does the work.</p>
                     </div>
                 </div>
 
@@ -131,35 +131,9 @@ require_once '../includes/header.php';
                         </div>
                     </div>
                     <div class="team-info">
-                        <h4>Sarah Chen</h4>
-                        <span class="team-role">Design Specialist</span>
-                        <p>Creates custom graphics and commercial designs. Background in automotive design.</p>
-                    </div>
-                </div>
-
-                <div class="team-card">
-                    <div class="team-image">
-                        <div class="team-placeholder">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                    <div class="team-info">
-                        <h4>Carlos Rivera</h4>
-                        <span class="team-role">Senior Installer</span>
-                        <p>PPF specialist. 10 years in the industry. XPEL certified. Detail-obsessed perfectionist.</p>
-                    </div>
-                </div>
-
-                <div class="team-card">
-                    <div class="team-image">
-                        <div class="team-placeholder">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                    <div class="team-info">
-                        <h4>Jake Williams</h4>
-                        <span class="team-role">Customer Relations</span>
-                        <p>Your first point of contact. Handles quotes, scheduling, and makes sure you're happy.</p>
+                        <h4>His Son</h4>
+                        <span class="team-role">Installer</span>
+                        <p>Works alongside on every job, learning the trade hands-on.</p>
                     </div>
                 </div>
             </div>
@@ -201,28 +175,23 @@ require_once '../includes/header.php';
             <div class="facility-grid">
                 <div class="facility-content" data-aos="fade-right">
                     <span class="section-tag">Our Shop</span>
-                    <h2>State-of-the-Art Facility</h2>
+                    <h2>Our Workshop</h2>
                     <p>
-                        Our 5,000 sq ft climate-controlled facility is designed specifically for vehicle wrapping.
-                        Temperature and humidity control ensure optimal vinyl application conditions year-round.
+                        A dedicated indoor workshop where we do all our wrapping. We take the time to prep
+                        every panel properly — it's the biggest factor in how a wrap looks and how long it
+                        lasts.
                     </p>
                     <ul class="facility-features">
-                        <li><i class="fas fa-check"></i> Climate-controlled installation bays</li>
-                        <li><i class="fas fa-check"></i> Professional lighting for color matching</li>
-                        <li><i class="fas fa-check"></i> Dust-free paint preparation area</li>
-                        <li><i class="fas fa-check"></i> Secure indoor storage</li>
-                        <li><i class="fas fa-check"></i> Comfortable customer lounge</li>
+                        <li><i class="fas fa-check"></i> Thorough surface prep on every job</li>
+                        <li><i class="fas fa-check"></i> Good lighting for finishing and inspection</li>
+                        <li><i class="fas fa-check"></i> Indoor storage while your vehicle is with us</li>
                     </ul>
                 </div>
                 <div class="facility-images" data-aos="fade-left">
                     <div class="facility-image-grid">
                         <div class="facility-placeholder">
                             <i class="fas fa-warehouse"></i>
-                            <span>Installation Bay</span>
-                        </div>
-                        <div class="facility-placeholder">
-                            <i class="fas fa-couch"></i>
-                            <span>Customer Lounge</span>
+                            <span>Workshop</span>
                         </div>
                     </div>
                 </div>
