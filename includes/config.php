@@ -34,6 +34,7 @@ $services = [
         'short_desc' => 'Complete color transformation for your entire vehicle.',
         'description' => 'Transform your vehicle with a complete color change. Our full wraps cover every visible panel, giving your car, truck, or SUV an entirely new look while protecting the original paint underneath.',
         'icon' => 'fa-car',
+        'image' => '/assets/images/gallery/vivaro-6.jpg',
         'price_from' => 2500
     ],
     [
@@ -42,6 +43,7 @@ $services = [
         'short_desc' => 'Accent wraps for hoods, roofs, mirrors, and more.',
         'description' => 'Add style without committing to a full wrap. Perfect for hoods, roofs, mirrors, spoilers, or any combination of panels. Create a custom two-tone look or add racing stripes.',
         'icon' => 'fa-palette',
+        'image' => '/assets/images/gallery/vw-t5-camper-1.jpg',
         'price_from' => 500
     ],
     [
@@ -50,6 +52,7 @@ $services = [
         'short_desc' => 'Turn your vehicles into mobile billboards.',
         'description' => 'Make your business stand out with professional vehicle graphics. From single work vans to entire fleets, we create eye-catching designs that advertise your brand wherever you go.',
         'icon' => 'fa-truck',
+        'image' => '/assets/images/gallery/vivaro-8.jpg',
         'price_from' => 1500
     ],
     [
@@ -75,6 +78,7 @@ $services = [
         'short_desc' => 'Bring your unique vision to life.',
         'description' => 'Have something special in mind? Our design team can create custom graphics, patterns, liveries, or artistic wraps that make your vehicle truly one-of-a-kind.',
         'icon' => 'fa-pencil-ruler',
+        'image' => '/assets/images/gallery/ice-hockey-helmet-1.jpg',
         'price_from' => null
     ]
 ];
