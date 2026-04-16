@@ -302,6 +302,38 @@ require_once 'includes/header.php';
         </div>
     </section>
 
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Reviews</span>
+                <h2 class="section-title">What Our Customers Say</h2>
+            </div>
+
+            <div class="testimonials-slider" data-aos="fade-up">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"I contacted Northstar Wrap to ask about changing the colour of my mask. They said they'd give it a go but couldn't guarantee anything due to the shape and contours of it. But WOW! They did an amazing job. I couldn't be happier. I'll definitely be returning when I want a change of colour."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-hockey-puck"></i>
+                        </div>
+                        <div class="author-info">
+                            <strong>Terry</strong>
+                            <span>Ice Hockey Goalie Helmet Wrap</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
