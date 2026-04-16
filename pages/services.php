@@ -39,9 +39,13 @@ require_once '../includes/header.php';
             <div class="service-detail-card" id="<?php echo $service['id']; ?>" data-aos="fade-up">
                 <div class="service-detail-grid <?php echo $index % 2 === 1 ? 'reverse' : ''; ?>">
                     <div class="service-detail-image">
+                        <?php if (!empty($service['image'])): ?>
+                        <img src="<?php echo $service['image']; ?>" alt="<?php echo $service['name']; ?>" loading="lazy">
+                        <?php else: ?>
                         <div class="image-placeholder-large">
                             <i class="fas <?php echo $service['icon']; ?>"></i>
                         </div>
+                        <?php endif; ?>
                     </div>
                     <div class="service-detail-content">
                         <div class="service-detail-icon">
@@ -81,6 +85,17 @@ require_once '../includes/header.php';
                                 <li><i class="fas fa-check"></i> Brand consistency across vehicles</li>
                                 <li><i class="fas fa-check"></i> Faster turnaround than paint</li>
                                 <li><i class="fas fa-check"></i> Easy updates when branding changes</li>
+                            </ul>
+                        </div>
+                        <?php elseif ($service['id'] === 'chevron-kits'): ?>
+                        <div class="service-features">
+                            <h4>Typical Applications:</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Rear door chevron kits (Chapter 8 style)</li>
+                                <li><i class="fas fa-check"></i> Hi-viz reflective red &amp; yellow film</li>
+                                <li><i class="fas fa-check"></i> Cut and fitted to suit your van</li>
+                                <li><i class="fas fa-check"></i> Utility, recovery and work fleets</li>
+                                <li><i class="fas fa-check"></i> Single vans or multi-vehicle fleets</li>
                             </ul>
                         </div>
                         <?php elseif ($service['id'] === 'chrome-delete'): ?>

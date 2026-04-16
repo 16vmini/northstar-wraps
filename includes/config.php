@@ -53,6 +53,15 @@ $services = [
         'price_from' => 1500
     ],
     [
+        'id' => 'chevron-kits',
+        'name' => 'Chevron Kits',
+        'short_desc' => 'Hi-viz rear chevron kits for work and utility vans.',
+        'description' => 'Red and yellow reflective chevron kits for work vans, utility vehicles and fleets. Cut and fitted to suit the vehicle, using hi-viz reflective film so you stand out on site and on the road.',
+        'icon' => 'fa-exclamation-triangle',
+        'image' => '/assets/images/services/chevron-kit.jpg',
+        'price_from' => null
+    ],
+    [
         'id' => 'chrome-delete',
         'name' => 'Chrome Delete',
         'short_desc' => 'Sleek blackout packages for trim and accents.',
