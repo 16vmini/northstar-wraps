@@ -51,9 +51,15 @@ require_once 'includes/header.php';
                 <?php foreach (array_slice($services, 0, 6) as $index => $service): ?>
                 <div class="service-card" data-aos="fade-up" data-aos-delay="<?php echo $index * 100; ?>">
                     <div class="service-card-inner">
+                        <?php if (!empty($service['image'])): ?>
+                        <div class="service-card-image">
+                            <img src="<?php echo $service['image']; ?>" alt="<?php echo $service['name']; ?>" loading="lazy">
+                        </div>
+                        <?php else: ?>
                         <div class="service-icon">
                             <i class="fas <?php echo $service['icon']; ?>"></i>
                         </div>
+                        <?php endif; ?>
                         <h3><?php echo $service['name']; ?></h3>
                         <p><?php echo $service['short_desc']; ?></p>
                         <?php if ($service['price_from']): ?>
@@ -127,14 +133,7 @@ require_once 'includes/header.php';
                 </div>
                 <div class="why-us-image" data-aos="fade-left">
                     <div class="image-wrapper">
-                        <div class="image-placeholder">
-                            <i class="fas fa-car-side"></i>
-                            <span>Quality Installation</span>
-                        </div>
-                    </div>
-                    <div class="floating-badge">
-                        <span class="badge-number">5</span>
-                        <span class="badge-text">Year Warranty</span>
+                        <img src="/assets/images/gallery/range-rover-sport-9.jpg" alt="Wrap in progress" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -176,7 +175,7 @@ require_once 'includes/header.php';
                     <div class="step-number">04</div>
                     <div class="step-content">
                         <h3>Installation</h3>
-                        <p>Our certified installers meticulously apply your wrap in our climate-controlled facility.</p>
+                        <p>We take our time applying the wrap by hand in our indoor workshop — prep and patience are what make the finish.</p>
                     </div>
                 </div>
                 <div class="process-step" data-aos="fade-up" data-aos-delay="600">
@@ -201,58 +200,43 @@ require_once 'includes/header.php';
 
             <div class="gallery-grid" data-aos="fade-up">
                 <div class="gallery-item gallery-item-lg">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>BMW M4 - Satin Black</span>
-                    </div>
+                    <img src="/assets/images/gallery/vivaro-6.jpg" alt="Vauxhall Vivaro Matte Forest Green" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="gallery-tag">Full Wrap</span>
-                        <h4>BMW M4</h4>
-                        <p>Satin Black</p>
+                        <h4>Vauxhall Vivaro</h4>
+                        <p>Matte Forest Green</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Tesla Model 3</span>
-                    </div>
+                    <img src="/assets/images/gallery/vw-t5-camper-1.jpg" alt="VW T5 Camper two-tone" loading="lazy">
                     <div class="gallery-overlay">
-                        <span class="gallery-tag">Color Change</span>
-                        <h4>Tesla Model 3</h4>
-                        <p>Midnight Purple</p>
+                        <span class="gallery-tag">Partial Wrap</span>
+                        <h4>VW T5 Camper</h4>
+                        <p>Matte Military Green</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Ford F-150</span>
-                    </div>
+                    <img src="/assets/images/gallery/vivaro-3.jpg" alt="Vivaro bonnet wrap detail" loading="lazy">
                     <div class="gallery-overlay">
-                        <span class="gallery-tag">Commercial</span>
-                        <h4>Ford F-150</h4>
-                        <p>Business Graphics</p>
+                        <span class="gallery-tag">Full Wrap</span>
+                        <h4>Vauxhall Vivaro</h4>
+                        <p>Bonnet detail</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Porsche 911</span>
-                    </div>
+                    <img src="/assets/images/gallery/range-rover-sport-5.jpg" alt="Range Rover Sport roof wrap" loading="lazy">
                     <div class="gallery-overlay">
-                        <span class="gallery-tag">PPF + Wrap</span>
-                        <h4>Porsche 911</h4>
-                        <p>Racing Stripes</p>
+                        <span class="gallery-tag">Partial Wrap</span>
+                        <h4>Range Rover Sport</h4>
+                        <p>Roof wrap</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Mercedes AMG</span>
-                    </div>
+                    <img src="/assets/images/gallery/ice-hockey-helmet-1.jpg" alt="Gloss blue ice hockey helmet wrap" loading="lazy">
                     <div class="gallery-overlay">
-                        <span class="gallery-tag">Chrome Delete</span>
-                        <h4>Mercedes AMG GT</h4>
-                        <p>Blackout Package</p>
+                        <span class="gallery-tag">Custom</span>
+                        <h4>Ice Hockey Helmet</h4>
+                        <p>Gloss Blue</p>
                     </div>
                 </div>
             </div>
