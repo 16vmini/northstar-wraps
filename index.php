@@ -28,20 +28,6 @@ require_once 'includes/header.php';
                         <i class="fas fa-images"></i> View Our Work
                     </a>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number" data-count="500">0</span>
-                        <span class="stat-label">Vehicles Wrapped</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" data-count="15">0</span>
-                        <span class="stat-label">Years Experience</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" data-count="100">0</span>
-                        <span class="stat-label">% Satisfaction</span>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="hero-scroll">

@@ -25,25 +25,24 @@ require_once '../includes/header.php';
             <div class="story-grid">
                 <div class="story-content" data-aos="fade-right">
                     <span class="section-tag">Our Story</span>
-                    <h2>Born From a Passion for Cars</h2>
+                    <h2>Built on a Background in Bodywork</h2>
                     <p class="lead-text">
-                        North Star Wraps started with a simple belief: your vehicle should be as unique as you are.
+                        North Star Wrap is a new vehicle wrapping business — but we're not new to cars.
                     </p>
                     <p>
-                        What began as a hobby wrapping our own project cars has grown into a full-service vehicle
-                        customization shop. We've wrapped everything from daily drivers to exotic supercars,
-                        work trucks to entire commercial fleets.
+                        Our background is in the paint shop and bodywork trade, where surface prep, patience
+                        and an eye for detail matter more than anything. That same approach carries straight
+                        over into how we wrap vehicles.
                     </p>
                     <p>
-                        Our team consists of certified installers who genuinely love what they do. We're car
-                        enthusiasts first—we attend car meets, we follow the latest automotive trends, and we
-                        treat every vehicle that comes through our doors like it's our own.
+                        We're deliberately keeping things honest about where we are as a wrapping firm: we're
+                        early on, we take our time, and we'd rather do a smaller number of jobs properly than
+                        rush through work we're not proud of.
                     </p>
                     <p>
-                        We're not the cheapest option out there, and that's intentional. We use only premium
-                        materials, take the time to do things right, and stand behind our work with solid
-                        warranties. Quality is never an accident—it's the result of skilled hands, premium
-                        materials, and genuine care.
+                        We use quality materials, prep every panel properly, and talk you through what's
+                        realistic before we start. No hard sell and no overpromising — just straight talk and
+                        tidy work.
                     </p>
                 </div>
                 <div class="story-image" data-aos="fade-left">
@@ -52,10 +51,6 @@ require_once '../includes/header.php';
                             <i class="fas fa-users"></i>
                             <span>Our Team</span>
                         </div>
-                    </div>
-                    <div class="story-badge">
-                        <span class="badge-year">Est.</span>
-                        <span class="badge-number">2010</span>
                     </div>
                 </div>
             </div>
@@ -106,42 +101,6 @@ require_once '../includes/header.php';
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="about-stats">
-        <div class="container">
-            <div class="stats-grid" data-aos="fade-up">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-car"></i>
-                    </div>
-                    <span class="stat-number" data-count="500">0</span>
-                    <span class="stat-label">Vehicles Wrapped</span>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <span class="stat-number" data-count="15">0</span>
-                    <span class="stat-label">Years Experience</span>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <span class="stat-number" data-count="8">0</span>
-                    <span class="stat-label">Team Members</span>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <span class="stat-number" data-count="5">0</span>
-                    <span class="stat-label">Star Reviews</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Team Section -->
     <section class="about-team">
         <div class="container">
@@ -161,7 +120,7 @@ require_once '../includes/header.php';
                     <div class="team-info">
                         <h4>Mike Johnson</h4>
                         <span class="team-role">Founder & Lead Installer</span>
-                        <p>15+ years experience. 3M & Avery certified. Car collector and track day enthusiast.</p>
+                        <p>Background in bodywork and the paint shop trade. Detail-focused and car enthusiast.</p>
                     </div>
                 </div>
 
