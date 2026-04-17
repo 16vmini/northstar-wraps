@@ -6,7 +6,7 @@
 // Site Configuration
 define('SITE_NAME', 'North Star Wrap');
 define('SITE_TAGLINE', 'Premium Vehicle Wrapping Services');
-define('SITE_EMAIL', 'info@northstarwrap.com');
+define('SITE_EMAIL', 'northstarwrap@yahoo.com');
 define('SITE_PHONE', '07300 365782');
 define('SITE_ADDRESS', 'Unit G2, Manorway Business Park, Swanscombe, Kent DA10 0PP');
 

@@ -330,6 +330,26 @@ require_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"I had my Range Rover Sport roof vinyl wrapped by these guys, highly recommend 5 star would definitely use again."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="author-info">
+                            <strong>Stef Taz</strong>
+                            <span>Range Rover Sport Roof Wrap</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
