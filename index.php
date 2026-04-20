@@ -365,7 +365,7 @@ require_once 'includes/header.php';
                             <i class="fas fa-shuttle-van"></i>
                         </div>
                         <div class="author-info">
-                            <strong>Jac</strong>
+                            <strong>Jack</strong>
                             <span>VW T5 Camper Wrap</span>
                         </div>
                     </div>
