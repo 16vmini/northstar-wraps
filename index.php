@@ -350,6 +350,26 @@ require_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Just wanted to give a big shoutout and recommendation for an amazing car wrapping job we've just had done. The attention to detail, quality of the finish, and overall professionalism were absolutely spot on from start to finish. We are so pleased with how it's turned out — it's completely transformed my van. If anyone is considering a wrap, I wouldn't hesitate to recommend."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-shuttle-van"></i>
+                        </div>
+                        <div class="author-info">
+                            <strong>Jac</strong>
+                            <span>VW T5 Camper Wrap</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
